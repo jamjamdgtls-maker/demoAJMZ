@@ -498,6 +498,7 @@ body{
               <th>Price</th>
               <th>Amount</th>
               <th>Remarks</th>
+              <th style="width:40px;text-align:center;">✏️</th>
               <th style="width:40px;text-align:center;">❌</th>
             </tr>
           </thead>
@@ -544,6 +545,7 @@ body{
               <th>Price</th>
               <th>Amount</th>
               <th>Remarks</th>
+              <th style="width:40px;text-align:center;">✏️</th>
               <th style="width:40px;text-align:center;">❌</th>
             </tr>
           </thead>
@@ -761,6 +763,7 @@ async function loadSellRecordsList(){
         date:dateStr,
         party:r.party || "",
         cts:parseNum(r.cts),
+        pcs:0,
         sellPrice:parseNum(r.sellPrice || r.price),
         amount:parseNum(r.amount || (parseNum(r.cts)*parseNum(r.sellPrice||r.price))),
         remarks:r.remarks || "",
@@ -906,7 +909,7 @@ function renderSellAJMZ(){
   const rows=AJMZ_SELL_FILTERED.slice(start,start+SELL_PAGE_SIZE);
 
   if(!rows.length){
-    tbody.innerHTML=`<tr><td colspan="11" style="text-align:center;color:#777;font-size:11px;">No AJMZ sell records found.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;color:#777;font-size:11px;">No AJMZ sell records found.</td></tr>`;
   }else{
     let html="";
     rows.forEach(r=>{
@@ -922,6 +925,9 @@ function renderSellAJMZ(){
           <td><div class="cell readonly">${fmtNumber(r.sellPrice)}</div></td>
           <td><div class="cell readonly">${fmtNumber(r.amount)}</div></td>
           <td><div class="cell readonly">${esc(r.remarks||"")}</div></td>
+          <td style="text-align:center;">
+            <button class="button icon-only btn-edit-sell" data-type="AJMZ" data-key="${esc(r.key)}" title="Edit sell record">✏️</button>
+          </td>
           <td style="text-align:center;">
             <button class="button icon-only btn-delete-sell" data-type="AJMZ" data-key="${esc(r.key)}" title="Delete sell &amp; restore parent">❌</button>
           </td>
@@ -948,7 +954,7 @@ function renderSellCALIB(){
   const rows=CALIB_SELL_FILTERED.slice(start,start+SELL_PAGE_SIZE);
 
   if(!rows.length){
-    tbody.innerHTML=`<tr><td colspan="10" style="text-align:center;color:#777;font-size:11px;">No CALIB sell records found.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="11" style="text-align:center;color:#777;font-size:11px;">No CALIB sell records found.</td></tr>`;
   }else{
     let html="";
     rows.forEach(r=>{
@@ -963,6 +969,9 @@ function renderSellCALIB(){
           <td><div class="cell readonly">${fmtNumber(r.sellPrice)}</div></td>
           <td><div class="cell readonly">${fmtNumber(r.amount)}</div></td>
           <td><div class="cell readonly">${esc(r.remarks||"")}</div></td>
+          <td style="text-align:center;">
+            <button class="button icon-only btn-edit-sell" data-type="CALIB" data-key="${esc(r.key)}" title="Edit sell record">✏️</button>
+          </td>
           <td style="text-align:center;">
             <button class="button icon-only btn-delete-sell" data-type="CALIB" data-key="${esc(r.key)}" title="Delete sell &amp; restore parent">❌</button>
           </td>
@@ -1028,7 +1037,7 @@ function bindPagination(){
   });
 }
 
-/* ======================== SELL MODAL ========================== */
+/* ======================== SELL MODAL (NEW) ========================== */
 function openSellModal(type, parents){
   if(!parents.length){
     alert("Select at least one parent row first.");
@@ -1093,6 +1102,7 @@ function openSellModal(type, parents){
     sellInputBound=true;
   }
 }
+
 function closeSellModal(){
   sellModalEl.style.display="none";
   currentSellType=null;
@@ -1129,15 +1139,88 @@ function onSellTableInput(e){
   else tr.classList.remove("over-limit");
 }
 
-/* ================= SAVE SELLS + REDUCE PARENTS ================= */
+/* ===================== EDIT SELL (OPEN MODAL) ===================== */
+function editSellRecord(type, sellKey){
+  const list = type==="AJMZ" ? AJMZ_SELL_ALL : CALIB_SELL_ALL;
+  const rec = list.find(r=>r.key===sellKey);
+  if(!rec){
+    alert("Sell record not found.");
+    return;
+  }
+
+  currentSellType = type;
+  sellModalTypeLabel.textContent = (type==="AJMZ" ? "AJMZ" : "CALIB") + " · Edit Sell";
+  const today = rec.date || nowDate();
+
+  const lotOrGrade = type==="AJMZ" ? (rec.parentLot || "") : (rec.parentGrade || "");
+
+  const header = `
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Parent TxID</th>
+          <th>Lot / Grade</th>
+          <th>Description</th>
+          <th>CTS (Before)</th>
+          ${type==="AJMZ" ? '<th>PCS (Before)</th>' : ''}
+          <th>Parent Price</th>
+          <th>Date</th>
+          <th>Party</th>
+          <th>CTS</th>
+          ${type==="AJMZ" ? '<th>PCS</th>' : ''}
+          <th>Sell Price</th>
+          <th>Amount</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  const row = `
+    <tr data-key="${esc(rec.parentKey)}"
+        data-sell-key="${esc(rec.key)}"
+        data-rem-cts="${rec.parentCTSBefore}"
+        data-rem-pcs="${type==="AJMZ" ? rec.parentPCSBefore : 0}"
+        data-parent-price="${rec.parentPrice}"
+        data-old-cts="${rec.cts}"
+        data-old-pcs="${type==="AJMZ" ? rec.pcs : 0}">
+      <td>${esc(rec.parentTxId || "")}</td>
+      <td>${esc(lotOrGrade || "")}</td>
+      <td>${esc(rec.parentDescription || "")}</td>
+      <td>${fmtNumber(rec.parentCTSBefore)}</td>
+      ${type==="AJMZ" ? `<td>${fmtNumber(rec.parentPCSBefore)}</td>` : ""}
+      <td>${fmtNumber(rec.parentPrice)}</td>
+      <td><input class="sell-input" type="date" data-field="date" value="${today}"></td>
+      <td><input class="sell-input" type="text" data-field="party" value="${esc(rec.party || "")}"></td>
+      <td><input class="sell-input" type="number" step="0.0001" data-field="sellCts" value="${rec.cts}"></td>
+      ${type==="AJMZ" ? `<td><input class="sell-input" type="number" step="1" data-field="sellPcs" value="${rec.pcs}"></td>` : ""}
+      <td><input class="sell-input" type="number" step="0.0001" data-field="sellPrice" value="${rec.sellPrice}"></td>
+      <td><input class="sell-input" type="text" data-field="amount" readonly value="${fmtNumber(rec.amount)}"></td>
+      <td><input class="sell-input" type="text" data-field="remarks" value="${esc(rec.remarks || "")}"></td>
+    </tr>
+  `;
+
+  sellTableWrapper.innerHTML = header + row + "</tbody></table>";
+  sellModalEl.style.display="flex";
+
+  if(!sellInputBound){
+    sellTableWrapper.addEventListener("input",onSellTableInput);
+    sellInputBound=true;
+  }
+}
+
+/* ================= SAVE SELLS + REDUCE / EDIT PARENTS ================= */
 async function saveSellRecords(){
   if(!currentSellType)return;
   const type=currentSellType;
+  const sellPath   = type==="AJMZ" ? "sellRecords/ajmz" : "sellRecords/calib";
+  const parentPath = type==="AJMZ" ? "ajmzRecords"      : "calibRecords";
+
   const rows=Array.from(sellTableWrapper.querySelectorAll("tbody tr[data-key]"));
   const tasks=[];
 
   rows.forEach(tr=>{
-    const key=tr.dataset.key;
+    const key=tr.dataset.key; // parent key
     const dateVal   = tr.querySelector('input[data-field="date"]')?.value || nowDate();
     const partyVal  = tr.querySelector('input[data-field="party"]')?.value.trim() || "";
     const sellCts   = parseNum(tr.querySelector('input[data-field="sellCts"]')?.value || 0);
@@ -1145,8 +1228,56 @@ async function saveSellRecords(){
     const sellPrice = parseNum(tr.querySelector('input[data-field="sellPrice"]')?.value || 0);
     const remarks   = tr.querySelector('input[data-field="remarks"]')?.value.trim() || "";
 
-    if(!sellCts && !sellPcs && !sellPrice && !remarks) return; // skip empty
+    // skip fully empty rows
+    if(!sellCts && !sellPcs && !sellPrice && !remarks && !partyVal) return;
 
+    const existingSellKey = tr.dataset.sellKey || "";
+
+    // EDIT MODE
+    if(existingSellKey){
+      const parentRef = db.ref(parentPath+"/"+key);
+      const sellRef   = db.ref(sellPath+"/"+existingSellKey);
+
+      const oldCTS = parseNum(tr.dataset.oldCts || 0);
+      const oldPCS = parseNum(tr.dataset.oldPcs || 0);
+
+      const amount = sellCts * sellPrice;
+
+      tasks.push(
+        parentRef.once("value").then(snap=>{
+          const parent = snap.val() || {};
+          const currentCts = parseNum(parent.cts);
+          const currentPcs = parseNum(parent.pcs);
+          const basePrice  = parseNum(parent.price || 0);
+
+          // remove old, apply new
+          const newParentCts = currentCts + oldCTS - sellCts;
+          const newParentPcs = type==="AJMZ" ? (currentPcs + oldPCS - sellPcs) : currentPcs;
+          const newAmount    = newParentCts * basePrice;
+
+          const parentUpdate = (type==="AJMZ")
+            ? {cts:newParentCts, pcs:newParentPcs, amount:newAmount}
+            : {cts:newParentCts, amount:newAmount};
+
+          return parentRef.update(parentUpdate).then(()=>{
+            return sellRef.update({
+              date:dateVal,
+              party:partyVal,
+              cts:sellCts,
+              pcs:type==="AJMZ" ? sellPcs : 0,
+              sellPrice:sellPrice,
+              price:sellPrice,
+              amount:amount,
+              remarks:remarks
+            });
+          });
+        })
+      );
+
+      return; // skip create branch
+    }
+
+    // CREATE MODE (new sell)
     const parentList = type==="AJMZ" ? AJMZ_ALL : CALIB_ALL;
     const parent = parentList.find(p=>p.key===key);
     if(!parent)return;
@@ -1155,9 +1286,6 @@ async function saveSellRecords(){
     const newCts = (parent.cts||0) - sellCts;
     const newPcs = type==="AJMZ" ? ((parent.pcs||0) - sellPcs) : 0;
     const newAmount = newCts * parent.price;  // using parent price
-
-    const sellPath   = type==="AJMZ" ? "sellRecords/ajmz" : "sellRecords/calib";
-    const parentPath = type==="AJMZ" ? "ajmzRecords"      : "calibRecords";
 
     const sellRef   = db.ref(sellPath).push();
     const parentRef = db.ref(parentPath+"/"+key);
@@ -1316,18 +1444,29 @@ function bindMainButtons(){
     if(e.target===sellModalEl) closeSellModal();
   });
 
-  // Delegate delete buttons
+  // Delegate EDIT + DELETE buttons
   document.getElementById("tbodySellAJMZ").addEventListener("click",e=>{
-    const btn=e.target.closest(".btn-delete-sell");
-    if(!btn)return;
-    const key=btn.dataset.key;
-    deleteSellRecord("AJMZ",key);
+    const editBtn=e.target.closest(".btn-edit-sell");
+    if(editBtn){
+      editSellRecord("AJMZ",editBtn.dataset.key);
+      return;
+    }
+    const delBtn=e.target.closest(".btn-delete-sell");
+    if(delBtn){
+      deleteSellRecord("AJMZ",delBtn.dataset.key);
+    }
   });
+
   document.getElementById("tbodySellCALIB").addEventListener("click",e=>{
-    const btn=e.target.closest(".btn-delete-sell");
-    if(!btn)return;
-    const key=btn.dataset.key;
-    deleteSellRecord("CALIB",key);
+    const editBtn=e.target.closest(".btn-edit-sell");
+    if(editBtn){
+      editSellRecord("CALIB",editBtn.dataset.key);
+      return;
+    }
+    const delBtn=e.target.closest(".btn-delete-sell");
+    if(delBtn){
+      deleteSellRecord("CALIB",delBtn.dataset.key);
+    }
   });
 }
 
