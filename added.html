@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>ADDED — AJMZ & CALIBRATE</title>
+<title>ADDED – AJMZ & CALIBRATE</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -431,7 +431,7 @@ body{
 <!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
   <a href="index.html" class="nav-item" title="Add">➕</a>
-  <a href="added.html" class="nav-item active" title="Added">📝</a>
+  <a href="added.html" class="nav-item active" title="Added">📋</a>
   <a href="sell.html" class="nav-item" title="Sell">💎</a>
   <a href="reports.html" class="nav-item" title="Reports">📊</a>
 </div>
@@ -445,8 +445,9 @@ body{
       <div class="panel-main">AJMZ & Calibrates</div>
     </div>
     <span class="badge">
-
-
+      <span class="badge-dot"></span>
+      <span>Live Data</span>
+    </span>
     <div class="spacer"></div>
     <button class="button soft" type="button" id="btnRefresh">🔄 Refresh</button>
   </div>
@@ -490,7 +491,7 @@ body{
           <table class="table" id="tableAJMZ">
             <thead>
               <tr>
-                <th style="width:32px;text-align:center;">✓</th>
+                <th style="width:32px;text-align:center;">✔</th>
                 <th style="width:120px;">Tx ID</th>
                 <th style="width:70px;">Stone</th>
                 <th style="width:90px;">Date</th>
@@ -567,7 +568,7 @@ body{
           <table class="table" id="tableCALIB">
             <thead>
               <tr>
-                <th style="width:32px;text-align:center;">✓</th>
+                <th style="width:32px;text-align:center;">✔</th>
                 <th style="width:120px;">Tx ID</th>
                 <th style="width:70px;">Stone</th>
                 <th style="width:90px;">Date</th>
@@ -644,7 +645,7 @@ body{
 <div id="batchModal" class="modal-overlay" style="z-index:5100;">
   <div class="modal-panel" style="width:820px;max-width:98%;max-height:90%;overflow:auto;">
     <h3 style="margin-bottom:12px;font-size:17px;font-weight:700">
-      Batch Add — <span id="batchModalTitle"></span>
+      Batch Add – <span id="batchModalTitle"></span>
     </h3>
 
     <div id="batchExisting" style="
@@ -690,7 +691,7 @@ body{
 <div id="multiBatchModal" class="modal-overlay" style="z-index:5200;">
   <div class="modal-panel" style="width:900px;max-width:98%;max-height:90%;overflow:auto;">
     <h3 style="margin-bottom:10px;font-size:17px;font-weight:700">
-      Batch Add — <span id="multiBatchCount">0</span> Selected Rows
+      Batch Add – <span id="multiBatchCount">0</span> Selected Rows
     </h3>
 
     <div id="multiBatchSelectedWrapper" style="
@@ -779,7 +780,7 @@ let multiBatchParentType=null; // "AJMZ" or "CALIB"
 let multiBatchParentKeys=[];
 
 /* ============================================================
-   RENDERERS — MAIN ROWS
+   RENDERERS – MAIN ROWS
    ============================================================ */
 function renderAJMZRow(row){
   const key=row.key||"";
@@ -892,7 +893,7 @@ function renderBatchRow(parentKey,batch){
   <tr class="batch-row" data-parent-key="${parentKey}" data-batch-key="${batch.key}">
     <td colspan="15">
       <div class="cell readonly">
-        <b>Batch</b> — Date: ${createdAt||"—"}
+        <b>Batch</b> – Date: ${createdAt||"–"}
         • CTS: ${cts||0}
         ${pcs?("• PCS: "+pcs):""}
         • Price: ${price||0}
@@ -1363,7 +1364,7 @@ function openChooserModal(field,key,type){
   const currentArr=parseMulti(row[field]);
   const options=field==="shape"?getShapeOptions(type):getSizeOptions();
 
-  chooserTitleEl.textContent=(field==="shape"?"Select Shapes":"Select Sizes")+(type==="AJMZ"?" — AJMZ":" — Calibrate");
+  chooserTitleEl.textContent=(field==="shape"?"Select Shapes":"Select Sizes")+(type==="AJMZ"?" – AJMZ":" – Calibrate");
   chooserListEl.innerHTML="";
   if(options.length===0){
     chooserListEl.innerHTML=`<div style="font-size:12px;color:#777;">No saved options yet. You can still type directly into the cell.</div>`;
@@ -1424,7 +1425,7 @@ async function openBatchModal(parentKey){
 
   const label=parent.txId||"";
   const refPiece=parent.lotFormat||parent.grade||parent.description||"";
-  batchModalTitleEl.textContent=`${label}${refPiece?(" — "+refPiece):""}`;
+  batchModalTitleEl.textContent=`${label}${refPiece?(" – "+refPiece):""}`;
 
   const existing=BATCHES[parentKey]||[];
   if(existing.length===0){
@@ -1491,21 +1492,19 @@ batchNewBodyEl?.addEventListener("click",e=>{
 });
 
 /* ============================================================
-   RECOMPUTE PARENT FROM BATCHES (WEIGHTED AVERAGE)
+   RECOMPUTE PARENT FROM BATCHES (SIMPLE AVERAGE OF PRICES)
    ============================================================ */
 async function recomputeParentFromBatches(parentKey,type){
   const parentPath=type==="AJMZ"?"ajmzRecords":"calibRecords";
   const parentSnap=await db.ref(parentPath+"/"+parentKey).once("value");
   if(!parentSnap.exists())return;
-  const parent=parentSnap.val();
-  const baseCTS=Number(parent.cts||0);
-  const basePCS=Number(parent.pcs||0);
-  const basePrice=Number(parent.price||0);
 
   const batchesSnap=await db.ref("batches/add/"+parentKey).once("value");
-  let totalCTS=baseCTS;
-  let totalPCS=basePCS;
-  let sumValue=baseCTS*basePrice;
+  
+  let totalCTS=0;
+  let totalPCS=0;
+  let totalAmount=0;
+  const allPrices=[];
 
   if(batchesSnap.exists()){
     batchesSnap.forEach(b=>{
@@ -1513,16 +1512,22 @@ async function recomputeParentFromBatches(parentKey,type){
       const c=Number(v.cts||0);
       const p=Number(v.price||0);
       const pc=Number(v.pcs||0);
+      const amt=Number(v.amount||0);
       totalCTS+=c;
       totalPCS+=pc;
-      sumValue+=c*p;
+      totalAmount+=amt;
+      allPrices.push(p);
     });
   }
 
+  // Calculate simple average: sum of all prices / number of batches
   let newPrice=0;
-  if(totalCTS>0)newPrice=sumValue/totalCTS;
-  const newAmount=totalCTS*newPrice;
-  const payload={cts:totalCTS,price:newPrice,amount:newAmount};
+  if(allPrices.length>0){
+    const sumPrices=allPrices.reduce((sum,p)=>sum+p,0);
+    newPrice=sumPrices/allPrices.length;
+  }
+  
+  const payload={cts:totalCTS,price:newPrice,amount:totalAmount};
   if(type==="AJMZ")payload.pcs=totalPCS;
 
   await db.ref(parentPath+"/"+parentKey).update(payload);
@@ -1609,7 +1614,7 @@ function openMultiBatchModal(type, keys){
         </tr>
       `;
     } else {
-      // CALIB — no PCS for Add
+      // CALIB – no PCS for Add
       html += `
         <tr data-key="${r.key}">
           ${baseCols}
@@ -1667,7 +1672,7 @@ async function saveMultiBatch(){
     return;
   }
 
-  const type = multiBatchParentType; // "AJMZ" or "CALIB"
+  const type = multiBatchParentType;
   const rows = multiBatchSelectedWrapper.querySelectorAll("tbody tr[data-key]");
 
   const tasks = [];
@@ -1677,7 +1682,7 @@ async function saveMultiBatch(){
     if (!parentKey) return;
 
     const ctsInput     = tr.querySelector('input[data-add="cts"]');
-    const pcsInput     = tr.querySelector('input[data-add="pcs"]'); // AJMZ only
+    const pcsInput     = tr.querySelector('input[data-add="pcs"]');
     const priceInput   = tr.querySelector('input[data-add="price"]');
     const remarksInput = tr.querySelector('input[data-add="remarks"]');
 
@@ -1691,7 +1696,7 @@ async function saveMultiBatch(){
     const anything = cts || pcs || price || remarks;
     if (!anything) return;
 
-    const amount = cts * price; // auto calc, read-only
+    const amount = cts * price;
 
     const batchData = {
       cts,
@@ -1702,12 +1707,37 @@ async function saveMultiBatch(){
       createdAt: nowStamp()
     };
 
-    const batchesRef = db.ref("batches/add/" + parentKey);
-    const newKey = batchesRef.push().key;
-
     tasks.push(
-      batchesRef.child(newKey).set(batchData)
-        .then(() => recomputeParentFromBatches(parentKey, type))
+      (async () => {
+        const batchesRef = db.ref("batches/add/" + parentKey);
+        
+        // Check if this is the FIRST batch being added
+        const existingSnap = await batchesRef.once("value");
+        
+        if (!existingSnap.exists()) {
+          // Convert original parent data to first batch
+          const parentPath = type === "AJMZ" ? "ajmzRecords" : "calibRecords";
+          const parentSnap = await db.ref(parentPath + "/" + parentKey).once("value");
+          if (parentSnap.exists()) {
+            const parent = parentSnap.val();
+            const firstBatch = {
+              cts: Number(parent.cts || 0),
+              pcs: Number(parent.pcs || 0),
+              price: Number(parent.price || 0),
+              amount: Number(parent.amount || 0),
+              remarks: "Original entry",
+              createdAt: parent.date || nowStamp()
+            };
+            const firstKey = batchesRef.push().key;
+            await batchesRef.child(firstKey).set(firstBatch);
+          }
+        }
+        
+        // Add new batch
+        const newKey = batchesRef.push().key;
+        await batchesRef.child(newKey).set(batchData);
+        await recomputeParentFromBatches(parentKey, type);
+      })()
     );
   });
 
@@ -1825,6 +1855,28 @@ window.addEventListener("DOMContentLoaded",()=>{
     if(!newBatches.length){closeBatchModal();return;}
 
     const batchesRef=db.ref("batches/add/"+batchParentKey);
+    const existingSnap=await batchesRef.once("value");
+    
+    // If this is the FIRST batch being added, convert original parent data to first batch
+    if(!existingSnap.exists()){
+      const parentPath=batchParentType==="AJMZ"?"ajmzRecords":"calibRecords";
+      const parentSnap=await db.ref(parentPath+"/"+batchParentKey).once("value");
+      if(parentSnap.exists()){
+        const parent=parentSnap.val();
+        const firstBatch={
+          cts:Number(parent.cts||0),
+          pcs:Number(parent.pcs||0),
+          price:Number(parent.price||0),
+          amount:Number(parent.amount||0),
+          remarks:"Original entry",
+          createdAt:parent.date||nowStamp()
+        };
+        const firstKey=batchesRef.push().key;
+        await batchesRef.child(firstKey).set(firstBatch);
+      }
+    }
+
+    // Now add new batches
     const updates={};
     newBatches.forEach(b=>{
       const key=batchesRef.push().key;
