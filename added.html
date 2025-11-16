@@ -543,6 +543,7 @@ body{
         </div>
       </div>
     </section>
+
     <!-- CALIB SECTION -->
     <section class="record-section" id="sectionCALIB" style="display:none">
       <div class="toolbar-row">
@@ -702,7 +703,6 @@ body{
       background:#faf8f4;
     "></div>
 
-    <!-- No shared batch rows; per-row inputs live inside the selected table -->
     <div style="text-align:right;margin-top:16px;">
       <button class="button" id="multiBatchCancel">Cancel</button>
       <button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="multiBatchSave">
@@ -747,6 +747,7 @@ function nowStamp(){
   const mm=String(dt.getMinutes()).padStart(2,"0");
   return `${y}-${m}-${d} ${hh}:${mm}`;
 }
+
 /* ============================================================
    FIREBASE INIT
    ============================================================ */
@@ -770,13 +771,12 @@ let AJMZ_FILTERED=[], CALIB_FILTERED=[];
 let ajmzPage=1, calibPage=1;
 const ROWS_PER_PAGE=200;
 
-/* Modals refs */
 let chooserModalEl, chooserTitleEl, chooserListEl, chooserCancelBtn, chooserApplyBtn;
 let batchModalEl, batchModalTitleEl, batchExistingEl, batchNewBodyEl, addNewBatchRowBtn, batchCancelBtn, batchSaveBtn;
 let batchParentKey=null, batchParentType=null;
 
 let multiBatchModalEl, multiBatchSelectedWrapper, multiBatchCancelBtn, multiBatchSaveBtn;
-let multiBatchParentType=null; // "AJMZ" or "CALIB"
+let multiBatchParentType=null;
 let multiBatchParentKeys=[];
 
 /* ============================================================
@@ -880,7 +880,6 @@ function renderCALIBRow(row){
   </tr>`;
 }
 
-/* BATCH ROW */
 function renderBatchRow(parentKey,batch){
   const createdAt=esc(batch.createdAt||"");
   const cts=fmtNumber(batch.cts);
@@ -1112,6 +1111,7 @@ function updateMetrics(){
   document.getElementById("calibTotalCTS").textContent=fmtNumber(tCtsC);
   document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
+
 /* ============================================================
    UPDATE MAIN RECORD (INLINE SAVE)
    ============================================================ */
@@ -1191,7 +1191,7 @@ document.addEventListener("focusout",e=>{
 });
 
 /* ============================================================
-   ACTION BUTTONS (addRow, delete, batch, deleteBatch)
+   ACTION BUTTONS
    ============================================================ */
 document.addEventListener("click",async e=>{
   const actionBtn=e.target.closest("[data-action]");
@@ -1221,7 +1221,6 @@ document.addEventListener("click",async e=>{
   }
 });
 
-/* ADD ROW UNDER SAME TX */
 async function handleAddRow(parentKey){
   let parent=AJMZ_ALL.find(r=>r.key===parentKey)||CALIB_ALL.find(r=>r.key===parentKey);
   if(!parent){alert("Parent row not found.");return;}
@@ -1268,7 +1267,6 @@ async function handleAddRow(parentKey){
   }
 }
 
-/* DELETE MAIN */
 async function handleDeleteMain(key){
   if(!confirm("Delete this record and all its batches?"))return;
 
@@ -1280,7 +1278,6 @@ async function handleDeleteMain(key){
   await loadAllData();
 }
 
-/* DELETE BATCH */
 async function handleDeleteBatch(parentKey,batchKey){
   if(!parentKey||!batchKey)return;
   if(!confirm("Delete this batch entry?"))return;
@@ -1295,7 +1292,6 @@ async function handleDeleteBatch(parentKey,batchKey){
   await loadAllData();
 }
 
-/* BATCH TOGGLE */
 function handleBatchToggle(toggle){
   const key=toggle.dataset.key;
   const type=toggle.dataset.type;
@@ -1313,6 +1309,7 @@ function handleBatchToggle(toggle){
     expandBatchRows(key,type,toggle);
   }
 }
+
 function expandBatchRows(key,type,btn){
   const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
   const mainRow=tbody.querySelector(`tr[data-key="${key}"]`);
@@ -1327,6 +1324,7 @@ function expandBatchRows(key,type,btn){
   btn.innerHTML=`▼ Batches (<span class="count">${batches.length}</span>)`;
   btn.dataset.open="1";
 }
+
 function collapseBatchRows(key,type,btn){
   const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
   [...tbody.querySelectorAll(`.batch-row[data-parent-key="${key}"]`)].forEach(r=>r.remove());
@@ -1338,15 +1336,35 @@ function collapseBatchRows(key,type,btn){
 /* ============================================================
    SHAPE / SIZE CHOOSER
    ============================================================ */
+function getSavedLists(){
+  try{
+    const raw=localStorage.getItem("sell_saved_lists_v4");
+    return raw?JSON.parse(raw):{lotNames:[],shapes:[],sizes:[]};
+  }catch{
+    return {lotNames:[],shapes:[],sizes:[]};
+  }
+}
+
 function getShapeOptions(type){
   const set=new Set();
+  
+  const saved=getSavedLists();
+  saved.shapes.forEach(v=>set.add(v));
+  
   const src=type==="AJMZ"?AJMZ_ALL:CALIB_ALL;
   src.forEach(r=>parseMulti(r.shape).forEach(v=>set.add(v)));
+  
   return Array.from(set).filter(Boolean).sort();
 }
+
 function getSizeOptions(){
   const set=new Set();
+  
+  const saved=getSavedLists();
+  saved.sizes.forEach(v=>set.add(v));
+  
   CALIB_ALL.forEach(r=>parseMulti(r.size).forEach(v=>set.add(v)));
+  
   return Array.from(set).filter(Boolean).sort();
 }
 
@@ -1381,6 +1399,7 @@ function openChooserModal(field,key,type){
   }
   chooserModalEl.style.display="flex";
 }
+
 function closeChooserModal(){
   chooserModalEl.style.display="none";
   chooserCurrentField=null;
@@ -1409,6 +1428,7 @@ async function handleChooserApply(){
   await updateMainRecord(chooserCurrentKey,chooserCurrentType,chooserCurrentField,normalized);
   closeChooserModal();
 }
+
 /* ============================================================
    BATCH MODAL (SINGLE ROW)
    ============================================================ */
@@ -1464,11 +1484,13 @@ async function openBatchModal(parentKey){
   addNewBatchLine();
   batchModalEl.style.display="flex";
 }
+
 function closeBatchModal(){
   batchModalEl.style.display="none";
   batchParentKey=null;
   batchParentType=null;
 }
+
 function addNewBatchLine(){
   const tr=document.createElement("tr");
   tr.innerHTML=`
@@ -1482,18 +1504,7 @@ function addNewBatchLine(){
     </td>`;
   batchNewBodyEl.appendChild(tr);
 }
-batchNewBodyEl?.addEventListener("click",e=>{
-  const btn=e.target.closest("button");
-  if(!btn)return;
-  const tr=btn.closest("tr");
-  if(tr && batchNewBodyEl.children.length>1){
-    tr.remove();
-  }
-});
 
-/* ============================================================
-   RECOMPUTE PARENT FROM BATCHES (SIMPLE AVERAGE OF PRICES)
-   ============================================================ */
 async function recomputeParentFromBatches(parentKey,type){
   const parentPath=type==="AJMZ"?"ajmzRecords":"calibRecords";
   const parentSnap=await db.ref(parentPath+"/"+parentKey).once("value");
@@ -1520,7 +1531,6 @@ async function recomputeParentFromBatches(parentKey,type){
     });
   }
 
-  // Calculate simple average: sum of all prices / number of batches
   let newPrice=0;
   if(allPrices.length>0){
     const sumPrices=allPrices.reduce((sum,p)=>sum+p,0);
@@ -1534,7 +1544,7 @@ async function recomputeParentFromBatches(parentKey,type){
 }
 
 /* ============================================================
-   MULTI-ROW BATCH MODAL (PER-ROW ADD COLUMNS)
+   MULTI-ROW BATCH MODAL
    ============================================================ */
 function openMultiBatchModal(type, keys){
   if(!keys.length){
@@ -1614,7 +1624,6 @@ function openMultiBatchModal(type, keys){
         </tr>
       `;
     } else {
-      // CALIB – no PCS for Add
       html += `
         <tr data-key="${r.key}">
           ${baseCols}
@@ -1638,34 +1647,13 @@ function openMultiBatchModal(type, keys){
   multiBatchSelectedWrapper.innerHTML = html;
   multiBatchModalEl.style.display = "flex";
 }
+
 function closeMultiBatchModal(){
   multiBatchModalEl.style.display="none";
   multiBatchParentType=null;
   multiBatchParentKeys=[];
 }
 
-/* Auto-calc Add Amount = Add CTS * Add Price (per row) */
-multiBatchSelectedWrapper?.addEventListener("input", e => {
-  const input = e.target;
-  const tr = input.closest("tr[data-key]");
-  if (!tr) return;
-
-  if (input.dataset.add === "cts" || input.dataset.add === "price") {
-    const ctsInput   = tr.querySelector('input[data-add="cts"]');
-    const priceInput = tr.querySelector('input[data-add="price"]');
-    const amtInput   = tr.querySelector('input[data-add="amount"]');
-
-    if (!amtInput) return;
-
-    const cts   = Number((ctsInput?.value || "0").replace(/,/g, ""));
-    const price = Number((priceInput?.value || "0").replace(/,/g, ""));
-    const amt   = cts * price;
-
-    amtInput.value = amt ? fmtNumber(amt) : "";
-  }
-});
-
-/* SAVE MULTI-BATCH PER ROW */
 async function saveMultiBatch(){
   if (!multiBatchParentType || !multiBatchParentKeys.length) {
     closeMultiBatchModal();
@@ -1711,11 +1699,9 @@ async function saveMultiBatch(){
       (async () => {
         const batchesRef = db.ref("batches/add/" + parentKey);
         
-        // Check if this is the FIRST batch being added
         const existingSnap = await batchesRef.once("value");
         
         if (!existingSnap.exists()) {
-          // Convert original parent data to first batch
           const parentPath = type === "AJMZ" ? "ajmzRecords" : "calibRecords";
           const parentSnap = await db.ref(parentPath + "/" + parentKey).once("value");
           if (parentSnap.exists()) {
@@ -1733,7 +1719,6 @@ async function saveMultiBatch(){
           }
         }
         
-        // Add new batch
         const newKey = batchesRef.push().key;
         await batchesRef.child(newKey).set(batchData);
         await recomputeParentFromBatches(parentKey, type);
@@ -1750,6 +1735,7 @@ async function saveMultiBatch(){
   await loadAllData();
   closeMultiBatchModal();
 }
+
 /* ============================================================
    BINDINGS
    ============================================================ */
@@ -1838,6 +1824,15 @@ window.addEventListener("DOMContentLoaded",()=>{
     if(e.target===batchModalEl)closeBatchModal();
   });
 
+  batchNewBodyEl.addEventListener("click",e=>{
+    const btn=e.target.closest("button");
+    if(!btn)return;
+    const tr=btn.closest("tr");
+    if(tr && batchNewBodyEl.children.length>1){
+      tr.remove();
+    }
+  });
+
   batchSaveBtn.addEventListener("click",async ()=>{
     if(!batchParentKey)return;
     const newBatches=[];
@@ -1857,7 +1852,6 @@ window.addEventListener("DOMContentLoaded",()=>{
     const batchesRef=db.ref("batches/add/"+batchParentKey);
     const existingSnap=await batchesRef.once("value");
     
-    // If this is the FIRST batch being added, convert original parent data to first batch
     if(!existingSnap.exists()){
       const parentPath=batchParentType==="AJMZ"?"ajmzRecords":"calibRecords";
       const parentSnap=await db.ref(parentPath+"/"+batchParentKey).once("value");
@@ -1876,7 +1870,6 @@ window.addEventListener("DOMContentLoaded",()=>{
       }
     }
 
-    // Now add new batches
     const updates={};
     newBatches.forEach(b=>{
       const key=batchesRef.push().key;
@@ -1893,6 +1886,26 @@ window.addEventListener("DOMContentLoaded",()=>{
     if(e.target===multiBatchModalEl)closeMultiBatchModal();
   });
   multiBatchSaveBtn.addEventListener("click",saveMultiBatch);
+
+  multiBatchSelectedWrapper.addEventListener("input", e => {
+    const input = e.target;
+    const tr = input.closest("tr[data-key]");
+    if (!tr) return;
+
+    if (input.dataset.add === "cts" || input.dataset.add === "price") {
+      const ctsInput   = tr.querySelector('input[data-add="cts"]');
+      const priceInput = tr.querySelector('input[data-add="price"]');
+      const amtInput   = tr.querySelector('input[data-add="amount"]');
+
+      if (!amtInput) return;
+
+      const cts   = Number((ctsInput?.value || "0").replace(/,/g, ""));
+      const price = Number((priceInput?.value || "0").replace(/,/g, ""));
+      const amt   = cts * price;
+
+      amtInput.value = amt ? fmtNumber(amt) : "";
+    }
+  });
 
   document.getElementById("btnAjmzBatchMulti").addEventListener("click",()=>{
     const checked=[...document.querySelectorAll("#tbodyAJMZ .row-select:checked")];
