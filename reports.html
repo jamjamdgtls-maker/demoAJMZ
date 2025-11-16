@@ -1058,20 +1058,51 @@ function renderSummaryOverall(container){
   });
 
   const html = `
-    <table class="table">
-      <thead><tr><th>Metric</th><th style="text-align:right">Value</th></tr></thead>
-      <tbody>
-        <tr><td>Total Records</td><td style="text-align:right">${groups.length}</td></tr>
-        <tr><td>Total CTS</td><td style="text-align:right">${fmtNumber(totalCTS)}</td></tr>
-        <tr><td>Total PCS</td><td style="text-align:right">${fmtNumber(totalPCS,0)}</td></tr>
-        <tr><td>Total Amount</td><td style="text-align:right">${fmtNumber(totalAmt)}</td></tr>
-        <tr><td>Sold CTS</td><td style="text-align:right">${fmtNumber(soldCTS)}</td></tr>
-        <tr><td>Sold PCS</td><td style="text-align:right">${fmtNumber(soldPCS,0)}</td></tr>
-        <tr><td>Sold Amount</td><td style="text-align:right">${fmtNumber(soldAmt)}</td></tr>
-        <tr style="font-weight:700"><td>Balance CTS</td><td style="text-align:right">${fmtNumber(totalCTS-soldCTS)}</td></tr>
-        <tr style="font-weight:700"><td>Balance PCS</td><td style="text-align:right">${fmtNumber(totalPCS-soldPCS,0)}</td></tr>
-      </tbody>
-    </table>
+    <div style="padding:16px;">
+      <!-- Top Row: 5 cards -->
+      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;">
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total Records</div>
+          <div style="font-size:32px;font-weight:700;color:var(--ink)">${groups.length}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total CTS</div>
+          <div style="font-size:32px;font-weight:700;color:var(--ink)">${fmtNumber(totalCTS)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total PCS</div>
+          <div style="font-size:32px;font-weight:700;color:var(--ink)">${fmtNumber(totalPCS,0)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total Amount</div>
+          <div style="font-size:32px;font-weight:700;color:var(--ink)">${fmtNumber(totalAmt)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Sold CTS</div>
+          <div style="font-size:32px;font-weight:700;color:#8C6400">${fmtNumber(soldCTS)}</div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: 4 cards -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Sold PCS</div>
+          <div style="font-size:32px;font-weight:700;color:#8C6400">${fmtNumber(soldPCS,0)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Sold Amount</div>
+          <div style="font-size:32px;font-weight:700;color:#8C6400">${fmtNumber(soldAmt)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:3px solid var(--success)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Balance CTS</div>
+          <div style="font-size:32px;font-weight:700;color:var(--success)">${fmtNumber(totalCTS-soldCTS)}</div>
+        </div>
+        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:3px solid var(--success)">
+          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Balance PCS</div>
+          <div style="font-size:32px;font-weight:700;color:var(--success)">${fmtNumber(totalPCS-soldPCS,0)}</div>
+        </div>
+      </div>
+    </div>
   `;
   container.innerHTML = html;
 }
