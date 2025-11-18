@@ -498,6 +498,7 @@ body{
               <th>Price</th>
               <th>Amount</th>
               <th>Remarks</th>
+              <th>Source From</th>
               <th style="width:40px;text-align:center;">✏️</th>
               <th style="width:40px;text-align:center;">❌</th>
             </tr>
@@ -545,6 +546,7 @@ body{
               <th>Price</th>
               <th>Amount</th>
               <th>Remarks</th>
+              <th>Source From</th>
               <th style="width:40px;text-align:center;">✏️</th>
               <th style="width:40px;text-align:center;">❌</th>
             </tr>
@@ -593,7 +595,6 @@ body{
     </div>
   </div>
 </div>
-
 <script>
 /* ========================== UTILITIES ========================== */
 function esc(s){
@@ -625,6 +626,21 @@ function nowStamp(){
   const mm=String(d.getMinutes()).padStart(2,"0");
   const ss=String(d.getSeconds()).padStart(2,"0");
   return `${y}-${m}-${day} ${hh}:${mm}:${ss}`;
+}
+
+/* ============ SELL TX ID + COUNTER HELPERS ==================== */
+function generateSellTxId(num){
+  return "SELL-" + String(num).padStart(6,"0");
+}
+async function getNextSellNumber(type){
+  // type = "AJMZ" or "CALIB"
+  const key = type==="AJMZ" ? "ajmz" : "calib";
+  const counterRef = db.ref("counters/sell/"+key);
+  const snap = await counterRef.once("value");
+  let num = snap.exists() ? snap.val() : 0;
+  num++;
+  await counterRef.set(num);
+  return num;
 }
 
 /* ======================== FIREBASE INIT ======================== */
@@ -716,22 +732,24 @@ async function loadSellRecordsList(){
       }
 
       AJMZ_SELL_ALL.push({
-        key:r.key,
-        parentKey:r.parentKey || "",
-        parentTxId:r.parentTxId || "",
-        parentLot:r.parentLot || "",
-        parentFormat:r.parentFormat || "",
-        parentDescription:r.parentDescription || "",
-        parentPrice:parseNum(r.parentPrice),
-        parentCTSBefore:parseNum(r.parentCTSBefore),
-        parentPCSBefore:parseNum(r.parentPCSBefore),
-        date:dateStr,
-        party:r.party || "",
-        cts:parseNum(r.cts),
-        pcs:parseNum(r.pcs),
-        sellPrice:parseNum(r.sellPrice || r.price),
-        amount:parseNum(r.amount || (parseNum(r.cts)*parseNum(r.sellPrice||r.price))),
-        remarks:r.remarks || "",
+        key: r.key,
+        txId: r.txId || "",                    // SELL-000000 if set
+        parentKey: r.parentKey || "",
+        parentTxId: r.parentTxId || "",
+        parentLot: r.parentLot || "",
+        parentFormat: r.parentFormat || "",
+        parentDescription: r.parentDescription || "",
+        parentPrice: parseNum(r.parentPrice),
+        parentCTSBefore: parseNum(r.parentCTSBefore),
+        parentPCSBefore: parseNum(r.parentPCSBefore),
+        date: dateStr,
+        party: r.party || "",
+        cts: parseNum(r.cts),
+        pcs: parseNum(r.pcs),
+        sellPrice: parseNum(r.sellPrice || r.price),
+        amount: parseNum(r.amount || (parseNum(r.cts)*parseNum(r.sellPrice||r.price))),
+        remarks: r.remarks || "",
+        sourceFrom: r.sourceFrom || "",        // NEW FIELD
         sortKey
       });
     });
@@ -752,21 +770,23 @@ async function loadSellRecordsList(){
       }
 
       CALIB_SELL_ALL.push({
-        key:r.key,
-        parentKey:r.parentKey || "",
-        parentTxId:r.parentTxId || "",
-        parentLot:r.parentLot || "",
-        parentGrade:r.parentGrade || "",
-        parentDescription:r.parentDescription || "",
-        parentPrice:parseNum(r.parentPrice),
-        parentCTSBefore:parseNum(r.parentCTSBefore),
-        date:dateStr,
-        party:r.party || "",
-        cts:parseNum(r.cts),
-        pcs:0,
-        sellPrice:parseNum(r.sellPrice || r.price),
-        amount:parseNum(r.amount || (parseNum(r.cts)*parseNum(r.sellPrice||r.price))),
-        remarks:r.remarks || "",
+        key: r.key,
+        txId: r.txId || "",
+        parentKey: r.parentKey || "",
+        parentTxId: r.parentTxId || "",
+        parentLot: r.parentLot || "",
+        parentGrade: r.parentGrade || "",
+        parentDescription: r.parentDescription || "",
+        parentPrice: parseNum(r.parentPrice),
+        parentCTSBefore: parseNum(r.parentCTSBefore),
+        date: dateStr,
+        party: r.party || "",
+        cts: parseNum(r.cts),
+        pcs: 0,
+        sellPrice: parseNum(r.sellPrice || r.price),
+        amount: parseNum(r.amount || (parseNum(r.cts)*parseNum(r.sellPrice||r.price))),
+        remarks: r.remarks || "",
+        sourceFrom: r.sourceFrom || "",
         sortKey
       });
     });
@@ -889,19 +909,18 @@ function applySellFilters(){
 
   AJMZ_SELL_FILTERED=AJMZ_SELL_ALL.filter(r=>{
     if(!qA)return true;
-    const txt=(r.date+" "+r.parentTxId+" "+r.parentLot+" "+r.party+" "+r.remarks).toLowerCase();
+    const txt=(r.date+" "+(r.txId||r.parentTxId)+" "+r.parentLot+" "+r.party+" "+r.remarks+" "+r.sourceFrom).toLowerCase();
     return txt.includes(qA);
   });
   CALIB_SELL_FILTERED=CALIB_SELL_ALL.filter(r=>{
     if(!qC)return true;
-    const txt=(r.date+" "+r.parentTxId+" "+r.parentLot+" "+r.party+" "+r.remarks).toLowerCase();
+    const txt=(r.date+" "+(r.txId||r.parentTxId)+" "+r.parentLot+" "+r.party+" "+r.remarks+" "+r.sourceFrom).toLowerCase();
     return txt.includes(qC);
   });
 
   ajSellPage=1; calSellPage=1;
   renderSellAJMZ(); renderSellCALIB();
 }
-
 function renderSellAJMZ(){
   const tbody=document.getElementById("tbodySellAJMZ");
   tbody.innerHTML="";
@@ -909,14 +928,15 @@ function renderSellAJMZ(){
   const rows=AJMZ_SELL_FILTERED.slice(start,start+SELL_PAGE_SIZE);
 
   if(!rows.length){
-    tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;color:#777;font-size:11px;">No AJMZ sell records found.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="13" style="text-align:center;color:#777;font-size:11px;">No AJMZ sell records found.</td></tr>`;
   }else{
     let html="";
     rows.forEach(r=>{
+      const txDisplay = r.txId || r.parentTxId || r.key;
       html+=`
         <tr>
           <td><div class="cell readonly">${esc(r.date||"")}</div></td>
-          <td><div class="cell readonly">${esc(r.parentTxId||"")}</div></td>
+          <td><div class="cell readonly">${esc(txDisplay)}</div></td>
           <td><div class="cell readonly">${esc(r.parentLot||"")}</div></td>
           <td><div class="cell readonly">${esc(r.parentFormat||"")}</div></td>
           <td><div class="cell readonly">${esc(r.party||"")}</div></td>
@@ -925,6 +945,7 @@ function renderSellAJMZ(){
           <td><div class="cell readonly">${fmtNumber(r.sellPrice)}</div></td>
           <td><div class="cell readonly">${fmtNumber(r.amount)}</div></td>
           <td><div class="cell readonly">${esc(r.remarks||"")}</div></td>
+          <td><div class="cell readonly">${esc(r.sourceFrom||"")}</div></td>
           <td style="text-align:center;">
             <button class="button icon-only btn-edit-sell" data-type="AJMZ" data-key="${esc(r.key)}" title="Edit sell record">✏️</button>
           </td>
@@ -954,14 +975,15 @@ function renderSellCALIB(){
   const rows=CALIB_SELL_FILTERED.slice(start,start+SELL_PAGE_SIZE);
 
   if(!rows.length){
-    tbody.innerHTML=`<tr><td colspan="11" style="text-align:center;color:#777;font-size:11px;">No CALIB sell records found.</td></tr>`;
+    tbody.innerHTML=`<tr><td colspan="12" style="text-align:center;color:#777;font-size:11px;">No CALIB sell records found.</td></tr>`;
   }else{
     let html="";
     rows.forEach(r=>{
+      const txDisplay = r.txId || r.parentTxId || r.key;
       html+=`
         <tr>
           <td><div class="cell readonly">${esc(r.date||"")}</div></td>
-          <td><div class="cell readonly">${esc(r.parentTxId||"")}</div></td>
+          <td><div class="cell readonly">${esc(txDisplay)}</div></td>
           <td><div class="cell readonly">${esc(r.parentLot||"")}</div></td>
           <td><div class="cell readonly">${esc(r.parentGrade||"")}</div></td>
           <td><div class="cell readonly">${esc(r.party||"")}</div></td>
@@ -969,6 +991,7 @@ function renderSellCALIB(){
           <td><div class="cell readonly">${fmtNumber(r.sellPrice)}</div></td>
           <td><div class="cell readonly">${fmtNumber(r.amount)}</div></td>
           <td><div class="cell readonly">${esc(r.remarks||"")}</div></td>
+          <td><div class="cell readonly">${esc(r.sourceFrom||"")}</div></td>
           <td style="text-align:center;">
             <button class="button icon-only btn-edit-sell" data-type="CALIB" data-key="${esc(r.key)}" title="Edit sell record">✏️</button>
           </td>
@@ -1259,6 +1282,11 @@ async function saveSellRecords(){
             ? {cts:newParentCts, pcs:newParentPcs, amount:newAmount}
             : {cts:newParentCts, amount:newAmount};
 
+          // recompute sourceFrom on edit too
+          const sourceFrom = type==="AJMZ"
+            ? `${parent.txId || ""} | ${parent.lotName || ""} | ${parent.lotFormat || ""}`
+            : `${parent.txId || ""} | ${parent.lotName || ""} | ${parent.grade || ""}`;
+
           return parentRef.update(parentUpdate).then(()=>{
             return sellRef.update({
               date:dateVal,
@@ -1268,7 +1296,8 @@ async function saveSellRecords(){
               sellPrice:sellPrice,
               price:sellPrice,
               amount:amount,
-              remarks:remarks
+              remarks:remarks,
+              sourceFrom: sourceFrom
             });
           });
         })
@@ -1287,58 +1316,70 @@ async function saveSellRecords(){
     const newPcs = type==="AJMZ" ? ((parent.pcs||0) - sellPcs) : 0;
     const newAmount = newCts * parent.price;  // using parent price
 
-    const sellRef   = db.ref(sellPath).push();
     const parentRef = db.ref(parentPath+"/"+key);
 
-    let sellData;
-    if(type==="AJMZ"){
-      sellData={
-        parentKey:key,
-        parentTxId:parent.txId || "",
-        parentLot:parent.lotName || "",
-        parentFormat:parent.lotFormat || "",
-        parentDescription:parent.description || "",
-        parentPrice:parent.price || 0,
-        parentCTSBefore:parent.cts || 0,
-        parentPCSBefore:parent.pcs || 0,
-        date:dateVal,
-        party:partyVal,
-        cts:sellCts,
-        pcs:sellPcs,
-        sellPrice:sellPrice,
-        price:sellPrice,
-        amount:amount,
-        remarks:remarks,
-        createdAt:nowStamp()
-      };
-    }else{
-      sellData={
-        parentKey:key,
-        parentTxId:parent.txId || "",
-        parentLot:parent.lotName || "",
-        parentGrade:parent.grade || "",
-        parentDescription:parent.description || "",
-        parentPrice:parent.price || 0,
-        parentCTSBefore:parent.cts || 0,
-        date:dateVal,
-        party:partyVal,
-        cts:sellCts,
-        pcs:0,
-        sellPrice:sellPrice,
-        price:sellPrice,
-        amount:amount,
-        remarks:remarks,
-        createdAt:nowStamp()
-      };
-    }
+    tasks.push((async ()=>{
+      const nextNum = await getNextSellNumber(type);
+      const sellTxId = generateSellTxId(nextNum);
+      const sellRef = db.ref(sellPath + "/" + sellTxId);
 
-    const parentUpdate=(type==="AJMZ")
-      ? {cts:newCts, pcs:newPcs, amount:newAmount}
-      : {cts:newCts, amount:newAmount};
+      const sourceFrom = type==="AJMZ"
+        ? `${parent.txId || ""} | ${parent.lotName || ""} | ${parent.lotFormat || ""}`
+        : `${parent.txId || ""} | ${parent.lotName || ""} | ${parent.grade || ""}`;
 
-    tasks.push(
-      sellRef.set(sellData).then(()=>parentRef.update(parentUpdate))
-    );
+      let sellData;
+      if(type==="AJMZ"){
+        sellData={
+          txId: sellTxId,
+          parentKey:key,
+          parentTxId:parent.txId || "",
+          parentLot:parent.lotName || "",
+          parentFormat:parent.lotFormat || "",
+          parentDescription:parent.description || "",
+          parentPrice:parent.price || 0,
+          parentCTSBefore:parent.cts || 0,
+          parentPCSBefore:parent.pcs || 0,
+          sourceFrom: sourceFrom,
+          date:dateVal,
+          party:partyVal,
+          cts:sellCts,
+          pcs:sellPcs,
+          sellPrice:sellPrice,
+          price:sellPrice,
+          amount:amount,
+          remarks:remarks,
+          createdAt:nowStamp()
+        };
+      }else{
+        sellData={
+          txId: sellTxId,
+          parentKey:key,
+          parentTxId:parent.txId || "",
+          parentLot:parent.lotName || "",
+          parentGrade:parent.grade || "",
+          parentDescription:parent.description || "",
+          parentPrice:parent.price || 0,
+          parentCTSBefore:parent.cts || 0,
+          sourceFrom: sourceFrom,
+          date:dateVal,
+          party:partyVal,
+          cts:sellCts,
+          pcs:0,
+          sellPrice:sellPrice,
+          price:sellPrice,
+          amount:amount,
+          remarks:remarks,
+          createdAt:nowStamp()
+        };
+      }
+
+      const parentUpdate=(type==="AJMZ")
+        ? {cts:newCts, pcs:newPcs, amount:newAmount}
+        : {cts:newCts, amount:newAmount};
+
+      await sellRef.set(sellData);
+      await parentRef.update(parentUpdate);
+    })());
   });
 
   if(!tasks.length){
