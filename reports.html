@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Inventory Reports — AJMZ & CALIBRATE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>TABLE — ADD + SELL Ledger</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
-<!-- Firebase compat SDK -->
+<!-- Firebase compat -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -14,32 +15,17 @@
 :root{
   --bg:#F5F5F0;
   --card:#ffffff;
-  --accent-2:#C2A68C;
-  --accent:#5D866C;
-  --accent-soft:#eef5f0;
+  --line:#d6cbb8;
   --ink:#2f3b33;
-  --ink-soft:#5b6a5f;
-  --line:#d9cbb1;
-  --shadow:rgba(93,134,108,.18);
-  --muted:#f9f7f1;
-  --danger:#c75252;
-  --success:#0F7B3E;
-  
-  --col1:56px;   /* # */
-  --col2:140px;  /* TX */
-  --col3:120px;  /* Date */
-}
+  --ink-soft:#6b7a70;
+  --accent:#5D866C;
+  --accent-2:#C2A68C;
+  --shadow:rgba(0,0,0,0.08);
 
-/* Reset + base */
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{
-  font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-  display:flex;
-  height:100vh;
-  overflow:hidden;
+  --add-bg:#E9F7EC;
+  --sell-bg:#FCE9E9;
+  --profit:#2e7d32;
+  --loss:#c62828;
 }
 
 /* Left fixed nav */
@@ -54,18 +40,13 @@ body{
   padding:14px 0;
   box-shadow:6px 0 20px var(--shadow);
   position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
+  left:0; top:0; bottom:0;
   z-index:2000;
 }
 .nav-item{
-  width:44px;
-  height:44px;
+  width:44px; height:44px;
   border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex; align-items:center; justify-content:center;
   font-size:22px;
   text-decoration:none;
   color:var(--ink);
@@ -74,7 +55,6 @@ body{
   cursor:pointer;
   font-weight:600;
   transition:.15s;
-  user-select:none;
 }
 .nav-item:hover{background:#faf8f0}
 .nav-item.active{
@@ -84,1491 +64,1802 @@ body{
 }
 
 /* Workspace */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:Inter, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
 .workspace{
-  flex:1;
   margin-left:60px;
   height:100vh;
-  padding:18px;
+  padding:18px 18px 90px;
   overflow:auto;
 }
 
-/* Header panel */
-.header-panel{
+/* Top panel + global search */
+.panel{
   background:#fff;
   border:1px solid var(--line);
   border-radius:16px;
   box-shadow:0 8px 22px var(--shadow);
-  padding:12px 16px;
+  padding:12px 14px;
+  margin-bottom:14px;
   display:flex;
-  align-items:center;
-  gap:12px;
+  align-items:flex-end;
+  gap:16px;
   flex-wrap:wrap;
 }
-.panel-title{
-  font-weight:800;
-  letter-spacing:.04em;
-  text-transform:uppercase;
+.page-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+.page-sub{
   font-size:12px;
   color:var(--ink-soft);
 }
-.panel-main{
-  font-weight:600;
-  font-size:15px;
-}
-.spacer{flex:1}
-.button{
-  height:32px;
-  border-radius:9px;
-  border:1px solid var(--line);
+.search-box-global{
   background:#fff;
-  padding:0 12px;
-  font-size:12px;
-  color:var(--ink);
-  outline:none;
-  font-weight:600;
-  cursor:pointer;
-  display:inline-flex;
+  border:1px solid var(--line);
+  padding:6px 10px;
+  border-radius:10px;
+  display:flex;
   align-items:center;
   gap:6px;
-  transition:.15s;
+  width:280px;
+  margin-left:auto;
 }
-.button:hover{background:#faf8f0}
-.button.primary{background:var(--accent);color:#fff;border-color:transparent}
-.button.soft{background:var(--muted)}
+.search-box-global input{
+  border:none;
+  outline:none;
+  flex:1;
+  font-size:13px;
+}
 
-/* KPI Grid */
-.kpi-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-  gap:12px;
-  margin-top:14px;
+/* Tab buttons */
+.tab-row{
+  display:flex;
+  gap:8px;
+  margin-bottom:10px;
+}
+.tab-btn{
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink-soft);
+  cursor:pointer;
+}
+.tab-btn.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+
+/* KPI cards */
+.kpi-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:10px;
 }
 .kpi-card{
+  flex:1 1 180px;
   background:#fff;
+  border-radius:12px;
   border:1px solid var(--line);
-  border-radius:14px;
-  padding:12px 14px;
+  padding:8px 10px;
   box-shadow:0 4px 12px var(--shadow);
 }
 .kpi-label{
   font-size:11px;
   color:var(--ink-soft);
+  margin-bottom:4px;
   text-transform:uppercase;
-  letter-spacing:.03em;
-  margin-bottom:6px;
+  letter-spacing:.04em;
 }
-.kpi-value{
-  font-size:20px;
+.kpi-main{
+  font-size:16px;
   font-weight:700;
-  color:var(--ink);
+}
+.kpi-sub{
+  font-size:11px;
+  color:var(--ink-soft);
 }
 
-/* Filter Panel */
-.filter-panel{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:14px;
-  box-shadow:0 6px 18px var(--shadow);
-  padding:14px 16px;
-  margin-top:14px;
-}
-.filter-row{
+/* Slicer bar */
+.slicer-row{
   display:flex;
+  flex-wrap:wrap;
   gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-  margin-bottom:10px;
+  align-items:flex-end;
+  margin-bottom:8px;
 }
-.filter-row:last-child{margin-bottom:0}
-.filter-label{
-  font-size:12px;
-  font-weight:600;
-  color:var(--ink-soft);
-  min-width:60px;
-}
-.pill-group{
+.slicer-group{
   display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.pill-btn{
-  padding:6px 12px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#fff;
+  flex-direction:column;
+  gap:3px;
   font-size:11px;
-  font-weight:600;
   color:var(--ink-soft);
-  cursor:pointer;
-  transition:.15s;
 }
-.pill-btn:hover{background:#faf8f0}
-.pill-btn.active{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent;
-}
-.search-input{
-  flex:1;
-  min-width:220px;
-  max-width:380px;
-  padding:6px 12px;
-  border-radius:999px;
+.slicer-label{font-size:11px;}
+.slicer-select,
+.slicer-input{
+  min-width:120px;
+  height:26px;
+  border-radius:7px;
   border:1px solid var(--line);
-  background:#faf8f4;
+  padding:2px 6px;
   font-size:12px;
-  outline:none;
+  background:#fff;
 }
-.date-input{
+
+/* Searchable dropdown */
+.searchable-select-wrapper{
+  position:relative;
+  min-width:120px;
+}
+.searchable-select-input{
+  width:100%;
+  height:26px;
+  border-radius:7px;
+  border:1px solid var(--line);
+  padding:2px 24px 2px 6px;
+  font-size:12px;
+  background:#fff;
+  cursor:pointer;
+}
+.searchable-select-dropdown{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  max-height:200px;
+  overflow-y:auto;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:7px;
+  margin-top:2px;
+  box-shadow:0 4px 12px var(--shadow);
+  z-index:1000;
+  display:none;
+}
+.searchable-select-dropdown.active{
+  display:block;
+}
+.searchable-select-option{
   padding:6px 10px;
-  border-radius:8px;
-  border:1px solid var(--line);
-  font-size:11px;
-  outline:none;
-}
-
-/* Active Pills Display */
-.active-filters{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-top:8px;
-}
-.filter-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:4px 10px;
-  font-size:11px;
-}
-.filter-pill .close{
+  font-size:12px;
   cursor:pointer;
-  width:16px;
-  height:16px;
-  border-radius:50%;
-  background:#f0f0f0;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:800;
-  font-size:10px;
+  border-bottom:1px solid #f0f0f0;
 }
-
-/* Summary Card */
-.summary-card{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:14px;
-  box-shadow:0 6px 18px var(--shadow);
-  margin-top:14px;
-  padding:14px 16px;
+.searchable-select-option:last-child{
+  border-bottom:none;
 }
-.summary-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
+.searchable-select-option:hover{
+  background:#f5f5f0;
 }
-.summary-title{
-  font-weight:700;
-  font-size:14px;
-  color:var(--ink);
-}
-.summary-tabs{
-  display:flex;
-  gap:6px;
-  flex-wrap:wrap;
-}
-.summary-tab{
-  padding:6px 12px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:11px;
-  font-weight:600;
-  color:var(--ink-soft);
-  cursor:pointer;
-  transition:.15s;
-}
-.summary-tab:hover{background:#faf8f0}
-.summary-tab.active{
+.searchable-select-option.selected{
   background:var(--accent);
   color:#fff;
-  border-color:transparent;
 }
-.summary-content{
-  border:1px solid var(--line);
-  border-radius:10px;
-  overflow:auto;
-  max-height:400px;
-  background:#fafafa;
+.searchable-select-option.hidden{
+  display:none;
 }
 
-/* Ledger Card */
-.ledger-card{
+.slicer-clear-btn, .action-btn{
+  height:26px;
+  padding:0 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:12px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+.slicer-clear-btn:hover, .action-btn:hover{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+/* Card + table */
+.card{
   background:#fff;
   border:1px solid var(--line);
-  border-radius:14px;
-  box-shadow:0 6px 18px var(--shadow);
-  margin-top:14px;
-  padding:14px 16px;
-}
-.ledger-toolbar{
-  display:flex;
-  gap:8px;
-  align-items:center;
-  flex-wrap:wrap;
-  margin-bottom:10px;
+  border-radius:16px;
+  box-shadow:0 8px 22px var(--shadow);
+  margin-top:8px;
+  overflow:hidden;
 }
 .table-shell{
-  border:1px solid var(--line);
-  border-radius:12px;
-  overflow:hidden;
-  background:#fff;
-}
-.table-scroll{
-  max-height:65vh;
-  overflow:auto;
+  border-top:1px solid var(--line);
 }
 .table{
   width:100%;
   border-collapse:separate;
   border-spacing:0;
+  table-layout:fixed;
   font-size:12px;
-  min-width:1200px;
 }
 .table thead th{
-  position:sticky;
-  top:0;
+  position:sticky; top:0;
   background:#f3efe6;
-  border-bottom:1px solid var(--line);
-  padding:8px 6px;
-  text-align:left;
-  color:var(--ink-soft);
-  font-weight:700;
-  white-space:nowrap;
-  z-index:10;
-}
-
-/* Sticky columns */
-.sticky-col-1,.sticky-col-2,.sticky-col-3{
-  position:sticky;
-  z-index:11;
-  background:inherit;
-}
-thead .sticky-col-1, thead .sticky-col-2, thead .sticky-col-3{
-  background:#f3efe6;
-  z-index:12;
-}
-.sticky-col-1{left:0; width:var(--col1); border-right:1px solid var(--line)}
-.sticky-col-2{left:var(--col1); width:var(--col2); border-right:1px solid var(--line)}
-.sticky-col-3{left:calc(var(--col1) + var(--col2)); width:var(--col3); border-right:1px solid var(--line)}
-
-/* Shadow after sticky */
-.sticky-col-3::after{
-  content:"";
-  position:absolute;
-  top:0;
-  right:-6px;
-  width:6px;
-  height:100%;
-  pointer-events:none;
-  background:linear-gradient(to right,rgba(0,0,0,.06),transparent);
-}
-
-.table tbody tr{background:#fff}
-.table tbody tr:nth-child(even){background:#faf8f4}
-.table tbody tr:hover{background:#f0f0e8}
-.table tbody td{
   border-bottom:1px solid var(--line);
   padding:6px 6px;
-  vertical-align:middle;
-  white-space:nowrap;
+  color:#4b5a50;
+  text-align:left;
+  font-weight:700;
+}
+.table tbody td{
+  padding:5px 6px;
+  border-bottom:1px solid var(--line);
 }
 
-/* Parent/Child rows */
-.parent-row{
-  background:#fafafc!important;
-  cursor:pointer;
-  border-top:1px solid var(--line);
-  font-weight:600;
-}
-.parent-row.expanded{background:#f7fbf8!important}
-.parent-toggle{cursor:pointer}
-.parent-toggle .chev{
-  display:inline-block;
-  width:14px;
-  user-select:none;
-}
-.child-row{
-  display:none;
-  opacity:0;
-  transform:translateY(-4px);
-  transition:opacity .2s ease, transform .2s ease;
-}
-.child-row.show{display:table-row}
-.child-row td{background:#fff3f3!important}
-.child-row .first{color:#963131;font-weight:800}
+/* Row colors */
+.add-row{background:var(--add-bg); font-weight:600;}
+.sell-row{background:var(--sell-bg);}
 
-/* Stone badges */
+/* Badges */
 .badge{
   display:inline-block;
-  font-size:10px;
+  font-size:9px;
   padding:2px 6px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#f7f9f8;
-  margin-left:4px;
+  border-radius:8px;
+  font-weight:700;
 }
-.badge.ajmz{background:#f0faf5;border-color:#cbe9d7;color:#16583b}
-.badge.calib{background:#f5f0ff;border-color:#e1daff;color:#4c2fb8}
+.badge-add{background:#9CD8A5; color:#1f3a27;}
+.badge-sell{background:#E8A3A3; color:#4f1f1f;}
+.badge-source-ajmz{background:#d1e5ff; color:#204f7a;}
+.badge-source-calib{background:#ffe3b3; color:#7a4f20;}
+.kpi-profit{color:var(--profit);}
+.kpi-loss{color:var(--loss);}
 
-/* Value coloring */
-.val-pos{color:var(--success);font-weight:700}
-.val-neg{color:var(--danger);font-weight:700}
-.val-zero{color:var(--ink-soft)}
-
-/* Totals Footer */
-.totals-footer{
-  display:flex;
-  gap:10px;
-  justify-content:flex-end;
-  align-items:center;
-  padding:10px 12px;
-  border-top:1px solid var(--line);
-  background:#faf8f4;
-  font-size:11px;
-}
-.total-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:4px 10px;
-  font-weight:600;
-}
+/* Tab sections */
+.tab-section{display:none;}
+.tab-section.active{display:block;}
 
 /* Print styles */
-@media print{
-  .nav-vertical,.header-panel,.filter-panel,.ledger-toolbar,.button{display:none!important}
-  .workspace{margin-left:0;padding:10px}
-  .table-scroll{max-height:none!important;overflow:visible}
-  .table{min-width:auto}
-}
-
-/* Responsive */
-@media (max-width:1100px){
-  .workspace{padding:12px}
-  .kpi-grid{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-}
-@media (max-width:768px){
-  .workspace{padding:10px}
-  .header-panel,.filter-row{flex-direction:column;align-items:flex-start}
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .nav-vertical,
+  .panel,
+  .tab-row,
+  .kpi-row,
+  .slicer-row {
+    display: none !important;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  .card {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  .table {
+    font-size: 10px;
+  }
+  .table thead th {
+    background: #e0e0e0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .add-row {
+    background: #e9f7ec !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .sell-row {
+    background: #fce9e9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
 }
 </style>
 </head>
+
 <body>
 
-<!-- LEFT NAV -->
+<!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
-  <a href="index.html" class="nav-item" title="Add">➕</a>
-  <a href="added.html" class="nav-item" title="Added">📝</a>
-  <a href="sell.html" class="nav-item" title="Sell">💎</a>
-  <a href="reports.html" class="nav-item active" title="Reports">📊</a>
+  <a href="index.html"   class="nav-item"        title="Add">➕</a>
+  <a href="added.html"   class="nav-item"        title="Added">📝</a>
+  <a href="sell.html"    class="nav-item"        title="Sell">💎</a>
+  <a href="reports.html" class="nav-item active"        title="Reports">📊</a>
 </div>
 
-<!-- MAIN -->
 <div class="workspace">
 
-  <!-- HEADER -->
-  <div class="header-panel">
+  <!-- TOP PANEL -->
+  <div class="panel">
     <div>
-      <div class="panel-title">INVENTORY REPORTS</div>
-      <div class="panel-main">AJMZ & CALIBRATE Inventory Analysis</div>
+      <div class="page-title">ADD + SELL Master Ledger</div>
+      <div class="page-sub">Four smart views with slicers, KPIs, and combined analysis.</div>
     </div>
-    <div class="spacer"></div>
-    <button class="button soft" id="btnRefresh">🔄 Refresh</button>
-    <button class="button" id="btnExport">📥 Export CSV</button>
-    <button class="button primary" id="btnPrint">🖨️ Print</button>
-  </div>
-
-  <!-- KPI DASHBOARD -->
-  <div class="kpi-grid">
-    <div class="kpi-card">
-      <div class="kpi-label">Total Records</div>
-      <div class="kpi-value" id="kpiTotalRecords">0</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Total CTS</div>
-      <div class="kpi-value" id="kpiTotalCTS">0.00</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Total Amount</div>
-      <div class="kpi-value" id="kpiTotalAmount">0.00</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Sold Amount</div>
-      <div class="kpi-value" id="kpiSoldAmount">0.00</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Balance CTS</div>
-      <div class="kpi-value" id="kpiBalanceCTS">0.00</div>
-    </div>
-    <div class="kpi-card">
-      <div class="kpi-label">Balance PCS</div>
-      <div class="kpi-value" id="kpiBalancePCS">0</div>
+    <div class="search-box-global">
+      🔍 <input id="searchGlobal" placeholder="Search across all sections…">
     </div>
   </div>
 
-  <!-- FILTERS -->
-  <div class="filter-panel">
-    <div class="filter-row">
-      <div class="filter-label">Stone:</div>
-      <div class="pill-group">
-        <button class="pill-btn stone-filter active" data-stone="ALL">ALL</button>
-        <button class="pill-btn stone-filter" data-stone="AJMZ">AJMZ</button>
-        <button class="pill-btn stone-filter" data-stone="CALIBRATE">CALIBRATE</button>
-      </div>
-
-      <div style="width:20px"></div>
-
-      <div class="filter-label">View:</div>
-      <div class="pill-group">
-        <button class="pill-btn view-filter active" data-view="ALL">All Records</button>
-        <button class="pill-btn view-filter" data-view="OPEN">Open Balances Only</button>
-      </div>
-    </div>
-
-    <div class="filter-row">
-      <div class="filter-label">Search:</div>
-      <input type="text" class="search-input" id="quickSearch" placeholder="TX ID, Party, Lot, Grade, Description...">
-
-      <div style="width:10px"></div>
-
-      <div class="filter-label">Date:</div>
-      <input type="date" class="date-input" id="dateFrom">
-      <span style="font-size:11px;color:var(--ink-soft)">to</span>
-      <input type="date" class="date-input" id="dateTo">
-    </div>
-
-    <!-- Active Filters Display -->
-    <div class="active-filters" id="activeFilters"></div>
+  <!-- TAB BUTTONS -->
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="tabAJMZ">AJMZ</button>
+    <button class="tab-btn" data-tab="tabCALIB">CALIBRATION</button>
+    <button class="tab-btn" data-tab="tabALL">ALL STONES</button>
+    <button class="tab-btn" data-tab="tabPARTY">PARTY</button>
   </div>
 
-  <!-- SUMMARY REPORTS -->
-  <div class="summary-card">
-    <div class="summary-header">
-      <div class="summary-title">Summary Analysis</div>
-      <div class="summary-tabs">
-        <button class="summary-tab active" data-summary="overall">Overall</button>
-        <button class="summary-tab" data-summary="stone">By Stone</button>
-        <button class="summary-tab" data-summary="lot">By Lot</button>
-        <button class="summary-tab" data-summary="party_add">By Party (ADD)</button>
-        <button class="summary-tab" data-summary="party_sell">By Party (SELL)</button>
-        <button class="summary-tab" data-summary="grade">By Grade (CALIB)</button>
+  <!-- ========================= AJMZ TAB ========================= -->
+  <div class="tab-section active" id="tabAJMZ">
+    <!-- KPI row -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Added</div>
+        <div class="kpi-main" id="aj_kpi_added_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="aj_kpi_added_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Sold</div>
+        <div class="kpi-main" id="aj_kpi_sold_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="aj_kpi_sold_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Current Inventory</div>
+        <div class="kpi-main" id="aj_kpi_inv_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="aj_kpi_inv_sub">Remaining quantity</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Profit / Loss</div>
+        <div class="kpi-main" id="aj_kpi_profit_main">0.00</div>
+        <div class="kpi-sub" id="aj_kpi_profit_sub">Sold amount – cost</div>
       </div>
     </div>
-    <div class="summary-content" id="summaryContent">
-      <div style="padding:20px;text-align:center;color:var(--ink-soft);font-size:12px;">
-        Loading summary...
+
+    <!-- Slicers -->
+    <div class="slicer-row">
+      <div class="slicer-group">
+        <label class="slicer-label">Type</label>
+        <select id="aj_filter_type" class="slicer-select">
+          <option value="">All</option>
+          <option value="ADD">ADD only</option>
+          <option value="SELL">SELL only</option>
+        </select>
       </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Lot</label>
+        <div id="aj_filter_lot" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Format</label>
+        <div id="aj_filter_format" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Shape</label>
+        <div id="aj_filter_shape" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date from</label>
+        <input id="aj_filter_date_from" type="date" class="slicer-input">
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date to</label>
+        <input id="aj_filter_date_to" type="date" class="slicer-input">
+      </div>
+      <button class="slicer-clear-btn" id="aj_clear_filters">Clear Filters</button>
+      <button class="action-btn" id="aj_export_csv">📊 Export CSV</button>
+      <button class="action-btn" id="aj_print_table">🖨️ Print</button>
     </div>
-  </div>
 
-  <!-- DETAILED LEDGER -->
-  <div class="ledger-card">
-    <div class="ledger-toolbar">
-      <div style="font-weight:700;font-size:14px;color:var(--ink)">Detailed Ledger</div>
-      <div class="spacer"></div>
-      <button class="button" id="btnExpandAll">Expand All</button>
-      <button class="button" id="btnCollapseAll">Collapse All</button>
-    </div>
-
-    <div class="table-shell">
-      <div class="table-scroll">
+    <!-- Table -->
+    <div class="card print-area" id="aj_print_area">
+      <div class="table-shell">
         <table class="table">
           <thead>
             <tr>
-              <th class="sticky-col-1">#</th>
-              <th class="sticky-col-2">TX ID</th>
-              <th class="sticky-col-3">Date</th>
-              <th>Party</th>
-              <th>Stone</th>
+              <th style="width:60px;">Type</th>
+              <th>Date</th>
+              <th>Tx ID</th>
               <th>Lot</th>
-              <th>Grade/Format</th>
+              <th>Format</th>
+              <th>Description</th>
+              <th>Shape</th>
+              <th>CTS</th>
+              <th>PCS</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Party</th>
+              <th>Remarks</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyAJMZ"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================== CALIB TAB ========================== -->
+  <div class="tab-section" id="tabCALIB">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Added</div>
+        <div class="kpi-main" id="cb_kpi_added_main">0.00 CTS</div>
+        <div class="kpi-sub" id="cb_kpi_added_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Sold</div>
+        <div class="kpi-main" id="cb_kpi_sold_main">0.00 CTS</div>
+        <div class="kpi-sub" id="cb_kpi_sold_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Current Inventory</div>
+        <div class="kpi-main" id="cb_kpi_inv_main">0.00 CTS</div>
+        <div class="kpi-sub" id="cb_kpi_inv_sub">Remaining quantity</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Profit / Loss</div>
+        <div class="kpi-main" id="cb_kpi_profit_main">0.00</div>
+        <div class="kpi-sub" id="cb_kpi_profit_sub">Sold amount – cost</div>
+      </div>
+    </div>
+
+    <div class="slicer-row">
+      <div class="slicer-group">
+        <label class="slicer-label">Type</label>
+        <select id="cb_filter_type" class="slicer-select">
+          <option value="">All</option>
+          <option value="ADD">ADD only</option>
+          <option value="SELL">SELL only</option>
+        </select>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Lot</label>
+        <div id="cb_filter_lot" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Lot × Grade</label>
+        <div id="cb_filter_lotgrade" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Shape × Size</label>
+        <div id="cb_filter_shapesize" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date from</label>
+        <input id="cb_filter_date_from" type="date" class="slicer-input">
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date to</label>
+        <input id="cb_filter_date_to" type="date" class="slicer-input">
+      </div>
+      <button class="slicer-clear-btn" id="cb_clear_filters">Clear Filters</button>
+      <button class="action-btn" id="cb_export_csv">📊 Export CSV</button>
+      <button class="action-btn" id="cb_print_table">🖨️ Print</button>
+    </div>
+
+    <div class="card print-area" id="cb_print_area">
+      <div class="table-shell">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:60px;">Type</th>
+              <th>Date</th>
+              <th>Tx ID</th>
+              <th>Lot</th>
+              <th>Grade</th>
+              <th>Description</th>
+              <th>Shape</th>
+              <th>Size</th>
+              <th>CTS</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Party</th>
+              <th>Remarks</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyCALIB"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== ALL STONES TAB ====================== -->
+  <div class="tab-section" id="tabALL">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Added</div>
+        <div class="kpi-main" id="all_kpi_added_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="all_kpi_added_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Sold</div>
+        <div class="kpi-main" id="all_kpi_sold_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="all_kpi_sold_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Current Inventory</div>
+        <div class="kpi-main" id="all_kpi_inv_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="all_kpi_inv_sub">Remaining quantity</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Profit / Loss</div>
+        <div class="kpi-main" id="all_kpi_profit_main">0.00</div>
+        <div class="kpi-sub" id="all_kpi_profit_sub">Sold amount – cost</div>
+      </div>
+    </div>
+
+    <div class="slicer-row">
+      <div class="slicer-group">
+        <label class="slicer-label">Source</label>
+        <select id="all_filter_source" class="slicer-select">
+          <option value="">All</option>
+          <option value="AJMZ">AJMZ</option>
+          <option value="CALIB">CALIB</option>
+        </select>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Lot</label>
+        <div id="all_filter_lot" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Grade / Format</label>
+        <div id="all_filter_gradefmt" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Party</label>
+        <div id="all_filter_party" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date from</label>
+        <input id="all_filter_date_from" type="date" class="slicer-input">
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date to</label>
+        <input id="all_filter_date_to" type="date" class="slicer-input">
+      </div>
+      <button class="slicer-clear-btn" id="all_clear_filters">Clear Filters</button>
+      <button class="action-btn" id="all_export_csv">📊 Export CSV</button>
+      <button class="action-btn" id="all_print_table">🖨️ Print</button>
+    </div>
+
+    <div class="card print-area" id="all_print_area">
+      <div class="table-shell">
+        <table class="table">
+          <thead>
+            <tr>
+              <th style="width:70px;">Source</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Tx ID</th>
+              <th>Lot</th>
+              <th>Grade / Format</th>
               <th>Description</th>
               <th>CTS</th>
               <th>PCS</th>
               <th>Price</th>
-              <th>Total Amount</th>
-              <th>Sold Amount</th>
-              <th>Bal CTS</th>
-              <th>Bal PCS</th>
-              <th># Sells</th>
+              <th>Amount</th>
+              <th>Party</th>
+              <th>Remarks</th>
             </tr>
           </thead>
-          <tbody id="ledgerBody"></tbody>
+          <tbody id="tbodyALL"></tbody>
         </table>
-      </div>
-      <div class="totals-footer">
-        <div class="total-chip">Records: <span id="totalRecords">0</span></div>
-        <div class="total-chip">CTS: <span id="totalCTS">0.00</span></div>
-        <div class="total-chip">Amount: <span id="totalAmount">0.00</span></div>
-        <div class="total-chip" style="background:#fff3f3">Sold: <span id="totalSold">0.00</span></div>
       </div>
     </div>
   </div>
 
-</div><!-- /workspace -->
+  <!-- ======================= PARTY TAB ========================= -->
+  <div class="tab-section" id="tabPARTY">
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total Sold</div>
+        <div class="kpi-main" id="py_kpi_sold_main">0.00 CTS / 0 PCS</div>
+        <div class="kpi-sub" id="py_kpi_sold_sub">Amount: 0.00</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Distinct Parties</div>
+        <div class="kpi-main" id="py_kpi_party_main">0</div>
+        <div class="kpi-sub" id="py_kpi_party_sub">Parties with sell records</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">AJMZ vs CALIB</div>
+        <div class="kpi-main" id="py_kpi_split_main">0 / 0</div>
+        <div class="kpi-sub" id="py_kpi_split_sub">AJMZ CTS / CALIB CTS</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Profit / Loss</div>
+        <div class="kpi-main" id="py_kpi_profit_main">0.00</div>
+        <div class="kpi-sub" id="py_kpi_profit_sub">Sold amount – cost</div>
+      </div>
+    </div>
+
+    <div class="slicer-row">
+      <div class="slicer-group">
+        <label class="slicer-label">Party</label>
+        <div id="py_filter_party" class="searchable-select-wrapper"></div>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Stone Type</label>
+        <select id="py_filter_source" class="slicer-select">
+          <option value="">All</option>
+          <option value="AJMZ">AJMZ</option>
+          <option value="CALIB">CALIB</option>
+        </select>
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date from</label>
+        <input id="py_filter_date_from" type="date" class="slicer-input">
+      </div>
+      <div class="slicer-group">
+        <label class="slicer-label">Date to</label>
+        <input id="py_filter_date_to" type="date" class="slicer-input">
+      </div>
+      <button class="slicer-clear-btn" id="py_clear_filters">Clear Filters</button>
+      <button class="action-btn" id="py_export_csv">📊 Export CSV</button>
+      <button class="action-btn" id="py_print_table">🖨️ Print</button>
+    </div>
+
+    <div class="card print-area" id="py_print_area">
+      <div class="table-shell">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Party</th>
+              <th>Source</th>
+              <th>Date</th>
+              <th>Tx ID</th>
+              <th>Lot</th>
+              <th>Grade / Format</th>
+              <th>CTS</th>
+              <th>PCS</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Cost</th>
+              <th>Profit</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
+          <tbody id="tbodyPARTY"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- /workspace -->
 
 <script>
-/* ========================== UTILITIES ========================== */
-function esc(s){
-  if(s===null||s===undefined)return "";
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-function fmtNumber(n,decimals=2){
-  const num=Number(n||0);
-  return num.toLocaleString("en-US",{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
-}
-function parseNum(str){
-  if(str===null||str===undefined)return 0;
-  const n=Number(String(str).replace(/,/g,"")||0);
-  return isNaN(n)?0:n;
-}
-
-/* ======================== FIREBASE INIT ======================== */
-const firebaseConfig={
-  apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
-  authDomain:"ajmzinventory.firebaseapp.com",
-  databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"ajmzinventory",
-  storageBucket:"ajmzinventory.firebasestorage.app",
-  messagingSenderId:"1069845316242",
-  appId:"1:1069845316242:web:c55be9de3724734f88dc4b"
+/* ======================= FIREBASE ======================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
+  authDomain: "ajmzinventory.firebaseapp.com",
+  databaseURL: "https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ajmzinventory",
+  storageBucket: "ajmzinventory.firebasestorage.app",
+  messagingSenderId: "1069845316242",
+  appId: "1:1069845316242:web:c55be9de3724734f88dc4b"
 };
 firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
+const db = firebase.database();
 
-/* =========================== STATE ============================= */
-let movements = [];  // normalized ADD + SELL records
-let groups = [];     // grouped by parent
-let expanded = new Set();
+/* ======================= UTILS =========================== */
+function esc(v){
+  if(v === null || v === undefined) return "";
+  return String(v)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+function num(v){
+  if(v === null || v === undefined || v === "") return 0;
+  const n=Number(String(v).replace(/,/g,""));
+  return isNaN(n)?0:n;
+}
+function fmt(v){
+  return Number(v||0).toLocaleString("en-US",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
+  });
+}
+function parseDateToComparable(d){
+  if(!d) return null;
+  const t=Date.parse(d);
+  return isNaN(t)?null:t;
+}
 
-// Filters
-let stoneFilter = 'ALL';
-let viewFilter = 'ALL';
-let quickSearch = '';
-let dateFrom = '';
-let dateTo = '';
-let activeSummary = 'overall';
+/* ================== DATA CONTAINERS ====================== */
+let AJMZ_PARENTS=[], AJMZ_SELLS=[], AJMZ_TREE=[];
+let CALIB_PARENTS=[], CALIB_SELLS=[], CALIB_TREE=[];
+let ALL_ROWS=[];
+let PARTY_ROWS=[];
 
-/* ======================= DATA LOADING ========================= */
-async function loadAllData(){
-  const [ajAdd, calAdd, ajSell, calSell] = await Promise.all([
+/* =================== LOAD PARENTS ======================== */
+async function loadParents(){
+  const [ajSnap, cbSnap] = await Promise.all([
     db.ref("ajmzRecords").once("value"),
-    db.ref("calibRecords").once("value"),
+    db.ref("calibRecords").once("value")
+  ]);
+
+  AJMZ_PARENTS=[]; CALIB_PARENTS=[];
+
+  if(ajSnap.exists()){
+    ajSnap.forEach(s=>{
+      const o=s.val(); o.key=s.key;
+      o.cts=num(o.cts); o.pcs=num(o.pcs);
+      o.price=num(o.price);
+      o.amount=num(o.amount || o.cts*o.price);
+      AJMZ_PARENTS.push(o);
+    });
+  }
+
+  if(cbSnap.exists()){
+    cbSnap.forEach(s=>{
+      const o=s.val(); o.key=s.key;
+      o.cts=num(o.cts);
+      o.price=num(o.price);
+      o.amount=num(o.amount || o.cts*o.price);
+      CALIB_PARENTS.push(o);
+    });
+  }
+
+  AJMZ_PARENTS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
+  CALIB_PARENTS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
+}
+
+/* ==================== LOAD SELLS ========================= */
+async function loadSellRecords(){
+  const [ajSnap, cbSnap] = await Promise.all([
     db.ref("sellRecords/ajmz").once("value"),
     db.ref("sellRecords/calib").once("value")
   ]);
 
-  movements = [];
+  AJMZ_SELLS=[]; CALIB_SELLS=[];
 
-  // Process AJMZ ADD
-  if(ajAdd.exists()){
-    ajAdd.forEach(snap=>{
-      const r = snap.val();
-      movements.push({
-        movement: 'ADD',
-        stone: 'AJMZ',
-        key: snap.key,
-        txId: r.txId || '',
-        date: r.date || '',
-        party: r.party || '',
-        lot: r.lotName || r.lotFormat || '',
-        grade: r.lotno || '',
-        format: r.lotFormat || '',
-        description: r.description || '',
-        cts: parseNum(r.cts),
-        pcs: parseNum(r.pcs),
-        price: parseNum(r.price),
-        amount: parseNum(r.amount || (parseNum(r.cts) * parseNum(r.price))),
-        remarks: r.remarks || '',
-        composite: `${r.txId||''}||${r.lotName||r.lotFormat||''}||${r.lotno||''}`
-      });
+  if(ajSnap.exists()){
+    ajSnap.forEach(snap=>{
+      const s=snap.val(); s.key=snap.key;
+      s.cts=num(s.cts); s.pcs=num(s.pcs);
+      s.sellPrice=num(s.sellPrice);
+      s.amount=num(s.amount || s.cts*s.sellPrice);
+      s.cost=num(s.cost || 0);
+      AJMZ_SELLS.push(s);
     });
   }
 
-  // Process CALIBRATE ADD
-  if(calAdd.exists()){
-    calAdd.forEach(snap=>{
-      const r = snap.val();
-      movements.push({
-        movement: 'ADD',
-        stone: 'CALIBRATE',
-        key: snap.key,
-        txId: r.txId || '',
-        date: r.date || '',
-        party: r.party || '',
-        lot: r.lotName || '',
-        grade: r.grade || '',
-        format: '',
-        description: r.description || '',
-        cts: parseNum(r.cts),
-        pcs: 0,
-        price: parseNum(r.price),
-        amount: parseNum(r.amount || (parseNum(r.cts) * parseNum(r.price))),
-        remarks: r.remarks || '',
-        composite: `${r.txId||''}||${r.lotName||''}||${r.grade||''}`
-      });
+  if(cbSnap.exists()){
+    cbSnap.forEach(snap=>{
+      const s=snap.val(); s.key=snap.key;
+      s.cts=num(s.cts);
+      s.sellPrice=num(s.sellPrice);
+      s.amount=num(s.amount || s.cts*s.sellPrice);
+      s.cost=num(s.cost || 0);
+      CALIB_SELLS.push(s);
     });
   }
 
-  // Process AJMZ SELL
-  if(ajSell.exists()){
-    ajSell.forEach(snap=>{
-      const r = snap.val();
-      movements.push({
-        movement: 'SELL',
-        stone: 'AJMZ',
-        key: snap.key,
-        parentKey: r.parentKey || '',
-        txId: r.parentTxId || '',
-        date: r.date || '',
-        party: r.party || '',
-        lot: r.parentLot || '',
-        grade: '',
-        format: r.parentFormat || '',
-        description: r.parentDescription || '',
-        cts: -Math.abs(parseNum(r.cts)),
-        pcs: -Math.abs(parseNum(r.pcs)),
-        price: parseNum(r.sellPrice || r.price),
-        amount: -Math.abs(parseNum(r.amount || (parseNum(r.cts) * parseNum(r.sellPrice || r.price)))),
-        remarks: r.remarks || '',
-        composite: `${r.parentTxId||''}||${r.parentLot||''}||`
-      });
-    });
-  }
-
-  // Process CALIBRATE SELL
-  if(calSell.exists()){
-    calSell.forEach(snap=>{
-      const r = snap.val();
-      movements.push({
-        movement: 'SELL',
-        stone: 'CALIBRATE',
-        key: snap.key,
-        parentKey: r.parentKey || '',
-        txId: r.parentTxId || '',
-        date: r.date || '',
-        party: r.party || '',
-        lot: r.parentLot || '',
-        grade: r.parentGrade || '',
-        format: '',
-        description: r.parentDescription || '',
-        cts: -Math.abs(parseNum(r.cts)),
-        pcs: 0,
-        price: parseNum(r.sellPrice || r.price),
-        amount: -Math.abs(parseNum(r.amount || (parseNum(r.cts) * parseNum(r.sellPrice || r.price)))),
-        remarks: r.remarks || '',
-        composite: `${r.parentTxId||''}||${r.parentLot||''}||${r.parentGrade||''}`
-      });
-    });
-  }
-
-  applyFilters();
+  AJMZ_SELLS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
+  CALIB_SELLS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
 }
 
-/* ======================= FILTERING ========================= */
-function passFilters(r){
-  // Stone filter
-  if(stoneFilter !== 'ALL' && r.stone !== stoneFilter) return false;
+/* ===================== BUILD TREES ======================= */
+function buildTrees(){
+  AJMZ_TREE = AJMZ_PARENTS.map(p=>{
+    const sells=AJMZ_SELLS.filter(s=>s.parentKey===p.key);
+    return {parent:p, sells};
+  });
 
-  // Date filter
-  if(dateFrom && r.date < dateFrom) return false;
-  if(dateTo && r.date > dateTo) return false;
+  CALIB_TREE = CALIB_PARENTS.map(p=>{
+    const sells=CALIB_SELLS.filter(s=>s.parentKey===p.key);
+    return {parent:p, sells};
+  });
+}
 
-  // Quick search
-  if(quickSearch){
-    const q = quickSearch.toLowerCase();
-    const searchStr = [
-      r.txId, r.party, r.lot, r.grade, r.format, r.description, r.remarks
-    ].join(' ').toLowerCase();
-    if(!searchStr.includes(q)) return false;
+/* ========== BUILD UNIFIED ALL_ROWS + PARTY_ROWS ========== */
+function buildUnifiedRows(){
+  ALL_ROWS=[];
+  PARTY_ROWS=[];
+
+  // AJMZ
+  AJMZ_TREE.forEach(row=>{
+    const p=row.parent;
+    const lot=p.lotName || "";
+    const fmtTxt=p.lotFormat || "";
+    const shape=p.shape || "";
+    const gradeOrFormat=fmtTxt;
+
+    const totalSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
+    const totalSellPCS=row.sells.reduce((a,s)=>a+s.pcs,0);
+    const origCTS=p.cts + totalSellCTS;
+    const origPCS=p.pcs + totalSellPCS;
+
+    ALL_ROWS.push({
+      source:"AJMZ",
+      type:"ADD",
+      date:p.date || "",
+      txId:p.txId || "",
+      lot,
+      gradeFmt:gradeOrFormat,
+      description:p.description || "",
+      cts:origCTS,
+      pcs:origPCS,
+      price:p.price,
+      amount:origCTS * p.price,
+      party:p.party || "",
+      remarks:p.remarks || "",
+      shape
+    });
+
+    row.sells.forEach(s=>{
+      const gradeFmtSell=s.parentFormat || fmtTxt || "";
+      const lotSell=s.parentLot || lot;
+      const descSell=s.parentDescription || p.description || "";
+      const party=s.party || "";
+      const cost = s.cost || 0;
+      const profit = s.amount - cost;
+
+      ALL_ROWS.push({
+        source:"AJMZ",
+        type:"SELL",
+        date:s.date || "",
+        txId:s.txId || s.key,
+        lot:lotSell,
+        gradeFmt:gradeFmtSell,
+        description:descSell,
+        cts:s.cts,
+        pcs:s.pcs,
+        price:s.sellPrice,
+        amount:s.amount,
+        party,
+        remarks:s.remarks || "",
+        shape:shape,
+        cost:cost,
+        profit:profit
+      });
+
+      PARTY_ROWS.push({
+        source:"AJMZ",
+        party,
+        date:s.date || "",
+        txId:s.txId || s.key,
+        lot:lotSell,
+        gradeFmt:gradeFmtSell,
+        cts:s.cts,
+        pcs:s.pcs,
+        price:s.sellPrice,
+        amount:s.amount,
+        cost,
+        profit,
+        remarks:s.remarks || ""
+      });
+    });
+  });
+
+  // CALIB
+  CALIB_TREE.forEach(row=>{
+    const p=row.parent;
+    const lot=p.lotName || "";
+    const grade=p.grade || "";
+    const shape=p.shape || "";
+    const size=p.size || "";
+    const gradeOrFormat=grade || "";
+
+    const totalSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
+    const origCTS=p.cts + totalSellCTS;
+
+    ALL_ROWS.push({
+      source:"CALIB",
+      type:"ADD",
+      date:p.date || "",
+      txId:p.txId || "",
+      lot,
+      gradeFmt:gradeOrFormat,
+      description:p.description || "",
+      cts:origCTS,
+      pcs:0,
+      price:p.price,
+      amount:origCTS * p.price,
+      party:p.party || "",
+      remarks:p.remarks || "",
+      shape:`${shape} ${size}`.trim()
+    });
+
+    row.sells.forEach(s=>{
+      const gradeFmtSell=s.parentGrade || grade || "";
+      const lotSell=s.parentLot || lot;
+      const descSell=s.parentDescription || p.description || "";
+      const party=s.party || "";
+      const cost = s.cost || 0;
+      const profit = s.amount - cost;
+
+      ALL_ROWS.push({
+        source:"CALIB",
+        type:"SELL",
+        date:s.date || "",
+        txId:s.txId || s.key,
+        lot:lotSell,
+        gradeFmt:gradeFmtSell,
+        description:descSell,
+        cts:s.cts,
+        pcs:0,
+        price:s.sellPrice,
+        amount:s.amount,
+        party,
+        remarks:s.remarks || "",
+        shape:`${shape} ${size}`.trim(),
+        cost:cost,
+        profit:profit
+      });
+
+      PARTY_ROWS.push({
+        source:"CALIB",
+        party,
+        date:s.date || "",
+        txId:s.txId || s.key,
+        lot:lotSell,
+        gradeFmt:gradeFmtSell,
+        cts:s.cts,
+        pcs:0,
+        price:s.sellPrice,
+        amount:s.amount,
+        cost,
+        profit,
+        remarks:s.remarks || ""
+      });
+    });
+  });
+
+  ALL_ROWS.sort((a,b)=>parseDateToComparable(b.date||"")-parseDateToComparable(a.date||""));
+  PARTY_ROWS.sort((a,b)=>parseDateToComparable(b.date||"")-parseDateToComparable(a.date||""));
+}
+
+/* ============= SEARCHABLE SELECT COMPONENT =============== */
+function createSearchableSelect(wrapperId, values, includeAll=true){
+  const wrapper = document.getElementById(wrapperId);
+  if(!wrapper) return null;
+  
+  wrapper.innerHTML = `
+    <input type="text" class="searchable-select-input" placeholder="${includeAll ? 'All' : 'Select...'}" readonly>
+    <div class="searchable-select-dropdown"></div>
+  `;
+  
+  const input = wrapper.querySelector('.searchable-select-input');
+  const dropdown = wrapper.querySelector('.searchable-select-dropdown');
+  
+  let selectedValue = "";
+  
+  const options = includeAll ? ["All", ...values] : values;
+  options.forEach(val => {
+    const opt = document.createElement('div');
+    opt.className = 'searchable-select-option';
+    opt.textContent = val === "All" ? "All" : val;
+    opt.dataset.value = val === "All" ? "" : val;
+    
+    if(val === "All") opt.classList.add('selected');
+    
+    opt.addEventListener('click', () => {
+      selectedValue = opt.dataset.value;
+      input.value = opt.textContent;
+      input.setAttribute('data-value', selectedValue);
+      
+      dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
+        o.classList.remove('selected');
+      });
+      opt.classList.add('selected');
+      
+      dropdown.classList.remove('active');
+      
+      const event = new Event('change', { bubbles: true });
+      wrapper.dispatchEvent(event);
+    });
+    
+    dropdown.appendChild(opt);
+  });
+  
+  input.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isActive = dropdown.classList.contains('active');
+    
+    document.querySelectorAll('.searchable-select-dropdown').forEach(d => {
+      d.classList.remove('active');
+    });
+    
+    if(!isActive){
+      dropdown.classList.add('active');
+      input.removeAttribute('readonly');
+      input.focus();
+      input.select();
+    }
+  });
+  
+  input.addEventListener('input', () => {
+    const searchTerm = input.value.toLowerCase();
+    dropdown.querySelectorAll('.searchable-select-option').forEach(opt => {
+      const text = opt.textContent.toLowerCase();
+      if(text.includes(searchTerm) || opt.dataset.value === ""){
+        opt.classList.remove('hidden');
+      } else {
+        opt.classList.add('hidden');
+      }
+    });
+  });
+  
+  input.addEventListener('blur', () => {
+    setTimeout(() => {
+      if(!dropdown.matches(':hover')){
+        dropdown.classList.remove('active');
+        input.setAttribute('readonly', true);
+        const selected = dropdown.querySelector('.searchable-select-option.selected');
+        if(selected){
+          input.value = selected.textContent;
+        }
+      }
+    }, 200);
+  });
+  
+  document.addEventListener('click', (e) => {
+    if(!wrapper.contains(e.target)){
+      dropdown.classList.remove('active');
+      input.setAttribute('readonly', true);
+      const selected = dropdown.querySelector('.searchable-select-option.selected');
+      if(selected){
+        input.value = selected.textContent;
+      }
+    }
+  });
+  
+  return {
+    getValue: () => selectedValue,
+    setValue: (val) => {
+      selectedValue = val || "";
+      const opt = dropdown.querySelector(`[data-value="${val || ""}"]`);
+      if(opt){
+        input.value = opt.textContent;
+        input.setAttribute('data-value', selectedValue);
+        dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
+          o.classList.remove('selected');
+        });
+        opt.classList.add('selected');
+      }
+    },
+    reset: () => {
+      selectedValue = "";
+      input.value = includeAll ? "All" : "";
+      input.setAttribute('data-value', "");
+      dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
+        o.classList.remove('selected');
+        if(o.dataset.value === "") o.classList.add('selected');
+      });
+    }
+  };
+}
+
+/* ================= POPULATE SLICERS ====================== */
+function uniqueValues(arr, key){
+  const set=new Set();
+  arr.forEach(o=>{
+    const v=(o[key] ?? "").toString().trim();
+    if(v) set.add(v);
+  });
+  return Array.from(set).sort();
+}
+
+const searchableSelects = {};
+
+function populateAllSlicers(){
+  const lotVals   = uniqueValues(AJMZ_PARENTS,"lotName");
+  const fmtVals   = uniqueValues(AJMZ_PARENTS,"lotFormat");
+  const shapeVals = uniqueValues(AJMZ_PARENTS,"shape");
+
+  searchableSelects.aj_lot = createSearchableSelect("aj_filter_lot", lotVals);
+  searchableSelects.aj_format = createSearchableSelect("aj_filter_format", fmtVals);
+  searchableSelects.aj_shape = createSearchableSelect("aj_filter_shape", shapeVals);
+
+  const cbLotVals   = uniqueValues(CALIB_PARENTS,"lotName");
+  
+  const lotGradeSet=new Set();
+  CALIB_PARENTS.forEach(p=>{
+    const pair=`${p.lotName||""} | ${p.grade||""}`.trim();
+    if(pair!=="|") lotGradeSet.add(pair);
+  });
+  const lotGradeVals=Array.from(lotGradeSet).sort();
+
+  const shapeSizeSet=new Set();
+  CALIB_PARENTS.forEach(p=>{
+    const pair=`${p.shape||""} | ${p.size||""}`.trim();
+    if(pair!=="|") shapeSizeSet.add(pair);
+  });
+  const shapeSizeVals=Array.from(shapeSizeSet).sort();
+
+  searchableSelects.cb_lot = createSearchableSelect("cb_filter_lot", cbLotVals);
+  searchableSelects.cb_lotgrade = createSearchableSelect("cb_filter_lotgrade", lotGradeVals);
+  searchableSelects.cb_shapesize = createSearchableSelect("cb_filter_shapesize", shapeSizeVals);
+
+  searchableSelects.all_lot = createSearchableSelect("all_filter_lot", uniqueValues(ALL_ROWS,"lot"));
+  searchableSelects.all_gradefmt = createSearchableSelect("all_filter_gradefmt", uniqueValues(ALL_ROWS,"gradeFmt"));
+  searchableSelects.all_party = createSearchableSelect("all_filter_party", uniqueValues(ALL_ROWS,"party"));
+
+  searchableSelects.py_party = createSearchableSelect("py_filter_party", uniqueValues(PARTY_ROWS,"party"));
+}
+
+async function loadAll(){
+  await loadParents();
+  await loadSellRecords();
+  buildTrees();
+  buildUnifiedRows();
+  populateAllSlicers();
+}
+
+/* ===================== FILTER HELPERS ===================== */
+function dateInRange(dateStr, fromStr, toStr){
+  const d=parseDateToComparable(dateStr);
+  if(d===null) return false;
+  if(fromStr){
+    const df=parseDateToComparable(fromStr);
+    if(df!==null && d<df) return false;
   }
-
+  if(toStr){
+    const dt=parseDateToComparable(toStr);
+    if(dt!==null && d>dt) return false;
+  }
   return true;
 }
 
-function groupMovements(filtered){
-  const map = new Map();
-
-  // Group ADD records
-  filtered.forEach(r=>{
-    if(r.movement === 'ADD'){
-      map.set(r.composite, {add: r, sells: []});
-    }
-  });
-
-  // Attach SELL records
-  filtered.forEach(r=>{
-    if(r.movement === 'SELL'){
-      const g = map.get(r.composite);
-      if(g) g.sells.push(r);
-    }
-  });
-
-  let arr = [...map.values()];
-
-  // Apply open balances filter
-  if(viewFilter === 'OPEN'){
-    arr = arr.filter(g=>{
-      const a = g.add;
-      const balCTS = a.cts + g.sells.reduce((s,x)=>s+x.cts, 0);
-      const balPCS = a.pcs + g.sells.reduce((s,x)=>s+x.pcs, 0);
-      return Math.abs(balCTS) > 0.01 || Math.abs(balPCS) > 0.01;
-    });
-  }
-
-  // Sort by date DESC
-  arr.sort((a,b)=> String(b.add.date).localeCompare(String(a.add.date)) || String(b.add.txId).localeCompare(String(a.add.txId)));
-
-  return arr;
-}
-
-function applyFilters(){
-  const filtered = movements.filter(passFilters);
-  groups = groupMovements(filtered);
-
-  renderLedger();
-  updateKPIs();
-  renderSummary();
-  renderActiveFilters();
-}
-
-/* ======================= RENDER LEDGER ========================= */
-function renderLedger(){
-  const tbody = document.getElementById('ledgerBody');
-  tbody.innerHTML = '';
-
-  if(!groups.length){
-    tbody.innerHTML = '<tr><td colspan="16" style="text-align:center;padding:40px;color:var(--ink-soft)">No records match the current filters.</td></tr>';
-    updateTotalsFooter(0, 0, 0, 0);
-    return;
-  }
-
-  let totalCTS = 0, totalPCS = 0, totalAmt = 0, totalSold = 0;
-  let rowNum = 1;
-
-  groups.forEach(g=>{
-    const a = g.add;
-    const sells = g.sells.sort((x,y)=> String(x.date).localeCompare(String(y.date)) || String(x.txId).localeCompare(String(y.txId)));
-    const key = a.composite;
-    const isOpen = expanded.has(key);
-
-    const origCTS = a.cts;
-    const origPCS = a.pcs;
-    const origAmt = a.amount;
-
-    const soldAmt = sells.reduce((s,x)=>s+Math.abs(x.amount), 0);
-    const balCTS = origCTS + sells.reduce((s,x)=>s+x.cts, 0);
-    const balPCS = origPCS + sells.reduce((s,x)=>s+x.pcs, 0);
-
-    totalCTS += origCTS;
-    totalPCS += origPCS;
-    totalAmt += origAmt;
-    totalSold += soldAmt;
-
-    const tr = document.createElement('tr');
-    tr.className = 'parent-row' + (isOpen ? ' expanded' : '');
-    tr.dataset.key = key;
-    tr.innerHTML = `
-      <td class="sticky-col-1 parent-toggle"><span class="chev">${isOpen?'▼':'▶'}</span></td>
-      <td class="sticky-col-2">${esc(a.txId)}</td>
-      <td class="sticky-col-3">${esc(a.date)}</td>
-      <td>${esc(a.party)}</td>
-      <td>${esc(a.stone)}${stoneBadge(a.stone)}</td>
-      <td>${esc(a.lot)}</td>
-      <td>${esc(a.grade || a.format)}</td>
-      <td>${esc(a.description)}</td>
-      <td>${fmtNumber(origCTS)}</td>
-      <td>${fmtNumber(origPCS,0)}</td>
-      <td>${fmtNumber(a.price)}</td>
-      <td>${fmtNumber(origAmt)}</td>
-      <td style="color:#8C6400;font-weight:600">${fmtNumber(soldAmt)}</td>
-      <td class="${valClass(balCTS)}">${fmtNumber(balCTS)}</td>
-      <td class="${valClass(balPCS)}">${fmtNumber(balPCS,0)}</td>
-      <td>${sells.length}</td>
-    `;
-    tbody.appendChild(tr);
-
-    // Add child rows
-    let runCTS = origCTS;
-    let runPCS = origPCS;
-
-    sells.forEach(s=>{
-      runCTS += s.cts;
-      runPCS += s.pcs;
-
-      const cr = document.createElement('tr');
-      cr.className = 'child-row';
-      cr.dataset.parent = key;
-      if(isOpen){
-        cr.classList.add('show');
-        setTimeout(()=>{cr.style.opacity='1';cr.style.transform='translateY(0)'},10);
+/* ================= CSV EXPORT & PRINT ==================== */
+function exportTableToCSV(tableId, filename){
+  const table = document.querySelector(`#${tableId} table`);
+  if(!table) return;
+  
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const csvContent = rows.map(row => {
+    const cells = Array.from(row.querySelectorAll('th, td'));
+    return cells.map(cell => {
+      let text = cell.textContent.trim();
+      text = text.replace(/\s+/g, ' ');
+      if(text.includes(',') || text.includes('"') || text.includes('\n')){
+        text = '"' + text.replace(/"/g, '""') + '"';
       }
-      cr.innerHTML = `
-        <td class="sticky-col-1 first">→</td>
-        <td class="sticky-col-2">${esc(s.txId)}</td>
-        <td class="sticky-col-3">${esc(s.date)}</td>
-        <td>${esc(s.party)}</td>
-        <td>${esc(s.stone)}${stoneBadge(s.stone)}</td>
-        <td>${esc(s.lot)}</td>
-        <td>${esc(s.grade || s.format)}</td>
-        <td>${esc(s.description)}</td>
-        <td>${fmtNumber(s.cts)}</td>
-        <td>${fmtNumber(s.pcs,0)}</td>
-        <td>${fmtNumber(s.price)}</td>
-        <td style="color:#bbb">—</td>
-        <td style="color:#8C6400;font-weight:600">${fmtNumber(Math.abs(s.amount))}</td>
-        <td class="${valClass(runCTS)}">${fmtNumber(runCTS)}</td>
-        <td class="${valClass(runPCS)}">${fmtNumber(runPCS,0)}</td>
-        <td style="color:#bbb">—</td>
-      `;
-      tbody.appendChild(cr);
-    });
-
-    rowNum++;
-  });
-
-  updateTotalsFooter(groups.length, totalCTS, totalAmt, totalSold);
-
-  // Bind expand/collapse
-  document.querySelectorAll('.parent-row').forEach(row=>{
-    row.addEventListener('click', ()=>{
-      const key = row.dataset.key;
-      const chev = row.querySelector('.chev');
-      const children = document.querySelectorAll(`tr.child-row[data-parent="${CSS.escape(key)}"]`);
-      const isOpen = expanded.has(key);
-
-      if(isOpen){
-        children.forEach(c=>{
-          c.style.opacity='0';
-          c.style.transform='translateY(-4px)';
-          setTimeout(()=>c.classList.remove('show'), 200);
-        });
-        expanded.delete(key);
-        chev.textContent='▶';
-        row.classList.remove('expanded');
-      }else{
-        children.forEach(c=>{
-          c.classList.add('show');
-          setTimeout(()=>{c.style.opacity='1';c.style.transform='translateY(0)'},10);
-        });
-        expanded.add(key);
-        chev.textContent='▼';
-        row.classList.add('expanded');
-      }
-    });
-  });
-}
-
-function stoneBadge(stone){
-  if(stone==='AJMZ') return ' <span class="badge ajmz">AJMZ</span>';
-  if(stone==='CALIBRATE') return ' <span class="badge calib">CAL</span>';
-  return '';
-}
-
-function valClass(n){
-  const v = Number(n||0);
-  return v>0.01 ? 'val-pos' : v<-0.01 ? 'val-neg' : 'val-zero';
-}
-
-function updateTotalsFooter(count, cts, amt, sold){
-  document.getElementById('totalRecords').textContent = count;
-  document.getElementById('totalCTS').textContent = fmtNumber(cts);
-  document.getElementById('totalAmount').textContent = fmtNumber(amt);
-  document.getElementById('totalSold').textContent = fmtNumber(sold);
-}
-
-/* ======================= UPDATE KPIs ========================= */
-function updateKPIs(){
-  let totalRecords = groups.length;
-  let totalCTS = 0, totalPCS = 0, totalAmt = 0, soldAmt = 0;
-  let balCTS = 0, balPCS = 0;
-
-  groups.forEach(g=>{
-    const a = g.add;
-    totalCTS += a.cts;
-    totalPCS += a.pcs;
-    totalAmt += a.amount;
-    soldAmt += g.sells.reduce((s,x)=>s+Math.abs(x.amount), 0);
-
-    const bC = a.cts + g.sells.reduce((s,x)=>s+x.cts, 0);
-    const bP = a.pcs + g.sells.reduce((s,x)=>s+x.pcs, 0);
-    balCTS += bC;
-    balPCS += bP;
-  });
-
-  document.getElementById('kpiTotalRecords').textContent = totalRecords;
-  document.getElementById('kpiTotalCTS').textContent = fmtNumber(totalCTS);
-  document.getElementById('kpiTotalAmount').textContent = fmtNumber(totalAmt);
-  document.getElementById('kpiSoldAmount').textContent = fmtNumber(soldAmt);
-  document.getElementById('kpiBalanceCTS').textContent = fmtNumber(balCTS);
-  document.getElementById('kpiBalancePCS').textContent = fmtNumber(balPCS,0);
-}
-
-/* ======================= RENDER SUMMARY ========================= */
-function renderSummary(){
-  const content = document.getElementById('summaryContent');
-
-  if(activeSummary === 'overall'){
-    renderSummaryOverall(content);
-  }else if(activeSummary === 'stone'){
-    renderSummaryByStone(content);
-  }else if(activeSummary === 'lot'){
-    renderSummaryByLot(content);
-  }else if(activeSummary === 'party_add'){
-    renderSummaryByPartyADD(content);
-  }else if(activeSummary === 'party_sell'){
-    renderSummaryByPartySELL(content);
-  }else if(activeSummary === 'grade'){
-    renderSummaryByGrade(content);
-  }
-}
-
-function renderSummaryOverall(container){
-  let totalCTS=0, totalPCS=0, totalAmt=0;
-  let soldCTS=0, soldPCS=0, soldAmt=0;
-
-  groups.forEach(g=>{
-    totalCTS += g.add.cts;
-    totalPCS += g.add.pcs;
-    totalAmt += g.add.amount;
-    g.sells.forEach(s=>{
-      soldCTS += Math.abs(s.cts);
-      soldPCS += Math.abs(s.pcs);
-      soldAmt += Math.abs(s.amount);
-    });
-  });
-
-  const html = `
-    <div style="padding:16px;">
-      <!-- Top Row: 5 cards -->
-      <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:12px;">
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total Records</div>
-          <div style="font-size:32px;font-weight:700;color:var(--ink)">${groups.length}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total CTS</div>
-          <div style="font-size:32px;font-weight:700;color:var(--ink)">${fmtNumber(totalCTS)}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total PCS</div>
-          <div style="font-size:32px;font-weight:700;color:var(--ink)">${fmtNumber(totalPCS,0)}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Total Amount</div>
-          <div style="font-size:32px;font-weight:700;color:var(--ink)">${fmtNumber(totalAmt)}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Sold CTS</div>
-          <div style="font-size:32px;font-weight:700;color:#8C6400">${fmtNumber(soldCTS)}</div>
-        </div>
-      </div>
-
-      <!-- Bottom Row: 4 cards -->
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Sold PCS</div>
-          <div style="font-size:32px;font-weight:700;color:#8C6400">${fmtNumber(soldPCS,0)}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Sold Amount</div>
-          <div style="font-size:32px;font-weight:700;color:#8C6400">${fmtNumber(soldAmt)}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:3px solid var(--success)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Balance CTS</div>
-          <div style="font-size:32px;font-weight:700;color:var(--success)">${fmtNumber(totalCTS-soldCTS)}</div>
-        </div>
-        <div style="background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.05);border-left:3px solid var(--success)">
-          <div style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;margin-bottom:8px;font-weight:600;letter-spacing:.02em">Balance PCS</div>
-          <div style="font-size:32px;font-weight:700;color:var(--success)">${fmtNumber(totalPCS-soldPCS,0)}</div>
-        </div>
-      </div>
-    </div>
-  `;
-  container.innerHTML = html;
-}
-
-function renderSummaryByStone(container){
-  const map = {};
-  groups.forEach(g=>{
-    const stone = g.add.stone || 'N/A';
-    if(!map[stone]) map[stone] = {tCTS:0, tPCS:0, tAmt:0, sCTS:0, sPCS:0, sAmt:0};
-    map[stone].tCTS += g.add.cts;
-    map[stone].tPCS += g.add.pcs;
-    map[stone].tAmt += g.add.amount;
-    g.sells.forEach(s=>{
-      map[stone].sCTS += Math.abs(s.cts);
-      map[stone].sPCS += Math.abs(s.pcs);
-      map[stone].sAmt += Math.abs(s.amount);
-    });
-  });
-
-  let rows = '';
-  let totT_CTS=0, totT_PCS=0, totT_Amt=0, totS_CTS=0, totS_PCS=0, totS_Amt=0;
-
-  Object.keys(map).sort().forEach(stone=>{
-    const m = map[stone];
-    rows += `
-      <tr>
-        <td>${esc(stone)}${stoneBadge(stone)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.tPCS,0)}</td>
-        <td style="text-align:right">${fmtNumber(m.tAmt)}</td>
-        <td style="text-align:right">${fmtNumber(m.sCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.sPCS,0)}</td>
-        <td style="text-align:right">${fmtNumber(m.sAmt)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS-m.sCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.tPCS-m.sPCS,0)}</td>
-      </tr>
-    `;
-    totT_CTS+=m.tCTS; totT_PCS+=m.tPCS; totT_Amt+=m.tAmt;
-    totS_CTS+=m.sCTS; totS_PCS+=m.sPCS; totS_Amt+=m.sAmt;
-  });
-
-  const html = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Stone</th>
-          <th style="text-align:right">Total CTS</th>
-          <th style="text-align:right">Total PCS</th>
-          <th style="text-align:right">Total Amt</th>
-          <th style="text-align:right">Sold CTS</th>
-          <th style="text-align:right">Sold PCS</th>
-          <th style="text-align:right">Sold Amt</th>
-          <th style="text-align:right">Bal CTS</th>
-          <th style="text-align:right">Bal PCS</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr style="font-weight:700;border-top:2px solid var(--line)">
-          <td>TOTAL</td>
-          <td style="text-align:right">${fmtNumber(totT_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totT_PCS,0)}</td>
-          <td style="text-align:right">${fmtNumber(totT_Amt)}</td>
-          <td style="text-align:right">${fmtNumber(totS_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totS_PCS,0)}</td>
-          <td style="text-align:right">${fmtNumber(totS_Amt)}</td>
-          <td style="text-align:right">${fmtNumber(totT_CTS-totS_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totT_PCS-totS_PCS,0)}</td>
-        </tr>
-      </tfoot>
-    </table>
-  `;
-  container.innerHTML = html;
-}
-
-function renderSummaryByLot(container){
-  const map = {};
-  groups.forEach(g=>{
-    const lot = g.add.lot || 'N/A';
-    if(!map[lot]) map[lot] = {tCTS:0, tPCS:0, tAmt:0, sCTS:0, sPCS:0, sAmt:0};
-    map[lot].tCTS += g.add.cts;
-    map[lot].tPCS += g.add.pcs;
-    map[lot].tAmt += g.add.amount;
-    g.sells.forEach(s=>{
-      map[lot].sCTS += Math.abs(s.cts);
-      map[lot].sPCS += Math.abs(s.pcs);
-      map[lot].sAmt += Math.abs(s.amount);
-    });
-  });
-
-  let rows = '';
-  let totT_CTS=0, totT_PCS=0, totT_Amt=0, totS_CTS=0, totS_PCS=0, totS_Amt=0;
-
-  Object.keys(map).sort().forEach(lot=>{
-    const m = map[lot];
-    rows += `
-      <tr>
-        <td>${esc(lot)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.tPCS,0)}</td>
-        <td style="text-align:right">${fmtNumber(m.tAmt)}</td>
-        <td style="text-align:right">${fmtNumber(m.sCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.sPCS,0)}</td>
-        <td style="text-align:right">${fmtNumber(m.sAmt)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS-m.sCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.tPCS-m.sPCS,0)}</td>
-      </tr>
-    `;
-    totT_CTS+=m.tCTS; totT_PCS+=m.tPCS; totT_Amt+=m.tAmt;
-    totS_CTS+=m.sCTS; totS_PCS+=m.sPCS; totS_Amt+=m.sAmt;
-  });
-
-  const html = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Lot</th>
-          <th style="text-align:right">Total CTS</th>
-          <th style="text-align:right">Total PCS</th>
-          <th style="text-align:right">Total Amt</th>
-          <th style="text-align:right">Sold CTS</th>
-          <th style="text-align:right">Sold PCS</th>
-          <th style="text-align:right">Sold Amt</th>
-          <th style="text-align:right">Bal CTS</th>
-          <th style="text-align:right">Bal PCS</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr style="font-weight:700;border-top:2px solid var(--line)">
-          <td>TOTAL</td>
-          <td style="text-align:right">${fmtNumber(totT_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totT_PCS,0)}</td>
-          <td style="text-align:right">${fmtNumber(totT_Amt)}</td>
-          <td style="text-align:right">${fmtNumber(totS_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totS_PCS,0)}</td>
-          <td style="text-align:right">${fmtNumber(totS_Amt)}</td>
-          <td style="text-align:right">${fmtNumber(totT_CTS-totS_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totT_PCS-totS_PCS,0)}</td>
-        </tr>
-      </tfoot>
-    </table>
-  `;
-  container.innerHTML = html;
-}
-
-function renderSummaryByPartyADD(container){
-  const map = {};
-  groups.forEach(g=>{
-    const party = g.add.party || 'N/A';
-    if(!map[party]) map[party] = {tCTS:0, tPCS:0, tAmt:0};
-    map[party].tCTS += g.add.cts;
-    map[party].tPCS += g.add.pcs;
-    map[party].tAmt += g.add.amount;
-  });
-
-  let rows = '';
-  let totCTS=0, totPCS=0, totAmt=0;
-
-  Object.keys(map).sort().forEach(party=>{
-    const m = map[party];
-    rows += `
-      <tr>
-        <td>${esc(party)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.tPCS,0)}</td>
-        <td style="text-align:right">${fmtNumber(m.tAmt)}</td>
-      </tr>
-    `;
-    totCTS+=m.tCTS; totPCS+=m.tPCS; totAmt+=m.tAmt;
-  });
-
-  const html = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Party</th>
-          <th style="text-align:right">Total CTS</th>
-          <th style="text-align:right">Total PCS</th>
-          <th style="text-align:right">Total Amount</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr style="font-weight:700;border-top:2px solid var(--line)">
-          <td>TOTAL</td>
-          <td style="text-align:right">${fmtNumber(totCTS)}</td>
-          <td style="text-align:right">${fmtNumber(totPCS,0)}</td>
-          <td style="text-align:right">${fmtNumber(totAmt)}</td>
-        </tr>
-      </tfoot>
-    </table>
-  `;
-  container.innerHTML = html;
-}
-
-function renderSummaryByPartySELL(container){
-  const map = {};
-  groups.forEach(g=>{
-    g.sells.forEach(s=>{
-      const party = s.party || 'N/A';
-      if(!map[party]) map[party] = {sCTS:0, sPCS:0, sAmt:0};
-      map[party].sCTS += Math.abs(s.cts);
-      map[party].sPCS += Math.abs(s.pcs);
-      map[party].sAmt += Math.abs(s.amount);
-    });
-  });
-
-  let rows = '';
-  let totCTS=0, totPCS=0, totAmt=0;
-
-  Object.keys(map).sort().forEach(party=>{
-    const m = map[party];
-    rows += `
-      <tr>
-        <td>${esc(party)}</td>
-        <td style="text-align:right">${fmtNumber(m.sCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.sPCS,0)}</td>
-        <td style="text-align:right">${fmtNumber(m.sAmt)}</td>
-      </tr>
-    `;
-    totCTS+=m.sCTS; totPCS+=m.sPCS; totAmt+=m.sAmt;
-  });
-
-  const html = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Party</th>
-          <th style="text-align:right">Sold CTS</th>
-          <th style="text-align:right">Sold PCS</th>
-          <th style="text-align:right">Sold Amount</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr style="font-weight:700;border-top:2px solid var(--line)">
-          <td>TOTAL</td>
-          <td style="text-align:right">${fmtNumber(totCTS)}</td>
-          <td style="text-align:right">${fmtNumber(totPCS,0)}</td>
-          <td style="text-align:right">${fmtNumber(totAmt)}</td>
-        </tr>
-      </tfoot>
-    </table>
-  `;
-  container.innerHTML = html;
-}
-
-function renderSummaryByGrade(container){
-  const map = {};
-  groups.forEach(g=>{
-    if(g.add.stone !== 'CALIBRATE') return;
-    const grade = g.add.grade || 'N/A';
-    if(!map[grade]) map[grade] = {tCTS:0, tAmt:0, sCTS:0, sAmt:0};
-    map[grade].tCTS += g.add.cts;
-    map[grade].tAmt += g.add.amount;
-    g.sells.forEach(s=>{
-      map[grade].sCTS += Math.abs(s.cts);
-      map[grade].sAmt += Math.abs(s.amount);
-    });
-  });
-
-  let rows = '';
-  let totT_CTS=0, totT_Amt=0, totS_CTS=0, totS_Amt=0;
-
-  Object.keys(map).sort().forEach(grade=>{
-    const m = map[grade];
-    rows += `
-      <tr>
-        <td>${esc(grade)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.tAmt)}</td>
-        <td style="text-align:right">${fmtNumber(m.sCTS)}</td>
-        <td style="text-align:right">${fmtNumber(m.sAmt)}</td>
-        <td style="text-align:right">${fmtNumber(m.tCTS-m.sCTS)}</td>
-      </tr>
-    `;
-    totT_CTS+=m.tCTS; totT_Amt+=m.tAmt;
-    totS_CTS+=m.sCTS; totS_Amt+=m.sAmt;
-  });
-
-  const html = `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Grade</th>
-          <th style="text-align:right">Total CTS</th>
-          <th style="text-align:right">Total Amt</th>
-          <th style="text-align:right">Sold CTS</th>
-          <th style="text-align:right">Sold Amt</th>
-          <th style="text-align:right">Bal CTS</th>
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-      <tfoot>
-        <tr style="font-weight:700;border-top:2px solid var(--line)">
-          <td>TOTAL</td>
-          <td style="text-align:right">${fmtNumber(totT_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totT_Amt)}</td>
-          <td style="text-align:right">${fmtNumber(totS_CTS)}</td>
-          <td style="text-align:right">${fmtNumber(totS_Amt)}</td>
-          <td style="text-align:right">${fmtNumber(totT_CTS-totS_CTS)}</td>
-        </tr>
-      </tfoot>
-    </table>
-  `;
-  container.innerHTML = html;
-}
-
-/* ======================= ACTIVE FILTERS ========================= */
-function renderActiveFilters(){
-  const container = document.getElementById('activeFilters');
-  container.innerHTML = '';
-
-  if(stoneFilter !== 'ALL'){
-    container.innerHTML += `<div class="filter-pill">Stone: ${stoneFilter} <span class="close" data-clear="stone">×</span></div>`;
-  }
-  if(viewFilter === 'OPEN'){
-    container.innerHTML += `<div class="filter-pill">View: Open Balances <span class="close" data-clear="view">×</span></div>`;
-  }
-  if(quickSearch){
-    container.innerHTML += `<div class="filter-pill">Search: ${esc(quickSearch)} <span class="close" data-clear="search">×</span></div>`;
-  }
-  if(dateFrom || dateTo){
-    const label = dateFrom && dateTo ? `${dateFrom} → ${dateTo}` : dateFrom ? `From: ${dateFrom}` : `To: ${dateTo}`;
-    container.innerHTML += `<div class="filter-pill">Date: ${label} <span class="close" data-clear="date">×</span></div>`;
-  }
-
-  // Bind clear buttons
-  container.querySelectorAll('.close').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const type = btn.dataset.clear;
-      if(type === 'stone'){
-        stoneFilter = 'ALL';
-        document.querySelectorAll('.stone-filter').forEach(b=>b.classList.remove('active'));
-        document.querySelector('.stone-filter[data-stone="ALL"]').classList.add('active');
-      }else if(type === 'view'){
-        viewFilter = 'ALL';
-        document.querySelectorAll('.view-filter').forEach(b=>b.classList.remove('active'));
-        document.querySelector('.view-filter[data-view="ALL"]').classList.add('active');
-      }else if(type === 'search'){
-        quickSearch = '';
-        document.getElementById('quickSearch').value = '';
-      }else if(type === 'date'){
-        dateFrom = '';
-        dateTo = '';
-        document.getElementById('dateFrom').value = '';
-        document.getElementById('dateTo').value = '';
-      }
-      applyFilters();
-    });
-  });
-}
-
-/* ======================= EXPORT CSV ========================= */
-function exportCSV(){
-  const rows = [[
-    '#','TX ID','Date','Party','Stone','Lot','Grade/Format','Description',
-    'CTS','PCS','Price','Total Amount','Sold Amount','Bal CTS','Bal PCS','# Sells','Type'
-  ]];
-
-  let rowNum = 1;
-  groups.forEach(g=>{
-    const a = g.add;
-    const sells = g.sells.sort((x,y)=> String(x.date).localeCompare(String(y.date)));
-    const soldAmt = sells.reduce((s,x)=>s+Math.abs(x.amount), 0);
-    const balCTS = a.cts + sells.reduce((s,x)=>s+x.cts, 0);
-    const balPCS = a.pcs + sells.reduce((s,x)=>s+x.pcs, 0);
-
-    rows.push([
-      rowNum++, a.txId, a.date, a.party, a.stone, a.lot, a.grade || a.format,
-      a.description, a.cts, a.pcs, a.price, a.amount, soldAmt, balCTS, balPCS, sells.length, 'ADD'
-    ]);
-
-    let runCTS = a.cts, runPCS = a.pcs;
-    sells.forEach(s=>{
-      runCTS += s.cts;
-      runPCS += s.pcs;
-      rows.push([
-        '→', s.txId, s.date, s.party, s.stone, s.lot, s.grade || s.format,
-        s.description, s.cts, s.pcs, s.price, '', Math.abs(s.amount), runCTS, runPCS, '', 'SELL'
-      ]);
-    });
-  });
-
-  const csv = rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
-  const blob = new Blob([csv], {type: 'text/csv'});
+      return text;
+    }).join(',');
+  }).join('\n');
+  
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `inventory-report-${new Date().toISOString().slice(0,10)}.csv`;
-  a.click();
-  URL.revokeObjectURL(url);
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
-/* ======================= EVENT BINDINGS ========================= */
-function bindEvents(){
-  // Refresh
-  document.getElementById('btnRefresh').addEventListener('click', loadAllData);
+function printTable(printAreaId){
+  window.print();
+}
 
-  // Export & Print
-  document.getElementById('btnExport').addEventListener('click', exportCSV);
-  document.getElementById('btnPrint').addEventListener('click', ()=>window.print());
 
-  // Stone filter
-  document.querySelectorAll('.stone-filter').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.stone-filter').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      stoneFilter = btn.dataset.stone;
-      applyFilters();
+/* ===================== AJMZ VIEW ========================= */
+function applyAJMZFilters(globalSearch=""){
+  const typeVal   = document.getElementById("aj_filter_type").value;
+  const lotVal    = searchableSelects.aj_lot?.getValue() || "";
+  const fmtVal    = searchableSelects.aj_format?.getValue() || "";
+  const shapeVal  = searchableSelects.aj_shape?.getValue() || "";
+  const dateFrom  = document.getElementById("aj_filter_date_from").value;
+  const dateTo    = document.getElementById("aj_filter_date_to").value;
+  const q = (globalSearch||"").toLowerCase();
+
+  const tbody=document.getElementById("tbodyAJMZ");
+  tbody.innerHTML="";
+
+  let totalAddedCTS=0,totalAddedPCS=0,totalAddedAmt=0;
+  let totalSoldCTS=0,totalSoldPCS=0,totalSoldAmt=0;
+  let totalInvCTS=0,totalInvPCS=0;
+  let totalCostSold=0;
+
+  AJMZ_TREE.forEach(row=>{
+    const p=row.parent;
+    const lot=p.lotName || "";
+    const fmtTxt=p.lotFormat || "";
+    const shape=p.shape || "";
+
+    const parentText=(JSON.stringify(p)||"").toLowerCase();
+
+    const sumSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
+    const sumSellPCS=row.sells.reduce((a,s)=>a+s.pcs,0);
+    const origCTS=p.cts + sumSellCTS;
+    const origPCS=p.pcs + sumSellPCS;
+
+    const parentDate=p.date || "";
+    if(lotVal && lotVal!==lot) return;
+    if(fmtVal && fmtVal!==fmtTxt) return;
+    if(shapeVal && shapeVal!==shape) return;
+    if((dateFrom || dateTo) && !dateInRange(parentDate,dateFrom,dateTo)) return;
+
+    if(q && !parentText.includes(q)){
+      const hasChild=row.sells.some(s=>{
+        const txt=JSON.stringify(s).toLowerCase();
+        if(q && !txt.includes(q)) return false;
+        return true;
+      });
+      if(!hasChild) return;
+    }
+
+    if(!typeVal || typeVal==="ADD"){
+      const addRowHtml = `
+        <tr class="add-row">
+          <td><span class="badge badge-add">ADD</span></td>
+          <td>${esc(parentDate)}</td>
+          <td>${esc(p.txId || "")}</td>
+          <td>${esc(lot)}</td>
+          <td>${esc(fmtTxt)}</td>
+          <td>${esc(p.description || "")}</td>
+          <td>${esc(shape)}</td>
+          <td>${fmt(origCTS)}</td>
+          <td>${fmt(origPCS)}</td>
+          <td>${fmt(p.price)}</td>
+          <td>${fmt(origCTS * p.price)}</td>
+          <td>${esc(p.party || "")}</td>
+          <td>${esc(p.remarks || "")}</td>
+          <td></td>
+        </tr>`;
+      tbody.insertAdjacentHTML("beforeend",addRowHtml);
+
+      totalAddedCTS += origCTS;
+      totalAddedPCS += origPCS;
+      totalAddedAmt += origCTS * p.price;
+    }
+
+    totalInvCTS += p.cts;
+    totalInvPCS += p.pcs;
+
+    row.sells.forEach(s=>{
+      const sDate=s.date || parentDate;
+      if((dateFrom || dateTo) && !dateInRange(sDate,dateFrom,dateTo)) return;
+
+      const childTxt=JSON.stringify(s).toLowerCase();
+      if(q && !childTxt.includes(q) && !parentText.includes(q)) return;
+
+      if(!typeVal || typeVal==="SELL"){
+        const sourceFrom=s.sourceFrom || `${p.txId||""} | ${lot} | ${fmtTxt}`;
+        const sellHTML=`
+          <tr class="sell-row">
+            <td><span class="badge badge-sell">SELL</span></td>
+            <td>${esc(sDate)}</td>
+            <td>${esc(s.txId || s.key)}</td>
+            <td>${esc(s.parentLot || lot)}</td>
+            <td>${esc(s.parentFormat || fmtTxt)}</td>
+            <td>${esc(s.parentDescription || p.description || "")}</td>
+            <td>${esc(shape)}</td>
+            <td>${fmt(s.cts)}</td>
+            <td>${fmt(s.pcs)}</td>
+            <td>${fmt(s.sellPrice)}</td>
+            <td>${fmt(s.amount)}</td>
+            <td>${esc(s.party || "")}</td>
+            <td>${esc(s.remarks || "")}</td>
+            <td>${esc(sourceFrom)}</td>
+          </tr>`;
+        tbody.insertAdjacentHTML("beforeend",sellHTML);
+      }
+
+      totalSoldCTS += s.cts;
+      totalSoldPCS += s.pcs;
+      totalSoldAmt += s.amount;
+
+      const cost = s.cost || 0;
+      totalCostSold += cost;
     });
   });
 
-  // View filter
-  document.querySelectorAll('.view-filter').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.view-filter').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      viewFilter = btn.dataset.view;
-      applyFilters();
+  const profit = totalSoldAmt - totalCostSold;
+  document.getElementById("aj_kpi_added_main").textContent =
+    `${fmt(totalAddedCTS)} CTS / ${fmt(totalAddedPCS)} PCS`;
+  document.getElementById("aj_kpi_added_sub").textContent =
+    `Amount: ${fmt(totalAddedAmt)}`;
+
+  document.getElementById("aj_kpi_sold_main").textContent =
+    `${fmt(totalSoldCTS)} CTS / ${fmt(totalSoldPCS)} PCS`;
+  document.getElementById("aj_kpi_sold_sub").textContent =
+    `Amount: ${fmt(totalSoldAmt)}`;
+
+  document.getElementById("aj_kpi_inv_main").textContent =
+    `${fmt(totalInvCTS)} CTS / ${fmt(totalInvPCS)} PCS`;
+  document.getElementById("aj_kpi_inv_sub").textContent = `Remaining quantity`;
+
+  const profitEl=document.getElementById("aj_kpi_profit_main");
+  profitEl.textContent = fmt(profit);
+  profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(profit>0) profitEl.classList.add("kpi-profit");
+  else if(profit<0) profitEl.classList.add("kpi-loss");
+}
+
+
+/* ==================== CALIB VIEW ========================= */
+function applyCALIBFilters(globalSearch=""){
+  const typeVal  = document.getElementById("cb_filter_type").value;
+  const lotVal   = searchableSelects.cb_lot?.getValue() || "";
+  const lotGrade = searchableSelects.cb_lotgrade?.getValue() || "";
+  const shapeSize= searchableSelects.cb_shapesize?.getValue() || "";
+  const dateFrom = document.getElementById("cb_filter_date_from").value;
+  const dateTo   = document.getElementById("cb_filter_date_to").value;
+  const q = (globalSearch||"").toLowerCase();
+
+  const tbody=document.getElementById("tbodyCALIB");
+  tbody.innerHTML="";
+
+  let totalAddedCTS=0,totalAddedAmt=0;
+  let totalSoldCTS=0,totalSoldAmt=0;
+  let totalInvCTS=0;
+  let totalCostSold=0;
+
+  CALIB_TREE.forEach(row=>{
+    const p=row.parent;
+    const lot=p.lotName || "";
+    const grade=p.grade || "";
+    const shape=p.shape || "";
+    const size=p.size || "";
+    const shapesz=`${shape} | ${size}`.trim();
+    const lotGradePair=`${lot} | ${grade}`.trim();
+
+    const parentText=JSON.stringify(p).toLowerCase();
+    const parentDate=p.date || "";
+
+    if(lotVal && lotVal!==lot) return;
+    if(lotGrade && lotGrade!==lotGradePair) return;
+    if(shapeSize && shapeSize!==shapesz) return;
+    if((dateFrom || dateTo) && !dateInRange(parentDate,dateFrom,dateTo)) return;
+
+    if(q && !parentText.includes(q)){
+      const hasChild=row.sells.some(s=>JSON.stringify(s).toLowerCase().includes(q));
+      if(!hasChild) return;
+    }
+
+    const sumSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
+    const origCTS=p.cts + sumSellCTS;
+
+    if(!typeVal || typeVal==="ADD"){
+      const addHTML=`
+        <tr class="add-row">
+          <td><span class="badge badge-add">ADD</span></td>
+          <td>${esc(parentDate)}</td>
+          <td>${esc(p.txId || "")}</td>
+          <td>${esc(lot)}</td>
+          <td>${esc(grade)}</td>
+          <td>${esc(p.description || "")}</td>
+          <td>${esc(shape)}</td>
+          <td>${esc(size)}</td>
+          <td>${fmt(origCTS)}</td>
+          <td>${fmt(p.price)}</td>
+          <td>${fmt(origCTS * p.price)}</td>
+          <td>${esc(p.party || "")}</td>
+          <td>${esc(p.remarks || "")}</td>
+          <td></td>
+        </tr>`;
+      tbody.insertAdjacentHTML("beforeend",addHTML);
+      totalAddedCTS += origCTS;
+      totalAddedAmt += origCTS * p.price;
+    }
+
+    totalInvCTS += p.cts;
+
+    row.sells.forEach(s=>{
+      const sDate=s.date || parentDate;
+      if((dateFrom || dateTo) && !dateInRange(sDate,dateFrom,dateTo)) return;
+      
+      const childTxt=JSON.stringify(s).toLowerCase();
+      if(q && !childTxt.includes(q) && !parentText.includes(q)) return;
+
+      if(!typeVal || typeVal==="SELL"){
+        const sourceFrom=s.sourceFrom || `${p.txId||""} | ${lot} | ${grade}`;
+        const sellHTML=`
+          <tr class="sell-row">
+            <td><span class="badge badge-sell">SELL</span></td>
+            <td>${esc(sDate)}</td>
+            <td>${esc(s.txId || s.key)}</td>
+            <td>${esc(s.parentLot || lot)}</td>
+            <td>${esc(s.parentGrade || grade)}</td>
+            <td>${esc(s.parentDescription || p.description || "")}</td>
+            <td>${esc(shape)}</td>
+            <td>${esc(size)}</td>
+            <td>${fmt(s.cts)}</td>
+            <td>${fmt(s.sellPrice)}</td>
+            <td>${fmt(s.amount)}</td>
+            <td>${esc(s.party || "")}</td>
+            <td>${esc(s.remarks || "")}</td>
+            <td>${esc(sourceFrom)}</td>
+          </tr>`;
+        tbody.insertAdjacentHTML("beforeend",sellHTML);
+      }
+
+      totalSoldCTS += s.cts;
+      totalSoldAmt += s.amount;
+      const cost = s.cost || 0;
+      totalCostSold += cost;
     });
   });
 
-  // Search
-  document.getElementById('quickSearch').addEventListener('input', e=>{
-    quickSearch = e.target.value.trim();
-    applyFilters();
+  const profit=totalSoldAmt-totalCostSold;
+
+  document.getElementById("cb_kpi_added_main").textContent = `${fmt(totalAddedCTS)} CTS`;
+  document.getElementById("cb_kpi_added_sub").textContent  = `Amount: ${fmt(totalAddedAmt)}`;
+  document.getElementById("cb_kpi_sold_main").textContent  = `${fmt(totalSoldCTS)} CTS`;
+  document.getElementById("cb_kpi_sold_sub").textContent   = `Amount: ${fmt(totalSoldAmt)}`;
+  document.getElementById("cb_kpi_inv_main").textContent   = `${fmt(totalInvCTS)} CTS`;
+  document.getElementById("cb_kpi_inv_sub").textContent    = `Remaining quantity`;
+
+  const profitEl=document.getElementById("cb_kpi_profit_main");
+  profitEl.textContent = fmt(profit);
+  profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(profit>0) profitEl.classList.add("kpi-profit");
+  else if(profit<0) profitEl.classList.add("kpi-loss");
+}
+
+/* ================== ALL STONES VIEW ====================== */
+function applyALLFilters(globalSearch=""){
+  const srcVal   = document.getElementById("all_filter_source").value;
+  const lotVal   = searchableSelects.all_lot?.getValue() || "";
+  const gfVal    = searchableSelects.all_gradefmt?.getValue() || "";
+  const partyVal = searchableSelects.all_party?.getValue() || "";
+  const dateFrom = document.getElementById("all_filter_date_from").value;
+  const dateTo   = document.getElementById("all_filter_date_to").value;
+  const q=(globalSearch||"").toLowerCase();
+
+  const tbody=document.getElementById("tbodyALL");
+  tbody.innerHTML="";
+
+  let totalAddedCTS=0,totalAddedPCS=0,totalAddedAmt=0;
+  let totalSoldCTS=0,totalSoldPCS=0,totalSoldAmt=0;
+  let totalInvCTS=0,totalInvPCS=0;
+  let totalCostSold=0;
+
+  const invMap=new Map();
+  ALL_ROWS.forEach(r=>{
+    const key=`${r.source}|${r.lot}|${r.gradeFmt}`;
+    const entry=invMap.get(key) || {addCTS:0,addPCS:0,soldCTS:0,soldPCS:0,price:r.price};
+    if(r.type==="ADD"){
+      entry.addCTS+=r.cts;
+      entry.addPCS+=r.pcs;
+      if(r.price) entry.price=r.price;
+    }else if(r.type==="SELL"){
+      entry.soldCTS+=r.cts;
+      entry.soldPCS+=r.pcs;
+    }
+    invMap.set(key,entry);
   });
 
-  // Date filters
-  document.getElementById('dateFrom').addEventListener('change', e=>{
-    dateFrom = e.target.value;
-    applyFilters();
-  });
-  document.getElementById('dateTo').addEventListener('change', e=>{
-    dateTo = e.target.value;
-    applyFilters();
+  ALL_ROWS.forEach(r=>{
+    if(srcVal && r.source!==srcVal) return;
+    if(lotVal && r.lot!==lotVal) return;
+    if(gfVal && r.gradeFmt!==gfVal) return;
+    if(partyVal && r.party!==partyVal) return;
+    if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
+
+    const txt=JSON.stringify(r).toLowerCase();
+    if(q && !txt.includes(q)) return;
+
+    const keyRow=`${r.source}|${r.lot}|${r.gradeFmt}`;
+    const inv=invMap.get(keyRow) || {addCTS:0,addPCS:0,soldCTS:0,soldPCS:0,price:r.price};
+
+    if(r.type==="ADD"){
+      totalAddedCTS+=r.cts;
+      totalAddedPCS+=r.pcs;
+      totalAddedAmt+=r.amount;
+    }else if(r.type==="SELL"){
+      totalSoldCTS+=r.cts;
+      totalSoldPCS+=r.pcs;
+      totalSoldAmt+=r.amount;
+      const cost = r.cost || 0;
+      totalCostSold+=cost;
+    }
+
+    const remCTS=inv.addCTS - inv.soldCTS;
+    const remPCS=inv.addPCS - inv.soldPCS;
+    if(remCTS>0 || remPCS>0){
+      totalInvCTS += remCTS;
+      totalInvPCS += remPCS;
+    }
+
+    const srcBadge = r.source==="AJMZ"
+      ? `<span class="badge badge-source-ajmz">AJMZ</span>`
+      : `<span class="badge badge-source-calib">CALIB</span>`;
+
+    const tr=`
+      <tr class="${r.type==="ADD"?"add-row":"sell-row"}">
+        <td>${srcBadge}</td>
+        <td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td>
+        <td>${esc(r.date||"")}</td>
+        <td>${esc(r.txId||"")}</td>
+        <td>${esc(r.lot||"")}</td>
+        <td>${esc(r.gradeFmt||"")}</td>
+        <td>${esc(r.description||"")}</td>
+        <td>${fmt(r.cts)}</td>
+        <td>${fmt(r.pcs)}</td>
+        <td>${fmt(r.price)}</td>
+        <td>${fmt(r.amount)}</td>
+        <td>${esc(r.party||"")}</td>
+        <td>${esc(r.remarks||"")}</td>
+      </tr>`;
+    tbody.insertAdjacentHTML("beforeend",tr);
   });
 
-  // Summary tabs
-  document.querySelectorAll('.summary-tab').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      document.querySelectorAll('.summary-tab').forEach(b=>b.classList.remove('active'));
-      btn.classList.add('active');
-      activeSummary = btn.dataset.summary;
-      renderSummary();
+  const profit=totalSoldAmt-totalCostSold;
+  document.getElementById("all_kpi_added_main").textContent =
+    `${fmt(totalAddedCTS)} CTS / ${fmt(totalAddedPCS)} PCS`;
+  document.getElementById("all_kpi_added_sub").textContent  =
+    `Amount: ${fmt(totalAddedAmt)}`;
+
+  document.getElementById("all_kpi_sold_main").textContent =
+    `${fmt(totalSoldCTS)} CTS / ${fmt(totalSoldPCS)} PCS`;
+  document.getElementById("all_kpi_sold_sub").textContent  =
+    `Amount: ${fmt(totalSoldAmt)}`;
+
+  document.getElementById("all_kpi_inv_main").textContent =
+    `${fmt(totalInvCTS)} CTS / ${fmt(totalInvPCS)} PCS`;
+  document.getElementById("all_kpi_inv_sub").textContent = `Approx. remaining quantity`;
+
+  const profitEl=document.getElementById("all_kpi_profit_main");
+  profitEl.textContent=fmt(profit);
+  profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(profit>0) profitEl.classList.add("kpi-profit");
+  else if(profit<0) profitEl.classList.add("kpi-loss");
+}
+
+/* ==================== PARTY VIEW ========================= */
+function applyPARTYFilters(globalSearch=""){
+  const partyVal = searchableSelects.py_party?.getValue() || "";
+  const srcVal   = document.getElementById("py_filter_source").value;
+  const dateFrom = document.getElementById("py_filter_date_from").value;
+  const dateTo   = document.getElementById("py_filter_date_to").value;
+  const q=(globalSearch||"").toLowerCase();
+
+  const tbody=document.getElementById("tbodyPARTY");
+  tbody.innerHTML="";
+
+  let totalSoldCTS=0,totalSoldPCS=0,totalSoldAmt=0,totalProfit=0;
+  const partySet=new Set();
+  let ajCTS=0, cbCTS=0;
+
+  PARTY_ROWS.forEach(r=>{
+    if(partyVal && r.party!==partyVal) return;
+    if(srcVal && r.source!==srcVal) return;
+    if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
+
+    const txt=JSON.stringify(r).toLowerCase();
+    if(q && !txt.includes(q)) return;
+
+    partySet.add(r.party);
+
+    totalSoldCTS+=r.cts;
+    totalSoldPCS+=r.pcs;
+    totalSoldAmt+=r.amount;
+    totalProfit+=r.profit;
+
+    if(r.source==="AJMZ") ajCTS+=r.cts;
+    else if(r.source==="CALIB") cbCTS+=r.cts;
+
+    const srcBadge = r.source==="AJMZ"
+      ? `<span class="badge badge-source-ajmz">AJMZ</span>`
+      : `<span class="badge badge-source-calib">CALIB</span>`;
+
+    const tr=`
+      <tr class="sell-row">
+        <td>${esc(r.party||"")}</td>
+        <td>${srcBadge}</td>
+        <td>${esc(r.date||"")}</td>
+        <td>${esc(r.txId||"")}</td>
+        <td>${esc(r.lot||"")}</td>
+        <td>${esc(r.gradeFmt||"")}</td>
+        <td>${fmt(r.cts)}</td>
+        <td>${fmt(r.pcs)}</td>
+        <td>${fmt(r.price)}</td>
+        <td>${fmt(r.amount)}</td>
+        <td>${fmt(r.cost)}</td>
+        <td>${fmt(r.profit)}</td>
+        <td>${esc(r.remarks||"")}</td>
+      </tr>`;
+    tbody.insertAdjacentHTML("beforeend",tr);
+  });
+
+  document.getElementById("py_kpi_sold_main").textContent =
+    `${fmt(totalSoldCTS)} CTS / ${fmt(totalSoldPCS)} PCS`;
+  document.getElementById("py_kpi_sold_sub").textContent =
+    `Amount: ${fmt(totalSoldAmt)}`;
+
+  document.getElementById("py_kpi_party_main").textContent = partySet.size;
+  document.getElementById("py_kpi_party_sub").textContent  = `Parties with sell records`;
+
+  document.getElementById("py_kpi_split_main").textContent =
+    `${fmt(ajCTS)} / ${fmt(cbCTS)}`;
+  document.getElementById("py_kpi_split_sub").textContent  =
+    `AJMZ CTS / CALIB CTS`;
+
+  const profitEl=document.getElementById("py_kpi_profit_main");
+  profitEl.textContent=fmt(totalProfit);
+  profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(totalProfit>0) profitEl.classList.add("kpi-profit");
+  else if(totalProfit<0) profitEl.classList.add("kpi-loss");
+}
+
+/* ==================== CLEAR FILTERS ====================== */
+function clearAJMZFilters(){
+  document.getElementById("aj_filter_type").value="";
+  searchableSelects.aj_lot?.reset();
+  searchableSelects.aj_format?.reset();
+  searchableSelects.aj_shape?.reset();
+  document.getElementById("aj_filter_date_from").value="";
+  document.getElementById("aj_filter_date_to").value="";
+}
+function clearCALIBFilters(){
+  document.getElementById("cb_filter_type").value="";
+  searchableSelects.cb_lot?.reset();
+  searchableSelects.cb_lotgrade?.reset();
+  searchableSelects.cb_shapesize?.reset();
+  document.getElementById("cb_filter_date_from").value="";
+  document.getElementById("cb_filter_date_to").value="";
+}
+function clearALLFilters(){
+  document.getElementById("all_filter_source").value="";
+  searchableSelects.all_lot?.reset();
+  searchableSelects.all_gradefmt?.reset();
+  searchableSelects.all_party?.reset();
+  document.getElementById("all_filter_date_from").value="";
+  document.getElementById("all_filter_date_to").value="";
+}
+function clearPARTYFilters(){
+  searchableSelects.py_party?.reset();
+  document.getElementById("py_filter_source").value="";
+  document.getElementById("py_filter_date_from").value="";
+  document.getElementById("py_filter_date_to").value="";
+}
+
+/* ====================== TABS ============================= */
+function bindTabs(){
+  const buttons=document.querySelectorAll(".tab-btn");
+  buttons.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      buttons.forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      const target=btn.dataset.tab;
+      document.querySelectorAll(".tab-section").forEach(sec=>{
+        sec.classList.remove("active");
+      });
+      document.getElementById(target).classList.add("active");
+      const q=document.getElementById("searchGlobal").value;
+      if(target==="tabAJMZ") applyAJMZFilters(q);
+      else if(target==="tabCALIB") applyCALIBFilters(q);
+      else if(target==="tabALL") applyALLFilters(q);
+      else if(target==="tabPARTY") applyPARTYFilters(q);
     });
-  });
-
-  // Expand/Collapse all
-  document.getElementById('btnExpandAll').addEventListener('click', ()=>{
-    expanded = new Set(groups.map(g=>g.add.composite));
-    renderLedger();
-  });
-  document.getElementById('btnCollapseAll').addEventListener('click', ()=>{
-    expanded.clear();
-    renderLedger();
   });
 }
 
-/* ============================= INIT =========================== */
-document.addEventListener('DOMContentLoaded', async ()=>{
-  bindEvents();
-  await loadAllData();
+/* ====================== INIT ============================= */
+document.addEventListener("DOMContentLoaded", async ()=>{
+  await loadAll();
+  bindTabs();
+
+  const globalInput=document.getElementById("searchGlobal");
+  globalInput.addEventListener("input",()=>{
+    const q=globalInput.value;
+    applyAJMZFilters(q);
+    applyCALIBFilters(q);
+    applyALLFilters(q);
+    applyPARTYFilters(q);
+  });
+
+  ["aj_filter_type","aj_filter_date_from","aj_filter_date_to"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyAJMZFilters(globalInput.value);
+    });
+  });
+  
+  ["aj_filter_lot","aj_filter_format","aj_filter_shape"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyAJMZFilters(globalInput.value);
+    });
+  });
+  
+  document.getElementById("aj_clear_filters").addEventListener("click",()=>{
+    clearAJMZFilters();
+    applyAJMZFilters(globalInput.value);
+  });
+
+  ["cb_filter_type","cb_filter_date_from","cb_filter_date_to"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyCALIBFilters(globalInput.value);
+    });
+  });
+  
+  ["cb_filter_lot","cb_filter_lotgrade","cb_filter_shapesize"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyCALIBFilters(globalInput.value);
+    });
+  });
+  
+  document.getElementById("cb_clear_filters").addEventListener("click",()=>{
+    clearCALIBFilters();
+    applyCALIBFilters(globalInput.value);
+  });
+
+  ["all_filter_source","all_filter_date_from","all_filter_date_to"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyALLFilters(globalInput.value);
+    });
+  });
+  
+  ["all_filter_lot","all_filter_gradefmt","all_filter_party"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyALLFilters(globalInput.value);
+    });
+  });
+  
+  document.getElementById("all_clear_filters").addEventListener("click",()=>{
+    clearALLFilters();
+    applyALLFilters(globalInput.value);
+  });
+
+  ["py_filter_source","py_filter_date_from","py_filter_date_to"].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyPARTYFilters(globalInput.value);
+    });
+  });
+  
+  document.getElementById("py_filter_party").addEventListener("change",()=>{
+    applyPARTYFilters(globalInput.value);
+  });
+  
+  document.getElementById("py_clear_filters").addEventListener("click",()=>{
+    clearPARTYFilters();
+    applyPARTYFilters(globalInput.value);
+  });
+
+  document.getElementById("aj_export_csv").addEventListener("click", () => {
+    exportTableToCSV("aj_print_area", "AJMZ_Export.csv");
+  });
+  document.getElementById("aj_print_table").addEventListener("click", () => {
+    printTable("aj_print_area");
+  });
+
+  document.getElementById("cb_export_csv").addEventListener("click", () => {
+    exportTableToCSV("cb_print_area", "Calibration_Export.csv");
+  });
+  document.getElementById("cb_print_table").addEventListener("click", () => {
+    printTable("cb_print_area");
+  });
+
+  document.getElementById("all_export_csv").addEventListener("click", () => {
+    exportTableToCSV("all_print_area", "All_Stones_Export.csv");
+  });
+  document.getElementById("all_print_table").addEventListener("click", () => {
+    printTable("all_print_area");
+  });
+
+  document.getElementById("py_export_csv").addEventListener("click", () => {
+    exportTableToCSV("py_print_area", "Party_Export.csv");
+  });
+  document.getElementById("py_print_table").addEventListener("click", () => {
+    printTable("py_print_area");
+  });
+
+  applyAJMZFilters("");
+  applyCALIBFilters("");
+  applyALLFilters("");
+  applyPARTYFilters("");
 });
 </script>
+
 </body>
 </html>
