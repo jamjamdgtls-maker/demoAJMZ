@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>REPORTS — Inventory Ledger</title>
+<title>REPORTS (2)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -16,7 +16,7 @@
   --card:#ffffff;
   --line:#d6cbb8;
   --ink:#2f3b33;
-  --ink-soft:black;
+  --ink-soft:#6b7a70;
   --accent:#5D866C;
   --accent-2:#C2A68C;
   --shadow:rgba(0,0,0,0.08);
@@ -347,6 +347,7 @@ body{
   <a href="added.html" class="nav-item" title="Added">📝</a>
   <a href="sell.html" class="nav-item" title="Sell">💎</a>
   <a href="reports.html" class="nav-item active" title="Reports">📊</a>
+  <a href="reports2.html" class="nav-item" title="Reports">📊</a>
 </div>
 
 <!-- ======================================
@@ -358,11 +359,7 @@ body{
        TOP PANEL
   ================================ -->
   <div class="panel">
-    <div class="page-title">Reports (2)</div>
-    
-    <a href="reports.html" class="button" style="margin:0; text-decoration:none;">📄 Reports (1)</a>
-    <a href="reports2.html" class="button" style="margin:0; text-decoration:none;">📄 Reports (2)</a>
-    
+    <div class="page-title">REPORTS</div>
     <div class="spacer"></div>
 
     <div class="search-box">
