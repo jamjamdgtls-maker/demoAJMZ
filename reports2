@@ -346,8 +346,8 @@ body{
   <a href="add.html" class="nav-item" title="Add">➕</a>
   <a href="added.html" class="nav-item" title="Added">📝</a>
   <a href="sell.html" class="nav-item" title="Sell">💎</a>
-  <a href="reports.html" class="nav-item active" title="Reports">📊</a>
-  <a href="reports2.html" class="nav-item" title="Reports">📊</a>
+  <a href="reports.html" class="nav-item" title="Reports">📊</a>
+  <a href="reports2.html" class="nav-item active" title="Reports">📊</a>
 </div>
 
 <!-- ======================================
