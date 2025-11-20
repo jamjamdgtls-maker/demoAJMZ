@@ -1,0 +1,1069 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>REPORTS — Inventory Ledger</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+:root{
+  --bg:#F5F5F0;
+  --card:#ffffff;
+  --line:#d6cbb8;
+  --ink:#2f3b33;
+  --ink-soft:black;
+  --accent:#5D866C;
+  --accent-2:#C2A68C;
+  --shadow:rgba(0,0,0,0.08);
+}
+
+/* -----------------------------------------
+   LEFT NAVIGATION
+------------------------------------------ */
+.nav-vertical{
+  width:60px;
+  background:#fff;
+  border-right:3px solid var(--accent-2);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+  padding:14px 0;
+  box-shadow:6px 0 20px var(--shadow);
+  position:fixed;
+  left:0; top:0; bottom:0;
+  z-index:2000;
+}
+.nav-item{
+  width:44px; height:44px;
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  text-decoration:none;
+  color:var(--ink);
+  background:#fff;
+  border:1px solid var(--line);
+  cursor:pointer;
+  font-weight:600;
+  transition:.15s;
+}
+.nav-item:hover{background:#faf8f0}
+.nav-item.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+
+/* -----------------------------------------
+   GENERAL RESET
+------------------------------------------ */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:Inter, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  overflow:hidden; /* NO PAGE SCROLL */
+}
+
+/* -----------------------------------------
+   WORKSPACE (NO VERTICAL PAGE SCROLL)
+------------------------------------------ */
+.workspace{
+  margin-left:60px;
+  height:100vh;
+  padding:1px;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+/* -----------------------------------------
+   PANEL
+------------------------------------------ */
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:0 4px 12px var(--shadow);
+  padding:8px 12px;
+  margin:1px 1px 4px 1px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+  flex-shrink:0;
+}
+.page-title{
+  font-size:18px;
+  font-weight:700;
+}
+.spacer{flex:1}
+.search-box{
+  position:relative;
+  min-width:280px;
+}
+.search-box input{
+  width:100%;
+  padding:6px 10px 6px 30px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  font-size:13px;
+}
+.search-icon{
+  position:absolute;
+  left:10px;
+  top:7px;
+  font-size:14px;
+}
+
+/* -----------------------------------------
+   TAB BUTTONS
+------------------------------------------ */
+.tab-row{
+  display:flex;
+  gap:6px;
+  margin:1px;
+  flex-shrink:0;
+}
+.tab-btn{
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:12px;
+  font-weight:600;
+  color:var(--ink-soft);
+  cursor:pointer;
+  transition:.15s;
+}
+.tab-btn:hover{background:#faf8f0}
+.tab-btn.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+
+/* -----------------------------------------
+   TOOLBAR
+------------------------------------------ */
+.toolbar{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  padding:8px 12px;
+  flex-wrap:wrap;
+  flex-shrink:0;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.filter-group{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.filter-label{
+  font-size:11px;
+  color:var(--ink-soft);
+  font-weight:600;
+}
+.filter-select{
+  min-width:120px;
+  height:32px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  padding:4px 8px;
+  font-size:12px;
+  background:#fff;
+}
+
+/* -----------------------------------------
+   BUTTONS
+------------------------------------------ */
+.button{
+  height:32px;
+  padding:0 14px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+}
+.button:hover{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+/* -----------------------------------------
+   TABLE WRAPPER (FULL HEIGHT)
+------------------------------------------ */
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:16px;
+  box-shadow:0 8px 22px var(--shadow);
+  overflow:hidden;
+}
+
+.table-wrapper{
+  overflow-x:auto;
+  overflow-y:auto;
+  max-height:calc(100vh - 245px);
+  border-top:1px solid var(--line);
+  position:relative;
+}
+
+.ledger-table{
+  background:#fff;
+}
+
+/* -----------------------------------------
+   TABLE BASE
+------------------------------------------ */
+.ledger-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+/* -----------------------------------------
+   FROZEN HEADER SYSTEM (PROFESSIONAL)
+------------------------------------------ */
+.ledger-table thead{
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.ledger-table thead th{
+  padding:10px 8px;
+  font-size:11px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.03em;
+  color:var(--ink-soft);
+  background:#f3efe6;
+  border-bottom:1px solid var(--line);
+}
+
+.ledger-table thead .hdr-row-3 th{
+  background:#faf7f3;
+  border-bottom:2px solid var(--accent-2);
+  font-weight:700;
+  padding:12px 8px;
+}
+
+/* -----------------------------------------
+   SECTION COLORS
+------------------------------------------ */
+.ledger-table thead th.section-header{
+  background:#e5dfd1;
+  text-align:center;
+  font-size:10px;
+  border-left:2px solid var(--line);
+}
+
+.ledger-table thead th.total-section{
+  background:#bdd7ee;
+  color:#1f4788;
+}
+
+.ledger-table thead th.sold-section{
+  background:#f4c7c3;
+  color:#8b1a1a;
+}
+
+.ledger-table thead th.balance-section{
+  background:#fff2cc;
+  color:#7f6000;
+}
+
+.ledger-table thead .hdr-row-3 th.total-col{
+  background:#e7f0f7;
+}
+
+.ledger-table thead .hdr-row-3 th.sold-col{
+  background:#fce9e8;
+}
+
+.ledger-table thead .hdr-row-3 th.balance-col{
+  background:#fffaeb;
+}
+
+/* -----------------------------------------
+   BODY CELLS
+------------------------------------------ */
+.ledger-table tbody td{
+  padding:8px;
+  border-bottom:1px solid #f0ebe3;
+}
+.ledger-table tbody tr:hover{
+  background:#fafaf8;
+}
+.ledger-table tbody td.section-col{
+  border-left:2px solid var(--line);
+}
+
+.ledger-table tbody td.total-col{background:#e7f0f7;}
+.ledger-table tbody td.sold-col{background:#fce9e8;}
+.ledger-table tbody td.balance-col{background:#fffaeb;}
+
+.num-cell{
+  text-align:right;
+  font-variant-numeric:tabular-nums;
+}
+
+/* -----------------------------------------
+   TAB VISIBILITY
+------------------------------------------ */
+.tab-section{display:none;}
+.tab-section.active{display:block;}
+
+.badge{
+  display:inline-block;
+  font-size:9px;
+  padding:2px 6px;
+  border-radius:6px;
+  font-weight:700;
+}
+.badge-ajmz{background:#d1e5ff; color:#204f7a;}
+.badge-calib{background:#ffe3b3; color:#7a4f20;}
+
+</style>
+</head>
+<body>
+
+<!-- ======================================
+     LEFT VERTICAL NAVIGATION
+====================================== -->
+<div class="nav-vertical">
+  <a href="add.html" class="nav-item" title="Add">➕</a>
+  <a href="added.html" class="nav-item" title="Added">📝</a>
+  <a href="sell.html" class="nav-item" title="Sell">💎</a>
+  <a href="reports.html" class="nav-item active" title="Reports">📊</a>
+</div>
+
+<!-- ======================================
+     WORKSPACE (NO PAGE SCROLL)
+====================================== -->
+<div class="workspace">
+
+  <!-- ===============================
+       TOP PANEL
+  ================================ -->
+  <div class="panel">
+    <div class="page-title">Reports (2)</div>
+    
+    <a href="reports.html" class="button" style="margin:0; text-decoration:none;">📄 Reports (1)</a>
+    <a href="reports2.html" class="button" style="margin:0; text-decoration:none;">📄 Reports (2)</a>
+    
+    <div class="spacer"></div>
+
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input id="globalSearch" placeholder="Search...">
+    </div>
+  </div>
+
+  <!-- ===============================
+       TAB ROW
+  ================================ -->
+  <div class="tab-row">
+    <button class="tab-btn active" data-tab="tabAJMZ">💎 AJMZ</button>
+    <button class="tab-btn" data-tab="tabCALIB">📏 CALIB</button>
+  </div>
+
+  <!-- ==========================================================
+       AJMZ TAB SECTION
+  =========================================================== -->
+  <div class="tab-section active" id="tabAJMZ">
+
+    <!-- ----------------------------
+         AJMZ TOOLBAR
+    ----------------------------- -->
+    <div class="toolbar">
+      <div class="filter-group">
+        <label class="filter-label">Party</label>
+        <select id="ajmz_filter_party" class="filter-select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Lot</label>
+        <select id="ajmz_filter_lot" class="filter-select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Date From</label>
+        <input type="date" id="ajmz_filter_date_from" class="filter-select">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Date To</label>
+        <input type="date" id="ajmz_filter_date_to" class="filter-select">
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="button" id="ajmz_clear">🔄 Clear Filters</button>
+      <button class="button" id="ajmz_export">📊 Export CSV</button>
+    </div>
+
+    <!-- ===============================
+         AJMZ TABLE (WITH FROZEN HEADER)
+    ================================ -->
+    <div class="card">
+      <div class="table-wrapper">
+
+        <table class="ledger-table">
+          <thead>
+
+            <!-- ========================
+                 HEADER ROW 1 (MAIN)
+            ========================= -->
+            <tr>
+              <th rowspan="2">Tx ID</th>
+              <th rowspan="2">Date</th>
+              <th rowspan="2">Party</th>
+              <th rowspan="2">Lot</th>
+              <th rowspan="2">Format</th>
+              <th rowspan="2">Description</th>
+
+              <th colspan="4" class="section-header total-section">TOTAL</th>
+              <th colspan="4" class="section-header sold-section">SOLD</th>
+              <th colspan="4" class="section-header balance-section">BALANCE</th>
+            </tr>
+
+            <!-- ========================
+                 HEADER ROW 2 (SUBHEADERS)
+            ========================= -->
+            <tr>
+
+              <!-- TOTAL -->
+              <th class="section-col">CTS</th>
+              <th>PCS</th>
+              <th>Price</th>
+              <th>Amount</th>
+
+              <!-- SOLD -->
+              <th class="section-col">CTS</th>
+              <th>PCS</th>
+              <th>Price</th>
+              <th>Amount</th>
+
+              <!-- BALANCE -->
+              <th class="section-col">CTS</th>
+              <th>PCS</th>
+              <th>Price</th>
+              <th>Amount</th>
+            </tr>
+
+            <!-- ========================
+                 HEADER ROW 3 (TOTALS)
+            ========================= -->
+            <tr class="hdr-row-3">
+
+              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">
+                TOTALS:
+              </th>
+
+              <!-- TOTAL -->
+              <th class="num-cell section-col total-col" id="ajmz_total_cts">0.00</th>
+              <th class="num-cell total-col" id="ajmz_total_pcs">0.00</th>
+              <th class="num-cell total-col"></th>
+              <th class="num-cell total-col" id="ajmz_total_amt">0.00</th>
+
+              <!-- SOLD -->
+              <th class="num-cell section-col sold-col" id="ajmz_sold_cts">0.00</th>
+              <th class="num-cell sold-col" id="ajmz_sold_pcs">0.00</th>
+              <th class="num-cell sold-col"></th>
+              <th class="num-cell sold-col" id="ajmz_sold_amt">0.00</th>
+
+              <!-- BALANCE -->
+              <th class="num-cell section-col balance-col" id="ajmz_bal_cts">0.00</th>
+              <th class="num-cell balance-col" id="ajmz_bal_pcs">0.00</th>
+              <th class="num-cell balance-col"></th>
+              <th class="num-cell balance-col" id="ajmz_bal_amt">0.00</th>
+
+            </tr>
+          </thead>
+
+          <!-- Body rendered by JavaScript (Part 5) -->
+          <tbody id="tbody_ajmz"></tbody>
+
+        </table>
+
+      </div>
+    </div>
+
+  </div> <!-- END AJMZ TAB -->
+  <!-- ==========================================================
+       CALIB TAB SECTION
+  =========================================================== -->
+  <div class="tab-section" id="tabCALIB">
+
+    <!-- ----------------------------
+         CALIB TOOLBAR
+    ----------------------------- -->
+    <div class="toolbar">
+      <div class="filter-group">
+        <label class="filter-label">Party</label>
+        <select id="calib_filter_party" class="filter-select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Lot</label>
+        <select id="calib_filter_lot" class="filter-select">
+          <option value="">All</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Date From</label>
+        <input type="date" id="calib_filter_date_from" class="filter-select">
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Date To</label>
+        <input type="date" id="calib_filter_date_to" class="filter-select">
+      </div>
+
+      <div class="spacer"></div>
+
+      <button class="button" id="calib_clear">🔄 Clear Filters</button>
+      <button class="button" id="calib_export">📊 Export CSV</button>
+    </div>
+
+    <!-- ===============================
+         CALIB TABLE (WITH FROZEN HEADER)
+    ================================ -->
+    <div class="card">
+      <div class="table-wrapper">
+
+        <table class="ledger-table">
+          <thead>
+
+            <!-- ========================
+                 HEADER ROW 1 (MAIN)
+            ========================= -->
+            <tr>
+              <th rowspan="2">Tx ID</th>
+              <th rowspan="2">Date</th>
+              <th rowspan="2">Party</th>
+              <th rowspan="2">Lot</th>
+              <th rowspan="2">Grade</th>
+              <th rowspan="2">Description</th>
+
+              <th colspan="3" class="section-header total-section">TOTAL</th>
+              <th colspan="3" class="section-header sold-section">SOLD</th>
+              <th colspan="3" class="section-header balance-section">BALANCE</th>
+            </tr>
+
+            <!-- ========================
+                 HEADER ROW 2 (SUBHEADERS)
+            ========================= -->
+            <tr>
+
+              <!-- TOTAL -->
+              <th class="section-col">CTS</th>
+              <th>Price</th>
+              <th>Amount</th>
+
+              <!-- SOLD -->
+              <th class="section-col">CTS</th>
+              <th>Price</th>
+              <th>Amount</th>
+
+              <!-- BALANCE -->
+              <th class="section-col">CTS</th>
+              <th>Price</th>
+              <th>Amount</th>
+            </tr>
+
+            <!-- ========================
+                 HEADER ROW 3 (TOTALS)
+            ========================= -->
+            <tr class="hdr-row-3">
+
+              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">
+                TOTALS:
+              </th>
+
+              <!-- TOTAL -->
+              <th class="num-cell section-col total-col" id="calib_total_cts">0.00</th>
+              <th class="num-cell total-col"></th>
+              <th class="num-cell total-col" id="calib_total_amt">0.00</th>
+
+              <!-- SOLD -->
+              <th class="num-cell section-col sold-col" id="calib_sold_cts">0.00</th>
+              <th class="num-cell sold-col"></th>
+              <th class="num-cell sold-col" id="calib_sold_amt">0.00</th>
+
+              <!-- BALANCE -->
+              <th class="num-cell section-col balance-col" id="calib_bal_cts">0.00</th>
+              <th class="num-cell balance-col"></th>
+              <th class="num-cell balance-col" id="calib_bal_amt">0.00</th>
+
+            </tr>
+          </thead>
+
+          <!-- Body rendered by JavaScript -->
+          <tbody id="tbody_calib"></tbody>
+
+        </table>
+
+      </div>
+    </div>
+
+  </div> <!-- END CALIB TAB -->
+<script>
+/* ---------------------------------------------------------
+   FIREBASE CONFIG + INIT
+--------------------------------------------------------- */
+const firebaseConfig = {
+  apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
+  authDomain:"ajmzinventory.firebaseapp.com",
+  databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:"ajmzinventory",
+  storageBucket:"ajmzinventory.firebasestorage.app",
+  messagingSenderId:"1069845316242",
+  appId:"1:1069845316242:web:c55be9de3724734f88dc4b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ---------------------------------------------------------
+   DATA STORAGE ARRAYS
+--------------------------------------------------------- */
+let AJMZ_PARENTS = [];
+let CALIB_PARENTS = [];
+let AJMZ_SELLS = [];
+let CALIB_SELLS = [];
+
+/* ---------------------------------------------------------
+   HELPERS
+--------------------------------------------------------- */
+function esc(s){
+  return s == null ? "" : String(s)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+function fmt(n){
+  return Number(n || 0).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+function parseNum(v){
+  return Number(String(v || "0").replace(/,/g,"")) || 0;
+}
+
+/* ---------------------------------------------------------
+   LOAD DATA FROM FIREBASE
+--------------------------------------------------------- */
+async function loadData(){
+  const [ajParents, calibParents, ajSells, calibSells] = await Promise.all([
+    db.ref("ajmzRecords").once("value"),
+    db.ref("calibRecords").once("value"),
+    db.ref("sellRecords/ajmz").once("value"),
+    db.ref("sellRecords/calib").once("value")
+  ]);
+
+  AJMZ_PARENTS = [];
+  CALIB_PARENTS = [];
+  AJMZ_SELLS = [];
+  CALIB_SELLS = [];
+
+  /* --------------------------
+     AJMZ Parent Records
+  -------------------------- */
+  if (ajParents.exists()) {
+    ajParents.forEach(snap => {
+      const v = snap.val();
+      v.key = snap.key;
+      v.cts = parseNum(v.cts);
+      v.pcs = parseNum(v.pcs);
+      v.price = parseNum(v.price);
+      v.amount = parseNum(v.amount || (v.cts * v.price));
+      AJMZ_PARENTS.push(v);
+    });
+  }
+
+  /* --------------------------
+     CALIB Parent Records
+  -------------------------- */
+  if (calibParents.exists()) {
+    calibParents.forEach(snap => {
+      const v = snap.val();
+      v.key = snap.key;
+      v.cts = parseNum(v.cts);
+      v.price = parseNum(v.price);
+      v.amount = parseNum(v.amount || (v.cts * v.price));
+      CALIB_PARENTS.push(v);
+    });
+  }
+
+  /* --------------------------
+     AJMZ Sell Records
+  -------------------------- */
+  if (ajSells.exists()) {
+    ajSells.forEach(snap => {
+      const r = snap.val();
+      r.key = snap.key;
+      r.cts = parseNum(r.cts);
+      r.pcs = parseNum(r.pcs);
+      r.sellPrice = parseNum(r.sellPrice || r.price);
+      r.amount = parseNum(r.amount || r.cts * r.sellPrice);
+      AJMZ_SELLS.push(r);
+    });
+  }
+
+  /* --------------------------
+     CALIB Sell Records
+  -------------------------- */
+  if (calibSells.exists()) {
+    calibSells.forEach(snap => {
+      const r = snap.val();
+      r.key = snap.key;
+      r.cts = parseNum(r.cts);
+      r.sellPrice = parseNum(r.sellPrice || r.price);
+      r.amount = parseNum(r.amount || r.cts * r.sellPrice);
+      CALIB_SELLS.push(r);
+    });
+  }
+
+  populateFilters();
+  renderAJMZ();
+  renderCALIB();
+}
+
+/* ---------------------------------------------------------
+   POPULATE FILTERS
+--------------------------------------------------------- */
+function populateFilters(){
+  const ajParties = [...new Set(AJMZ_PARENTS.map(p => p.party).filter(Boolean))].sort();
+  const ajLots = [...new Set(AJMZ_PARENTS.map(p => p.lotName).filter(Boolean))].sort();
+
+  const calibParties = [...new Set(CALIB_PARENTS.map(p => p.party).filter(Boolean))].sort();
+  const calibLots = [...new Set(CALIB_PARENTS.map(p => p.lotName).filter(Boolean))].sort();
+
+  /* AJMZ */
+  document.getElementById("ajmz_filter_party").innerHTML =
+    '<option value="">All</option>' +
+    ajParties.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+
+  document.getElementById("ajmz_filter_lot").innerHTML =
+    '<option value="">All</option>' +
+    ajLots.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+
+  /* CALIB */
+  document.getElementById("calib_filter_party").innerHTML =
+    '<option value="">All</option>' +
+    calibParties.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
+
+  document.getElementById("calib_filter_lot").innerHTML =
+    '<option value="">All</option>' +
+    calibLots.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+}
+/* ---------------------------------------------------------
+   RENDER AJMZ TABLE
+--------------------------------------------------------- */
+function renderAJMZ(){
+  const search = document.getElementById("globalSearch").value.toLowerCase();
+  const party = document.getElementById("ajmz_filter_party").value;
+  const lot = document.getElementById("ajmz_filter_lot").value;
+  const dateFrom = document.getElementById("ajmz_filter_date_from").value;
+  const dateTo = document.getElementById("ajmz_filter_date_to").value;
+
+  let filtered = AJMZ_PARENTS.filter(p => {
+    if (party && p.party !== party) return false;
+    if (lot && p.lotName !== lot) return false;
+    if (dateFrom && p.date < dateFrom) return false;
+    if (dateTo && p.date > dateTo) return false;
+    if (search) {
+      const txt = JSON.stringify(p).toLowerCase();
+      if (!txt.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const tbody = document.getElementById("tbody_ajmz");
+  tbody.innerHTML = "";
+
+  let totalCTS = 0, totalPCS = 0, totalAmt = 0;
+  let soldCTS = 0, soldPCS = 0, soldAmt = 0;
+  let balCTS = 0, balPCS = 0, balAmt = 0;
+
+  filtered.forEach(parent => {
+    const sells = AJMZ_SELLS.filter(s => s.parentKey === parent.key);
+
+    const soldC = sells.reduce((sum, s) => sum + s.cts, 0);
+    const soldP = sells.reduce((sum, s) => sum + s.pcs, 0);
+    const soldA = sells.reduce((sum, s) => sum + s.amount, 0);
+
+    const origCTS = parent.cts;
+    const origPCS = parent.pcs;
+
+    const totalC = origCTS + soldC;
+    const totalP = origPCS + soldP;
+    const totalA = parent.amount + soldA;
+
+    const balC = origCTS;
+    const balP = origPCS;
+    const balA = parent.amount;
+
+    const avgSellPrice = soldC > 0 ? soldA / soldC : 0;
+
+    totalCTS += totalC;
+    totalPCS += totalP;
+    totalAmt += totalA;
+
+    soldCTS += soldC;
+    soldPCS += soldP;
+    soldAmt += soldA;
+
+    balCTS += balC;
+    balPCS += balP;
+    balAmt += balA;
+
+    const row = `
+      <tr>
+        <td>${esc(parent.txId)}</td>
+        <td>${esc(parent.date)}</td>
+        <td>${esc(parent.party)}</td>
+        <td>${esc(parent.lotName || '')}</td>
+        <td>${esc(parent.lotFormat || '')}</td>
+        <td>${esc(parent.description || '')}</td>
+
+        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+        <td class="num-cell total-col">${fmt(totalP)}</td>
+        <td class="num-cell total-col">${fmt(parent.price)}</td>
+        <td class="num-cell total-col">${fmt(totalA)}</td>
+
+        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+        <td class="num-cell sold-col">${fmt(soldP)}</td>
+        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
+        <td class="num-cell sold-col">${fmt(soldA)}</td>
+
+        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+        <td class="num-cell balance-col">${fmt(balP)}</td>
+        <td class="num-cell balance-col">${fmt(parent.price)}</td>
+        <td class="num-cell balance-col">${fmt(balA)}</td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML("beforeend", row);
+  });
+
+  /* UPDATE HEADER TOTALS */
+  document.getElementById("ajmz_total_cts").textContent = fmt(totalCTS);
+  document.getElementById("ajmz_total_pcs").textContent = fmt(totalPCS);
+  document.getElementById("ajmz_total_amt").textContent = fmt(totalAmt);
+
+  document.getElementById("ajmz_sold_cts").textContent = fmt(soldCTS);
+  document.getElementById("ajmz_sold_pcs").textContent = fmt(soldPCS);
+  document.getElementById("ajmz_sold_amt").textContent = fmt(soldAmt);
+
+  document.getElementById("ajmz_bal_cts").textContent = fmt(balCTS);
+  document.getElementById("ajmz_bal_pcs").textContent = fmt(balPCS);
+  document.getElementById("ajmz_bal_amt").textContent = fmt(balAmt);
+}
+
+/* ---------------------------------------------------------
+   RENDER CALIB TABLE
+--------------------------------------------------------- */
+function renderCALIB(){
+  const search = document.getElementById("globalSearch").value.toLowerCase();
+  const party = document.getElementById("calib_filter_party").value;
+  const lot = document.getElementById("calib_filter_lot").value;
+  const dateFrom = document.getElementById("calib_filter_date_from").value;
+  const dateTo = document.getElementById("calib_filter_date_to").value;
+
+  let filtered = CALIB_PARENTS.filter(p => {
+    if (party && p.party !== party) return false;
+    if (lot && p.lotName !== lot) return false;
+    if (dateFrom && p.date < dateFrom) return false;
+    if (dateTo && p.date > dateTo) return false;
+    if (search) {
+      const txt = JSON.stringify(p).toLowerCase();
+      if (!txt.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const tbody = document.getElementById("tbody_calib");
+  tbody.innerHTML = "";
+
+  let totalCTS = 0, totalAmt = 0;
+  let soldCTS = 0, soldAmt = 0;
+  let balCTS = 0, balAmt = 0;
+
+  filtered.forEach(parent => {
+    const sells = CALIB_SELLS.filter(s => s.parentKey === parent.key);
+
+    const soldC = sells.reduce((sum, s) => sum + s.cts, 0);
+    const soldA = sells.reduce((sum, s) => sum + s.amount, 0);
+
+    const origCTS = parent.cts;
+
+    const totalC = origCTS + soldC;
+    const totalA = parent.amount + soldA;
+
+    const balC = origCTS;
+    const balA = parent.amount;
+
+    const avgSellPrice = soldC > 0 ? soldA / soldC : 0;
+
+    totalCTS += totalC;
+    totalAmt += totalA;
+
+    soldCTS += soldC;
+    soldAmt += soldA;
+
+    balCTS += balC;
+    balAmt += balA;
+
+    const row = `
+      <tr>
+        <td>${esc(parent.txId)}</td>
+        <td>${esc(parent.date)}</td>
+        <td>${esc(parent.party)}</td>
+        <td>${esc(parent.lotName || '')}</td>
+        <td>${esc(parent.grade || '')}</td>
+        <td>${esc(parent.description || '')}</td>
+
+        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+        <td class="num-cell total-col">${fmt(parent.price)}</td>
+        <td class="num-cell total-col">${fmt(totalA)}</td>
+
+        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
+        <td class="num-cell sold-col">${fmt(soldA)}</td>
+
+        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+        <td class="num-cell balance-col">${fmt(parent.price)}</td>
+        <td class="num-cell balance-col">${fmt(balA)}</td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML("beforeend", row);
+  });
+
+  /* UPDATE HEADER TOTALS */
+  document.getElementById("calib_total_cts").textContent = fmt(totalCTS);
+  document.getElementById("calib_total_amt").textContent = fmt(totalAmt);
+
+  document.getElementById("calib_sold_cts").textContent = fmt(soldCTS);
+  document.getElementById("calib_sold_amt").textContent = fmt(soldAmt);
+
+  document.getElementById("calib_bal_cts").textContent = fmt(balCTS);
+  document.getElementById("calib_bal_amt").textContent = fmt(balAmt);
+}
+
+/* ---------------------------------------------------------
+   EXPORT TABLE TO CSV
+--------------------------------------------------------- */
+function exportToCSV(type){
+  const table = type === 'AJMZ'
+    ? document.querySelector('#tabAJMZ .ledger-table')
+    : document.querySelector('#tabCALIB .ledger-table');
+
+  let csv = [];
+  const rows = table.querySelectorAll('tr');
+
+  for (let row of rows) {
+    let cols = row.querySelectorAll('td, th');
+    let csvRow = [];
+    for (let col of cols) {
+      let text = col.textContent.replace(/"/g, '""');
+      csvRow.push('"' + text + '"');
+    }
+    csv.push(csvRow.join(','));
+  }
+
+  const blob = new Blob([csv.join("\n")], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${type}_Ledger_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+/* ---------------------------------------------------------
+   DOM EVENTS
+--------------------------------------------------------- */
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadData();
+
+  /* TAB SWITCHING */
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const target = btn.dataset.tab;
+      document.querySelectorAll(".tab-section").forEach(sec =>
+        sec.classList.remove("active")
+      );
+      document.getElementById(target).classList.add("active");
+    });
+  });
+
+  /* GLOBAL SEARCH */
+  document.getElementById("globalSearch").addEventListener("input", () => {
+    renderAJMZ();
+    renderCALIB();
+  });
+
+  /* AJMZ FILTERS */
+  document.getElementById("ajmz_filter_party").addEventListener("change", renderAJMZ);
+  document.getElementById("ajmz_filter_lot").addEventListener("change", renderAJMZ);
+  document.getElementById("ajmz_filter_date_from").addEventListener("change", renderAJMZ);
+  document.getElementById("ajmz_filter_date_to").addEventListener("change", renderAJMZ);
+
+  document.getElementById("ajmz_clear").addEventListener("click", () => {
+    document.getElementById("ajmz_filter_party").value = "";
+    document.getElementById("ajmz_filter_lot").value = "";
+    document.getElementById("ajmz_filter_date_from").value = "";
+    document.getElementById("ajmz_filter_date_to").value = "";
+    document.getElementById("globalSearch").value = "";
+    renderAJMZ();
+  });
+
+  document.getElementById("ajmz_export").addEventListener("click", () => 
+    exportToCSV("AJMZ")
+  );
+
+  /* CALIB FILTERS */
+  document.getElementById("calib_filter_party").addEventListener("change", renderCALIB);
+  document.getElementById("calib_filter_lot").addEventListener("change", renderCALIB);
+  document.getElementById("calib_filter_date_from").addEventListener("change", renderCALIB);
+  document.getElementById("calib_filter_date_to").addEventListener("change", renderCALIB);
+
+  document.getElementById("calib_clear").addEventListener("click", () => {
+    document.getElementById("calib_filter_party").value = "";
+    document.getElementById("calib_filter_lot").value = "";
+    document.getElementById("calib_filter_date_from").value = "";
+    document.getElementById("calib_filter_date_to").value = "";
+    document.getElementById("globalSearch").value = "";
+    renderCALIB();
+  });
+
+  document.getElementById("calib_export").addEventListener("click", () => 
+    exportToCSV("CALIB")
+  );
+});
+</script>
+
+</body>
+</html>
