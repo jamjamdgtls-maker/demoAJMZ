@@ -22,9 +22,6 @@
   --shadow:rgba(0,0,0,0.08);
 }
 
-/* -----------------------------------------
-   LEFT NAVIGATION
------------------------------------------- */
 .nav-vertical{
   width:60px;
   background:#fff;
@@ -59,20 +56,14 @@
   border-color:transparent;
 }
 
-/* -----------------------------------------
-   GENERAL RESET
------------------------------------------- */
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
   font-family:Inter, sans-serif;
   background:var(--bg);
   color:var(--ink);
-  overflow:hidden; /* NO PAGE SCROLL */
+  overflow:hidden;
 }
 
-/* -----------------------------------------
-   WORKSPACE (NO VERTICAL PAGE SCROLL)
------------------------------------------- */
 .workspace{
   margin-left:60px;
   height:100vh;
@@ -82,9 +73,6 @@ body{
   flex-direction:column;
 }
 
-/* -----------------------------------------
-   PANEL
------------------------------------------- */
 .panel{
   background:#fff;
   border:1px solid var(--line);
@@ -120,9 +108,6 @@ body{
   font-size:14px;
 }
 
-/* -----------------------------------------
-   TAB BUTTONS
------------------------------------------- */
 .tab-row{
   display:flex;
   gap:6px;
@@ -147,9 +132,6 @@ body{
   border-color:transparent;
 }
 
-/* -----------------------------------------
-   TOOLBAR
------------------------------------------- */
 .toolbar{
   display:flex;
   gap:8px;
@@ -180,9 +162,6 @@ body{
   background:#fff;
 }
 
-/* -----------------------------------------
-   BUTTONS
------------------------------------------- */
 .button{
   height:32px;
   padding:0 14px;
@@ -200,9 +179,6 @@ body{
   border-color:var(--accent);
 }
 
-/* -----------------------------------------
-   TABLE WRAPPER (FULL HEIGHT)
------------------------------------------- */
 .card{
   background:#fff;
   border:1px solid var(--line);
@@ -226,9 +202,6 @@ body{
   font-size:12px;
 }
 
-/* -----------------------------------------
-   FROZEN HEADER SYSTEM
------------------------------------------- */
 .ledger-table thead{
   position:sticky;
   top:0;
@@ -246,7 +219,6 @@ body{
   border-bottom:1px solid var(--line);
 }
 
-/* HEADER ROW 3 STYLES */
 .ledger-table thead .hdr-row-3 th{
   background:#faf7f3;
   border-bottom:2px solid var(--accent-2);
@@ -254,7 +226,6 @@ body{
   padding:12px 8px;
 }
 
-/* SECTION COLORS */
 .section-header{background:#e5dfd1;text-align:center;font-size:10px;border-left:2px solid var(--line);}
 .total-section{background:#bdd7ee;color:#1f4788;}
 .sold-section{background:#f4c7c3;color:#8b1a1a;}
@@ -266,7 +237,6 @@ body{
 
 .section-col{border-left:2px solid var(--line);}
 
-/* BODY CELLS */
 .ledger-table tbody td{
   padding:8px;
   border-bottom:1px solid #f0ebe3;
@@ -279,17 +249,71 @@ body{
   font-variant-numeric:tabular-nums;
 }
 
-/* TAB VISIBILITY */
 .tab-section{display:none;}
 .tab-section.active{display:block;}
+
+/* Collapsible section toggles */
+.section-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  user-select:none;
+  padding:2px 6px;
+  border-radius:4px;
+  transition:.2s;
+}
+.section-toggle:hover{background:rgba(93,134,108,0.1);}
+.section-toggle-icon{
+  display:inline-block;
+  transition:transform 0.2s;
+  width:16px;
+  height:16px;
+  border:1px solid var(--ink-soft);
+  border-radius:2px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:bold;
+}
+.section-toggle-icon.collapsed::before{
+  content:">";
+}
+.section-toggle-icon:not(.collapsed)::before{
+  content:"∨";
+}
+
+/* Group number badges on column headers */
+.group-badge{
+  display:inline-block;
+  background:var(--accent);
+  color:#fff;
+  font-size:9px;
+  padding:2px 5px;
+  border-radius:3px;
+  margin-left:4px;
+  font-weight:700;
+}
+
+/* Hide columns when section is collapsed */
+.ledger-table.section-hidden-total .total-col,
+.ledger-table.section-hidden-total .total-section{
+  display:none !important;
+}
+.ledger-table.section-hidden-sold .sold-col,
+.ledger-table.section-hidden-sold .sold-section{
+  display:none !important;
+}
+.ledger-table.section-hidden-balance .balance-col,
+.ledger-table.section-hidden-balance .balance-section{
+  display:none !important;
+}
 
 </style>
 </head>
 <body>
 
-<!-- ======================================
-     LEFT NAVIGATION
-====================================== -->
 <div class="nav-vertical">
   <a href="index.html" class="nav-item" title="Add">➕</a>
   <a href="added.html" class="nav-item" title="Added">📝</a>
@@ -298,81 +322,64 @@ body{
   <a href="reports2.html" class="nav-item active" title="Reports">📊</a>
 </div>
 
-<!-- ======================================
-     WORKSPACE
-====================================== -->
 <div class="workspace">
 
-  <!-- ===============================
-       TOP PANEL
-  ================================ -->
   <div class="panel">
     <div class="page-title">REPORTS (2)</div>
     <div class="spacer"></div>
-
     <div class="search-box">
       <span class="search-icon">🔍</span>
       <input id="globalSearch" placeholder="Search...">
     </div>
   </div>
 
-  <!-- ===============================
-       TAB ROW
-  ================================ -->
   <div class="tab-row">
     <button class="tab-btn active" data-tab="tabAJMZ">💎 AJMZ</button>
     <button class="tab-btn" data-tab="tabCALIB">📏 CALIB</button>
     <button class="tab-btn" data-tab="tabALL">🌐 ALL STONES</button>
   </div>
-  <!-- ==========================================================
-       AJMZ TAB SECTION
-  =========================================================== -->
+
+  <!-- ======================= AJMZ TAB ======================= -->
   <div class="tab-section active" id="tabAJMZ">
 
-    <!-- ----------------------------
-         AJMZ TOOLBAR
-    ----------------------------- -->
     <div class="toolbar">
       <div class="filter-group">
         <label class="filter-label">Party</label>
-        <select id="ajmz_filter_party" class="filter-select">
-          <option value="">All</option>
-        </select>
+        <select id="ajmz_filter_party" class="filter-select"><option value="">All</option></select>
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Lot</label>
-        <select id="ajmz_filter_lot" class="filter-select">
-          <option value="">All</option>
-        </select>
+        <select id="ajmz_filter_lot" class="filter-select"><option value="">All</option></select>
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Date From</label>
         <input type="date" id="ajmz_filter_date_from" class="filter-select">
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Date To</label>
         <input type="date" id="ajmz_filter_date_to" class="filter-select">
       </div>
-
       <div class="spacer"></div>
-
-      <button class="button" id="ajmz_clear">🔄 Clear Filters</button>
-      <button class="button" id="ajmz_export">📊 Export CSV</button>
+      <span class="section-toggle" id="ajmz_toggle_total">
+        <span class="section-toggle-icon"></span>
+        <span>Total</span>
+      </span>
+      <span class="section-toggle" id="ajmz_toggle_sold">
+        <span class="section-toggle-icon"></span>
+        <span>Sold</span>
+      </span>
+      <span class="section-toggle" id="ajmz_toggle_balance">
+        <span class="section-toggle-icon"></span>
+        <span>Balance</span>
+      </span>
+      <button class="button" id="ajmz_clear">🔄 Clear</button>
+      <button class="button" id="ajmz_export">📊 Export</button>
     </div>
 
-    <!-- ===============================
-         AJMZ TABLE (WITH FROZEN HEADER)
-    ================================ -->
     <div class="card">
       <div class="table-wrapper">
-
         <table class="ledger-table">
           <thead>
-
-            <!-- MAIN HEADER -->
             <tr>
               <th rowspan="2">Tx ID</th>
               <th rowspan="2">Date</th>
@@ -380,120 +387,87 @@ body{
               <th rowspan="2">Lot</th>
               <th rowspan="2">Format</th>
               <th rowspan="2">Description</th>
-
               <th colspan="4" class="section-header total-section">TOTAL</th>
               <th colspan="4" class="section-header sold-section">SOLD</th>
               <th colspan="4" class="section-header balance-section">BALANCE</th>
             </tr>
-
-            <!-- SUBHEADERS -->
             <tr>
-              <!-- TOTAL -->
               <th class="section-col">CTS</th>
               <th>PCS</th>
               <th>Price</th>
               <th>Amount</th>
-
-              <!-- SOLD -->
               <th class="section-col">CTS</th>
               <th>PCS</th>
               <th>Price</th>
               <th>Amount</th>
-
-              <!-- BALANCE -->
               <th class="section-col">CTS</th>
               <th>PCS</th>
               <th>Price</th>
               <th>Amount</th>
             </tr>
-
-            <!-- TOTALS ROW -->
             <tr class="hdr-row-3">
-
-              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">
-                TOTALS:
-              </th>
-
-              <!-- TOTAL -->
+              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
               <th class="num-cell section-col total-col" id="ajmz_total_cts">0.00</th>
               <th class="num-cell total-col" id="ajmz_total_pcs">0.00</th>
               <th class="num-cell total-col"></th>
               <th class="num-cell total-col" id="ajmz_total_amt">0.00</th>
-
-              <!-- SOLD -->
               <th class="num-cell section-col sold-col" id="ajmz_sold_cts">0.00</th>
               <th class="num-cell sold-col" id="ajmz_sold_pcs">0.00</th>
               <th class="num-cell sold-col"></th>
               <th class="num-cell sold-col" id="ajmz_sold_amt">0.00</th>
-
-              <!-- BALANCE -->
               <th class="num-cell section-col balance-col" id="ajmz_bal_cts">0.00</th>
               <th class="num-cell balance-col" id="ajmz_bal_pcs">0.00</th>
               <th class="num-cell balance-col"></th>
               <th class="num-cell balance-col" id="ajmz_bal_amt">0.00</th>
-
             </tr>
           </thead>
-
           <tbody id="tbody_ajmz"></tbody>
-
         </table>
-
       </div>
     </div>
+  </div>
 
-  </div> <!-- END AJMZ TAB -->
-
-
-  <!-- ==========================================================
-       CALIB TAB SECTION
-  =========================================================== -->
+  <!-- ======================= CALIB TAB ======================= -->
   <div class="tab-section" id="tabCALIB">
 
-    <!-- ----------------------------
-         CALIB TOOLBAR
-    ----------------------------- -->
     <div class="toolbar">
       <div class="filter-group">
         <label class="filter-label">Party</label>
-        <select id="calib_filter_party" class="filter-select">
-          <option value="">All</option>
-        </select>
+        <select id="calib_filter_party" class="filter-select"><option value="">All</option></select>
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Lot</label>
-        <select id="calib_filter_lot" class="filter-select">
-          <option value="">All</option>
-        </select>
+        <select id="calib_filter_lot" class="filter-select"><option value="">All</option></select>
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Date From</label>
         <input type="date" id="calib_filter_date_from" class="filter-select">
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Date To</label>
         <input type="date" id="calib_filter_date_to" class="filter-select">
       </div>
-
       <div class="spacer"></div>
-
-      <button class="button" id="calib_clear">🔄 Clear Filters</button>
-      <button class="button" id="calib_export">📊 Export CSV</button>
+      <span class="section-toggle" id="calib_toggle_total">
+        <span class="section-toggle-icon"></span>
+        <span>Total</span>
+      </span>
+      <span class="section-toggle" id="calib_toggle_sold">
+        <span class="section-toggle-icon"></span>
+        <span>Sold</span>
+      </span>
+      <span class="section-toggle" id="calib_toggle_balance">
+        <span class="section-toggle-icon"></span>
+        <span>Balance</span>
+      </span>
+      <button class="button" id="calib_clear">🔄 Clear</button>
+      <button class="button" id="calib_export">📊 Export</button>
     </div>
 
-    <!-- ===============================
-         CALIB TABLE (WITH FROZEN HEADER)
-    ================================ -->
     <div class="card">
       <div class="table-wrapper">
-
         <table class="ledger-table">
           <thead>
-
-            <!-- MAIN HEADER -->
             <tr>
               <th rowspan="2">Tx ID</th>
               <th rowspan="2">Date</th>
@@ -501,302 +475,184 @@ body{
               <th rowspan="2">Lot</th>
               <th rowspan="2">Grade</th>
               <th rowspan="2">Description</th>
-
               <th colspan="3" class="section-header total-section">TOTAL</th>
               <th colspan="3" class="section-header sold-section">SOLD</th>
               <th colspan="3" class="section-header balance-section">BALANCE</th>
             </tr>
-
-            <!-- SUBHEADERS -->
             <tr>
-
-              <!-- TOTAL -->
               <th class="section-col">CTS</th>
               <th>Price</th>
               <th>Amount</th>
-
-              <!-- SOLD -->
               <th class="section-col">CTS</th>
               <th>Price</th>
               <th>Amount</th>
-
-              <!-- BALANCE -->
               <th class="section-col">CTS</th>
               <th>Price</th>
               <th>Amount</th>
             </tr>
-
-            <!-- TOTALS ROW -->
             <tr class="hdr-row-3">
-
-              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">
-                TOTALS:
-              </th>
-
-              <!-- TOTAL -->
+              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
               <th class="num-cell section-col total-col" id="calib_total_cts">0.00</th>
               <th class="num-cell total-col"></th>
               <th class="num-cell total-col" id="calib_total_amt">0.00</th>
-
-              <!-- SOLD -->
               <th class="num-cell section-col sold-col" id="calib_sold_cts">0.00</th>
               <th class="num-cell sold-col"></th>
               <th class="num-cell sold-col" id="calib_sold_amt">0.00</th>
-
-              <!-- BALANCE -->
               <th class="num-cell section-col balance-col" id="calib_bal_cts">0.00</th>
               <th class="num-cell balance-col"></th>
               <th class="num-cell balance-col" id="calib_bal_amt">0.00</th>
-
             </tr>
           </thead>
-
           <tbody id="tbody_calib"></tbody>
-
         </table>
-
       </div>
     </div>
+  </div>
 
-  </div> <!-- END CALIB TAB -->
-  <!-- ==========================================================
-       ALL STONES TAB SECTION
-  =========================================================== -->
+  <!-- ======================= ALL STONES TAB ======================= -->
   <div class="tab-section" id="tabALL">
 
-    <!-- ----------------------------
-         ALL STONES TOOLBAR
-    ----------------------------- -->
     <div class="toolbar">
       <div class="filter-group">
         <label class="filter-label">Party</label>
-        <select id="all_filter_party" class="filter-select">
-          <option value="">All</option>
-        </select>
+        <select id="all_filter_party" class="filter-select"><option value="">All</option></select>
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Lot</label>
-        <select id="all_filter_lot" class="filter-select">
-          <option value="">All</option>
-        </select>
+        <select id="all_filter_lot" class="filter-select"><option value="">All</option></select>
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Date From</label>
         <input type="date" id="all_filter_date_from" class="filter-select">
       </div>
-
       <div class="filter-group">
         <label class="filter-label">Date To</label>
         <input type="date" id="all_filter_date_to" class="filter-select">
       </div>
-
       <div class="spacer"></div>
-
-      <button class="button" id="all_clear">🔄 Clear Filters</button>
-      <button class="button" id="all_export">📊 Export CSV</button>
+      <span class="section-toggle" id="all_toggle_total">
+        <span class="section-toggle-icon"></span>
+        <span>Total</span>
+      </span>
+      <span class="section-toggle" id="all_toggle_sold">
+        <span class="section-toggle-icon"></span>
+        <span>Sold</span>
+      </span>
+      <span class="section-toggle" id="all_toggle_balance">
+        <span class="section-toggle-icon"></span>
+        <span>Balance</span>
+      </span>
+      <button class="button" id="all_clear">🔄 Clear</button>
+      <button class="button" id="all_export">📊 Export</button>
     </div>
 
-    <!-- ===============================
-         ALL STONES TABLE (WITH FROZEN HEADER)
-    ================================ -->
     <div class="card">
       <div class="table-wrapper">
-
         <table class="ledger-table">
           <thead>
-
-            <!-- ========================
-                 HEADER ROW 1
-            ========================= -->
             <tr>
               <th rowspan="2">Tx ID</th>
               <th rowspan="2">Date</th>
               <th rowspan="2">Party</th>
               <th rowspan="2">Lot</th>
               <th rowspan="2">Description</th>
-
               <th colspan="3" class="section-header total-section">TOTAL</th>
               <th colspan="3" class="section-header sold-section">SOLD</th>
               <th colspan="3" class="section-header balance-section">BALANCE</th>
             </tr>
-
-            <!-- ========================
-                 HEADER ROW 2 (SUBHEADERS)
-            ========================= -->
             <tr>
-
-              <!-- TOTAL -->
               <th class="section-col">CTS</th>
               <th>Price</th>
               <th>Amount</th>
-
-              <!-- SOLD -->
               <th class="section-col">CTS</th>
               <th>Price</th>
               <th>Amount</th>
-
-              <!-- BALANCE -->
               <th class="section-col">CTS</th>
               <th>Price</th>
               <th>Amount</th>
             </tr>
-
-            <!-- ========================
-                 HEADER ROW 3 (TOTALS)
-            ========================= -->
             <tr class="hdr-row-3">
-
-              <th colspan="5" style="text-align:right;font-weight:700;background:#faf7f3;">
-                TOTALS:
-              </th>
-
-              <!-- TOTAL -->
+              <th colspan="5" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
               <th class="num-cell section-col total-col" id="all_total_cts">0.00</th>
               <th class="num-cell total-col"></th>
               <th class="num-cell total-col" id="all_total_amt">0.00</th>
-
-              <!-- SOLD -->
               <th class="num-cell section-col sold-col" id="all_sold_cts">0.00</th>
               <th class="num-cell sold-col"></th>
               <th class="num-cell sold-col" id="all_sold_amt">0.00</th>
-
-              <!-- BALANCE -->
               <th class="num-cell section-col balance-col" id="all_bal_cts">0.00</th>
               <th class="num-cell balance-col"></th>
               <th class="num-cell balance-col" id="all_bal_amt">0.00</th>
-
             </tr>
-
           </thead>
-
           <tbody id="tbody_all"></tbody>
-
         </table>
-
       </div>
     </div>
+  </div>
 
-  </div> <!-- END ALL STONES TAB -->
+</div>
+
 <script>
-/* ---------------------------------------------------------
-   FIREBASE CONFIG + INIT
---------------------------------------------------------- */
-const firebaseConfig = {
-  apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
-  authDomain:"ajmzinventory.firebaseapp.com",
-  databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"ajmzinventory",
-  storageBucket:"ajmzinventory.firebasestorage.app",
-  messagingSenderId:"1069845316242",
-  appId:"1:1069845316242:web:c55be9de3724734f88dc4b"
-};
+const firebaseConfig={apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",authDomain:"ajmzinventory.firebaseapp.com",databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"ajmzinventory",storageBucket:"ajmzinventory.firebasestorage.app",messagingSenderId:"1069845316242",appId:"1:1069845316242:web:c55be9de3724734f88dc4b"};
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
-/* ---------------------------------------------------------
-   DATA STORAGE ARRAYS
---------------------------------------------------------- */
-let AJMZ_PARENTS = [];
-let CALIB_PARENTS = [];
-let AJMZ_SELLS = [];
-let CALIB_SELLS = [];
+let AJMZ_PARENTS=[],CALIB_PARENTS=[],SELL_MAP={};
 
-/* ---------------------------------------------------------
-   HELPERS
---------------------------------------------------------- */
-function esc(s){
-  return s == null ? "" : String(s)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
-}
-function fmt(n){
-  return Number(n || 0).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
-}
-function parseNum(v){
-  return Number(String(v || "0").replace(/,/g,"")) || 0;
-}
+function esc(s){return s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function fmt(n){return Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function parseNum(v){return Number(String(v||"0").replace(/,/g,""))||0;}
 
-/* ---------------------------------------------------------
-   LOAD DATA FROM FIREBASE
---------------------------------------------------------- */
 async function loadData(){
-  const [ajParents, calibParents, ajSells, calibSells] = await Promise.all([
+  const [ajParents,calibParents,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
     db.ref("calibRecords").once("value"),
-    db.ref("sellRecords/ajmz").once("value"),
-    db.ref("sellRecords/calib").once("value")
+    db.ref("sellRecords").once("value")
   ]);
 
-  AJMZ_PARENTS = [];
-  CALIB_PARENTS = [];
-  AJMZ_SELLS = [];
-  CALIB_SELLS = [];
+  SELL_MAP={};
+  if(sellSnap.exists()){
+    sellSnap.forEach(parentSnap=>{
+      const parentKey=parentSnap.key;
+      SELL_MAP[parentKey]=[];
+      parentSnap.forEach(childSnap=>{
+        const obj=childSnap.val();
+        obj.key=childSnap.key;
+        obj.cts=parseNum(obj.cts);
+        obj.pcs=parseNum(obj.pcs);
+        obj.price=parseNum(obj.price);
+        obj.amount=parseNum(obj.amount||(obj.cts*obj.price));
+        SELL_MAP[parentKey].push(obj);
+      });
+    });
+  }
 
-  /* --------------------------
-     AJMZ Parent Records
-  -------------------------- */
-  if (ajParents.exists()) {
-    ajParents.forEach(snap => {
-      const v = snap.val();
-      v.key = snap.key;
-      v.type = "AJMZ";
-      v.cts = parseNum(v.cts);
-      v.pcs = parseNum(v.pcs);
-      v.price = parseNum(v.price);
-      v.amount = parseNum(v.amount || (v.cts * v.price));
+  AJMZ_PARENTS=[];
+  if(ajParents.exists()){
+    ajParents.forEach(snap=>{
+      const v=snap.val();
+      v.key=snap.key;
+      v.type="AJMZ";
+      v.cts=parseNum(v.cts);
+      v.pcs=parseNum(v.pcs);
+      v.price=parseNum(v.price);
+      v.amount=parseNum(v.amount||(v.cts*v.price));
+      v.__sells=SELL_MAP[v.key]||[];
       AJMZ_PARENTS.push(v);
     });
   }
 
-  /* --------------------------
-     CALIB Parent Records
-  -------------------------- */
-  if (calibParents.exists()) {
-    calibParents.forEach(snap => {
-      const v = snap.val();
-      v.key = snap.key;
-      v.type = "CALIB";
-      v.cts = parseNum(v.cts);
-      v.price = parseNum(v.price);
-      v.amount = parseNum(v.amount || (v.cts * v.price));
+  CALIB_PARENTS=[];
+  if(calibParents.exists()){
+    calibParents.forEach(snap=>{
+      const v=snap.val();
+      v.key=snap.key;
+      v.type="CALIB";
+      v.cts=parseNum(v.cts);
+      v.price=parseNum(v.price);
+      v.amount=parseNum(v.amount||(v.cts*v.price));
+      v.__sells=SELL_MAP[v.key]||[];
       CALIB_PARENTS.push(v);
-    });
-  }
-
-  /* --------------------------
-     AJMZ Sell Records
-  -------------------------- */
-  if (ajSells.exists()) {
-    ajSells.forEach(snap => {
-      const r = snap.val();
-      r.key = snap.key;
-      r.type = "AJMZ";
-      r.cts = parseNum(r.cts);
-      r.pcs = parseNum(r.pcs);
-      r.sellPrice = parseNum(r.sellPrice || r.price);
-      r.amount = parseNum(r.amount || r.cts * r.sellPrice);
-      AJMZ_SELLS.push(r);
-    });
-  }
-
-  /* --------------------------
-     CALIB Sell Records
-  -------------------------- */
-  if (calibSells.exists()) {
-    calibSells.forEach(snap => {
-      const r = snap.val();
-      r.key = snap.key;
-      r.type = "CALIB";
-      r.cts = parseNum(r.cts);
-      r.sellPrice = parseNum(r.sellPrice || r.price);
-      r.amount = parseNum(r.amount || r.cts * r.sellPrice);
-      CALIB_SELLS.push(r);
     });
   }
 
@@ -806,442 +662,285 @@ async function loadData(){
   renderALL();
 }
 
-/* ---------------------------------------------------------
-   POPULATE FILTERS (ALL THREE SECTIONS)
---------------------------------------------------------- */
 function populateFilters(){
-  const ajParties = [...new Set(AJMZ_PARENTS.map(p => p.party).filter(Boolean))].sort();
-  const ajLots    = [...new Set(AJMZ_PARENTS.map(p => p.lotName).filter(Boolean))].sort();
+  const ajParties=[...new Set(AJMZ_PARENTS.map(p=>p.party).filter(Boolean))].sort();
+  const ajLots=[...new Set(AJMZ_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  const calibParties=[...new Set(CALIB_PARENTS.map(p=>p.party).filter(Boolean))].sort();
+  const calibLots=[...new Set(CALIB_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  const allParties=[...new Set([...ajParties,...calibParties])].sort();
+  const allLots=[...new Set([...ajLots,...calibLots])].sort();
 
-  const calibParties = [...new Set(CALIB_PARENTS.map(p => p.party).filter(Boolean))].sort();
-  const calibLots    = [...new Set(CALIB_PARENTS.map(p => p.lotName).filter(Boolean))].sort();
-
-  const allParties = [...new Set([...ajParties, ...calibParties])].sort();
-  const allLots    = [...new Set([...ajLots, ...calibLots])].sort();
-
-  /* AJMZ */
-  document.getElementById("ajmz_filter_party").innerHTML =
-    '<option value="">All</option>' +
-    ajParties.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
-
-  document.getElementById("ajmz_filter_lot").innerHTML =
-    '<option value="">All</option>' +
-    ajLots.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
-
-  /* CALIB */
-  document.getElementById("calib_filter_party").innerHTML =
-    '<option value="">All</option>' +
-    calibParties.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
-
-  document.getElementById("calib_filter_lot").innerHTML =
-    '<option value="">All</option>' +
-    calibLots.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
-
-  /* ALL STONES */
-  document.getElementById("all_filter_party").innerHTML =
-    '<option value="">All</option>' +
-    allParties.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join('');
-
-  document.getElementById("all_filter_lot").innerHTML =
-    '<option value="">All</option>' +
-    allLots.map(l => `<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  document.getElementById("ajmz_filter_party").innerHTML='<option value="">All</option>'+ajParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  document.getElementById("ajmz_filter_lot").innerHTML='<option value="">All</option>'+ajLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  
+  document.getElementById("calib_filter_party").innerHTML='<option value="">All</option>'+calibParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  document.getElementById("calib_filter_lot").innerHTML='<option value="">All</option>'+calibLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  
+  document.getElementById("all_filter_party").innerHTML='<option value="">All</option>'+allParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  document.getElementById("all_filter_lot").innerHTML='<option value="">All</option>'+allLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
 }
-/* ---------------------------------------------------------
-   RENDER AJMZ TABLE
---------------------------------------------------------- */
+
 function renderAJMZ(){
-  const search = document.getElementById("globalSearch").value.toLowerCase();
-  const party = document.getElementById("ajmz_filter_party").value;
-  const lot = document.getElementById("ajmz_filter_lot").value;
-  const dateFrom = document.getElementById("ajmz_filter_date_from").value;
-  const dateTo = document.getElementById("ajmz_filter_date_to").value;
+  const search=document.getElementById("globalSearch").value.toLowerCase();
+  const party=document.getElementById("ajmz_filter_party").value;
+  const lot=document.getElementById("ajmz_filter_lot").value;
+  const dateFrom=document.getElementById("ajmz_filter_date_from").value;
+  const dateTo=document.getElementById("ajmz_filter_date_to").value;
 
-  let filtered = AJMZ_PARENTS.filter(p => {
-    if (party && p.party !== party) return false;
-    if (lot && p.lotName !== lot) return false;
-    if (dateFrom && p.date < dateFrom) return false;
-    if (dateTo && p.date > dateTo) return false;
-    if (search) {
-      const txt = JSON.stringify(p).toLowerCase();
-      if (!txt.includes(search)) return false;
-    }
+  let filtered=AJMZ_PARENTS.filter(p=>{
+    if(party&&p.party!==party)return false;
+    if(lot&&p.lotName!==lot)return false;
+    if(dateFrom&&p.date<dateFrom)return false;
+    if(dateTo&&p.date>dateTo)return false;
+    if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
 
-  const tbody = document.getElementById("tbody_ajmz");
-  tbody.innerHTML = "";
+  const tbody=document.getElementById("tbody_ajmz");
+  tbody.innerHTML="";
 
-  let totalCTS = 0, totalPCS = 0, totalAmt = 0;
-  let soldCTS = 0, soldPCS = 0, soldAmt = 0;
-  let balCTS = 0, balPCS = 0, balAmt = 0;
+  let totalCTS=0,totalPCS=0,totalAmt=0,soldCTS=0,soldPCS=0,soldAmt=0,balCTS=0,balPCS=0,balAmt=0;
 
-  filtered.forEach(parent => {
-    const sells = AJMZ_SELLS.filter(s => s.parentKey === parent.key);
+  filtered.forEach(parent=>{
+    const sells=parent.__sells||[];
+    const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
+    const soldP=sells.reduce((sum,s)=>sum+s.pcs,0);
+    const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    const soldC = sells.reduce((sum, s) => sum + s.cts, 0);
-    const soldP = sells.reduce((sum, s) => sum + s.pcs, 0);
-    const soldA = sells.reduce((sum, s) => sum + s.amount, 0);
+    const totalC=parent.cts+soldC;
+    const totalP=parent.pcs+soldP;
+    const totalA=parent.amount+soldA;
 
-    const origCTS = parent.cts;
-    const origPCS = parent.pcs;
+    const balC=parent.cts;
+    const balP=parent.pcs;
+    const balA=parent.amount;
 
-    const totalC = origCTS + soldC;
-    const totalP = origPCS + soldP;
-    const totalA = parent.amount + soldA;
+    const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    const balC = origCTS;
-    const balP = origPCS;
-    const balA = parent.amount;
+    totalCTS+=totalC;totalPCS+=totalP;totalAmt+=totalA;
+    soldCTS+=soldC;soldPCS+=soldP;soldAmt+=soldA;
+    balCTS+=balC;balPCS+=balP;balAmt+=balA;
 
-    const avgSellPrice = soldC > 0 ? soldA / soldC : 0;
-
-    totalCTS += totalC;
-    totalPCS += totalP;
-    totalAmt += totalA;
-
-    soldCTS += soldC;
-    soldPCS += soldP;
-    soldAmt += soldA;
-
-    balCTS += balC;
-    balPCS += balP;
-    balAmt += balA;
-
-    const row = `
-      <tr>
-        <td>${esc(parent.txId)}</td>
-        <td>${esc(parent.date)}</td>
-        <td>${esc(parent.party)}</td>
-        <td>${esc(parent.lotName || '')}</td>
-        <td>${esc(parent.lotFormat || '')}</td>
-        <td>${esc(parent.description || '')}</td>
-
-        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-        <td class="num-cell total-col">${fmt(totalP)}</td>
-        <td class="num-cell total-col">${fmt(parent.price)}</td>
-        <td class="num-cell total-col">${fmt(totalA)}</td>
-
-        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
-        <td class="num-cell sold-col">${fmt(soldP)}</td>
-        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
-        <td class="num-cell sold-col">${fmt(soldA)}</td>
-
-        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-        <td class="num-cell balance-col">${fmt(balP)}</td>
-        <td class="num-cell balance-col">${fmt(parent.price)}</td>
-        <td class="num-cell balance-col">${fmt(balA)}</td>
-      </tr>
-    `;
-    tbody.insertAdjacentHTML("beforeend", row);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.lotFormat||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(totalP)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(soldP)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(balP)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
-  /* UPDATE HEADER TOTALS */
-  document.getElementById("ajmz_total_cts").textContent = fmt(totalCTS);
-  document.getElementById("ajmz_total_pcs").textContent = fmt(totalPCS);
-  document.getElementById("ajmz_total_amt").textContent = fmt(totalAmt);
-
-  document.getElementById("ajmz_sold_cts").textContent = fmt(soldCTS);
-  document.getElementById("ajmz_sold_pcs").textContent = fmt(soldPCS);
-  document.getElementById("ajmz_sold_amt").textContent = fmt(soldAmt);
-
-  document.getElementById("ajmz_bal_cts").textContent = fmt(balCTS);
-  document.getElementById("ajmz_bal_pcs").textContent = fmt(balPCS);
-  document.getElementById("ajmz_bal_amt").textContent = fmt(balAmt);
+  document.getElementById("ajmz_total_cts").textContent=fmt(totalCTS);
+  document.getElementById("ajmz_total_pcs").textContent=fmt(totalPCS);
+  document.getElementById("ajmz_total_amt").textContent=fmt(totalAmt);
+  document.getElementById("ajmz_sold_cts").textContent=fmt(soldCTS);
+  document.getElementById("ajmz_sold_pcs").textContent=fmt(soldPCS);
+  document.getElementById("ajmz_sold_amt").textContent=fmt(soldAmt);
+  document.getElementById("ajmz_bal_cts").textContent=fmt(balCTS);
+  document.getElementById("ajmz_bal_pcs").textContent=fmt(balPCS);
+  document.getElementById("ajmz_bal_amt").textContent=fmt(balAmt);
 }
 
-/* ---------------------------------------------------------
-   RENDER CALIB TABLE
---------------------------------------------------------- */
 function renderCALIB(){
-  const search = document.getElementById("globalSearch").value.toLowerCase();
-  const party = document.getElementById("calib_filter_party").value;
-  const lot = document.getElementById("calib_filter_lot").value;
-  const dateFrom = document.getElementById("calib_filter_date_from").value;
-  const dateTo = document.getElementById("calib_filter_date_to").value;
+  const search=document.getElementById("globalSearch").value.toLowerCase();
+  const party=document.getElementById("calib_filter_party").value;
+  const lot=document.getElementById("calib_filter_lot").value;
+  const dateFrom=document.getElementById("calib_filter_date_from").value;
+  const dateTo=document.getElementById("calib_filter_date_to").value;
 
-  let filtered = CALIB_PARENTS.filter(p => {
-    if (party && p.party !== party) return false;
-    if (lot && p.lotName !== lot) return false;
-    if (dateFrom && p.date < dateFrom) return false;
-    if (dateTo && p.date > dateTo) return false;
-    if (search) {
-      const txt = JSON.stringify(p).toLowerCase();
-      if (!txt.includes(search)) return false;
-    }
+  let filtered=CALIB_PARENTS.filter(p=>{
+    if(party&&p.party!==party)return false;
+    if(lot&&p.lotName!==lot)return false;
+    if(dateFrom&&p.date<dateFrom)return false;
+    if(dateTo&&p.date>dateTo)return false;
+    if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
 
-  const tbody = document.getElementById("tbody_calib");
-  tbody.innerHTML = "";
+  const tbody=document.getElementById("tbody_calib");
+  tbody.innerHTML="";
 
-  let totalCTS = 0, totalAmt = 0;
-  let soldCTS = 0, soldAmt = 0;
-  let balCTS = 0, balAmt = 0;
+  let totalCTS=0,totalAmt=0,soldCTS=0,soldAmt=0,balCTS=0,balAmt=0;
 
-  filtered.forEach(parent => {
-    const sells = CALIB_SELLS.filter(s => s.parentKey === parent.key);
+  filtered.forEach(parent=>{
+    const sells=parent.__sells||[];
+    const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
+    const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    const soldC = sells.reduce((sum, s) => sum + s.cts, 0);
-    const soldA = sells.reduce((sum, s) => sum + s.amount, 0);
+    const totalC=parent.cts+soldC;
+    const totalA=parent.amount+soldA;
 
-    const origCTS = parent.cts;
+    const balC=parent.cts;
+    const balA=parent.amount;
 
-    const totalC = origCTS + soldC;
-    const totalA = parent.amount + soldA;
+    const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    const balC = origCTS;
-    const balA = parent.amount;
+    totalCTS+=totalC;totalAmt+=totalA;
+    soldCTS+=soldC;soldAmt+=soldA;
+    balCTS+=balC;balAmt+=balA;
 
-    const avgSellPrice = soldC > 0 ? soldA / soldC : 0;
-
-    totalCTS += totalC;
-    totalAmt += totalA;
-
-    soldCTS += soldC;
-    soldAmt += soldA;
-
-    balCTS += balC;
-    balAmt += balA;
-
-    const row = `
-      <tr>
-        <td>${esc(parent.txId)}</td>
-        <td>${esc(parent.date)}</td>
-        <td>${esc(parent.party)}</td>
-        <td>${esc(parent.lotName || '')}</td>
-        <td>${esc(parent.grade || '')}</td>
-        <td>${esc(parent.description || '')}</td>
-
-        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-        <td class="num-cell total-col">${fmt(parent.price)}</td>
-        <td class="num-cell total-col">${fmt(totalA)}</td>
-
-        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
-        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
-        <td class="num-cell sold-col">${fmt(soldA)}</td>
-
-        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-        <td class="num-cell balance-col">${fmt(parent.price)}</td>
-        <td class="num-cell balance-col">${fmt(balA)}</td>
-      </tr>
-    `;
-    tbody.insertAdjacentHTML("beforeend", row);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.grade||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
-  /* UPDATE HEADER TOTALS */
-  document.getElementById("calib_total_cts").textContent = fmt(totalCTS);
-  document.getElementById("calib_total_amt").textContent = fmt(totalAmt);
-
-  document.getElementById("calib_sold_cts").textContent = fmt(soldCTS);
-  document.getElementById("calib_sold_amt").textContent = fmt(soldAmt);
-
-  document.getElementById("calib_bal_cts").textContent = fmt(balCTS);
-  document.getElementById("calib_bal_amt").textContent = fmt(balAmt);
+  document.getElementById("calib_total_cts").textContent=fmt(totalCTS);
+  document.getElementById("calib_total_amt").textContent=fmt(totalAmt);
+  document.getElementById("calib_sold_cts").textContent=fmt(soldCTS);
+  document.getElementById("calib_sold_amt").textContent=fmt(soldAmt);
+  document.getElementById("calib_bal_cts").textContent=fmt(balCTS);
+  document.getElementById("calib_bal_amt").textContent=fmt(balAmt);
 }
 
-/* ---------------------------------------------------------
-   RENDER ALL STONES TABLE (AJMZ + CALIB)
---------------------------------------------------------- */
 function renderALL(){
-  const search = document.getElementById("globalSearch").value.toLowerCase();
-  const party = document.getElementById("all_filter_party").value;
-  const lot = document.getElementById("all_filter_lot").value;
-  const dateFrom = document.getElementById("all_filter_date_from").value;
-  const dateTo = document.getElementById("all_filter_date_to").value;
+  const search=document.getElementById("globalSearch").value.toLowerCase();
+  const party=document.getElementById("all_filter_party").value;
+  const lot=document.getElementById("all_filter_lot").value;
+  const dateFrom=document.getElementById("all_filter_date_from").value;
+  const dateTo=document.getElementById("all_filter_date_to").value;
 
-  let combined = [...AJMZ_PARENTS, ...CALIB_PARENTS];
+  let combined=[...AJMZ_PARENTS,...CALIB_PARENTS];
 
-  let filtered = combined.filter(p => {
-    if (party && p.party !== party) return false;
-    if (lot && p.lotName !== lot) return false;
-    if (dateFrom && p.date < dateFrom) return false;
-    if (dateTo && p.date > dateTo) return false;
-    if (search) {
-      const txt = JSON.stringify(p).toLowerCase();
-      if (!txt.includes(search)) return false;
-    }
+  let filtered=combined.filter(p=>{
+    if(party&&p.party!==party)return false;
+    if(lot&&p.lotName!==lot)return false;
+    if(dateFrom&&p.date<dateFrom)return false;
+    if(dateTo&&p.date>dateTo)return false;
+    if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
 
-  const tbody = document.getElementById("tbody_all");
-  tbody.innerHTML = "";
+  const tbody=document.getElementById("tbody_all");
+  tbody.innerHTML="";
 
-  let tCTS=0,tAmt=0;
-  let sCTS=0,sAmt=0;
-  let bCTS=0,bAmt=0;
+  let tCTS=0,tAmt=0,sCTS=0,sAmt=0,bCTS=0,bAmt=0;
 
-  filtered.forEach(parent => {
-    const sells = parent.type === "CALIB"
-      ? CALIB_SELLS.filter(s => s.parentKey === parent.key)
-      : AJMZ_SELLS.filter(s => s.parentKey === parent.key);
+  filtered.forEach(parent=>{
+    const sells=parent.__sells||[];
+    const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
+    const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    const soldC = sells.reduce((sum, s) => sum + s.cts, 0);
-    const soldA = sells.reduce((sum, s) => sum + s.amount, 0);
-    const origC = parent.cts;
+    const totalC=parent.cts+soldC;
+    const totalA=parent.amount+soldA;
 
-    const totalC = origC + soldC;
-    const totalA = parent.amount + soldA;
+    const balC=parent.cts;
+    const balA=parent.amount;
 
-    const balC = origC;
-    const balA = parent.amount;
+    const avgSell=soldC>0?soldA/soldC:0;
 
-    const avgSell = soldC > 0 ? soldA / soldC : 0;
+    tCTS+=totalC;tAmt+=totalA;
+    sCTS+=soldC;sAmt+=soldA;
+    bCTS+=balC;bAmt+=balA;
 
-    tCTS+=totalC; tAmt+=totalA;
-    sCTS+=soldC;  sAmt+=soldA;
-    bCTS+=balC;   bAmt+=balA;
-
-    tbody.insertAdjacentHTML("beforeend", `
-      <tr>
-        <td>${esc(parent.txId)}</td>
-        <td>${esc(parent.date)}</td>
-        <td>${esc(parent.party)}</td>
-        <td>${esc(parent.lotName||"")}</td>
-        <td>${esc(parent.description||"")}</td>
-
-        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-        <td class="num-cell total-col">${fmt(parent.price)}</td>
-        <td class="num-cell total-col">${fmt(totalA)}</td>
-
-        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
-        <td class="num-cell sold-col">${fmt(avgSell)}</td>
-        <td class="num-cell sold-col">${fmt(soldA)}</td>
-
-        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-        <td class="num-cell balance-col">${fmt(parent.price)}</td>
-        <td class="num-cell balance-col">${fmt(balA)}</td>
-      </tr>
-    `);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSell)}</td><td class="num-cell sold-col">${fmt(sAmt)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
-  document.getElementById("all_total_cts").textContent = fmt(tCTS);
-  document.getElementById("all_total_amt").textContent = fmt(tAmt);
-
-  document.getElementById("all_sold_cts").textContent = fmt(sCTS);
-  document.getElementById("all_sold_amt").textContent = fmt(sAmt);
-
-  document.getElementById("all_bal_cts").textContent = fmt(bCTS);
-  document.getElementById("all_bal_amt").textContent = fmt(bAmt);
+  document.getElementById("all_total_cts").textContent=fmt(tCTS);
+  document.getElementById("all_total_amt").textContent=fmt(tAmt);
+  document.getElementById("all_sold_cts").textContent=fmt(sCTS);
+  document.getElementById("all_sold_amt").textContent=fmt(sAmt);
+  document.getElementById("all_bal_cts").textContent=fmt(bCTS);
+  document.getElementById("all_bal_amt").textContent=fmt(bAmt);
 }
 
-/* ---------------------------------------------------------
-   EXPORT TABLE TO CSV
---------------------------------------------------------- */
 function exportToCSV(type){
-  const table = type === 'AJMZ'
-    ? document.querySelector('#tabAJMZ .ledger-table')
-    : type === 'CALIB'
-      ? document.querySelector('#tabCALIB .ledger-table')
-      : document.querySelector('#tabALL .ledger-table');
-
-  let csv = [];
-  const rows = table.querySelectorAll('tr');
-
-  for (let row of rows) {
-    let cols = row.querySelectorAll('td, th');
-    let csvRow = [];
-    for (let col of cols) {
-      let text = col.textContent.replace(/"/g, '""');
-      csvRow.push('"' + text + '"');
+  const table=type==="AJMZ"?document.querySelector("#tabAJMZ .ledger-table"):type==="CALIB"?document.querySelector("#tabCALIB .ledger-table"):document.querySelector("#tabALL .ledger-table");
+  let csv=[];
+  const rows=table.querySelectorAll("tr");
+  for(let row of rows){
+    let cols=row.querySelectorAll("td, th");
+    let csvRow=[];
+    for(let col of cols){
+      let text=col.textContent.replace(/"/g,'""');
+      csvRow.push('"'+text+'"');
     }
-    csv.push(csvRow.join(','));
+    csv.push(csvRow.join(","));
   }
-
-  const blob = new Blob([csv.join("\n")], { type: 'text/csv' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `${type}_Ledger_${new Date().toISOString().slice(0,10)}.csv`;
+  const blob=new Blob([csv.join("\n")],{type:"text/csv"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download=`${type}_Ledger_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
 
-/* ---------------------------------------------------------
-   DOM EVENTS
---------------------------------------------------------- */
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded",async()=>{
   await loadData();
 
-  /* TAB SWITCHING */
-  document.querySelectorAll(".tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+  // Toggle visibility for each section
+  const toggleSections=(prefix)=>{
+    const table=document.querySelector(`#tab${prefix.toUpperCase().replace('_','')} .ledger-table`);
+    document.getElementById(`${prefix}_toggle_total`).addEventListener("click",()=>{
+      const icon=document.querySelector(`#${prefix}_toggle_total .section-toggle-icon`);
+      icon.classList.toggle("collapsed");
+      table.classList.toggle("section-hidden-total");
+    });
+    document.getElementById(`${prefix}_toggle_sold`).addEventListener("click",()=>{
+      const icon=document.querySelector(`#${prefix}_toggle_sold .section-toggle-icon`);
+      icon.classList.toggle("collapsed");
+      table.classList.toggle("section-hidden-sold");
+    });
+    document.getElementById(`${prefix}_toggle_balance`).addEventListener("click",()=>{
+      const icon=document.querySelector(`#${prefix}_toggle_balance .section-toggle-icon`);
+      icon.classList.toggle("collapsed");
+      table.classList.toggle("section-hidden-balance");
+    });
+  };
+
+  toggleSections("ajmz");
+  toggleSections("calib");
+  toggleSections("all");
+
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
-
-      const target = btn.dataset.tab;
-      document.querySelectorAll(".tab-section").forEach(sec =>
-        sec.classList.remove("active")
-      );
+      const target=btn.dataset.tab;
+      document.querySelectorAll(".tab-section").forEach(sec=>sec.classList.remove("active"));
       document.getElementById(target).classList.add("active");
-
-      if (target === "tabAJMZ") renderAJMZ();
-      if (target === "tabCALIB") renderCALIB();
-      if (target === "tabALL")  renderALL();
+      if(target==="tabAJMZ")renderAJMZ();
+      if(target==="tabCALIB")renderCALIB();
+      if(target==="tabALL")renderALL();
     });
   });
 
-  /* GLOBAL SEARCH */
-  document.getElementById("globalSearch").addEventListener("input", () => {
-    renderAJMZ();
-    renderCALIB();
-    renderALL();
+  document.getElementById("globalSearch").addEventListener("input",()=>{
+    renderAJMZ();renderCALIB();renderALL();
   });
 
-  /* AJMZ FILTERS */
-  document.getElementById("ajmz_filter_party").addEventListener("change", renderAJMZ);
-  document.getElementById("ajmz_filter_lot").addEventListener("change", renderAJMZ);
-  document.getElementById("ajmz_filter_date_from").addEventListener("change", renderAJMZ);
-  document.getElementById("ajmz_filter_date_to").addEventListener("change", renderAJMZ);
-
-  document.getElementById("ajmz_clear").addEventListener("click", () => {
-    document.getElementById("ajmz_filter_party").value = "";
-    document.getElementById("ajmz_filter_lot").value = "";
-    document.getElementById("ajmz_filter_date_from").value = "";
-    document.getElementById("ajmz_filter_date_to").value = "";
-    document.getElementById("globalSearch").value = "";
+  document.getElementById("ajmz_filter_party").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_filter_lot").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_filter_date_from").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_filter_date_to").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_clear").addEventListener("click",()=>{
+    document.getElementById("ajmz_filter_party").value="";
+    document.getElementById("ajmz_filter_lot").value="";
+    document.getElementById("ajmz_filter_date_from").value="";
+    document.getElementById("ajmz_filter_date_to").value="";
+    document.getElementById("globalSearch").value="";
     renderAJMZ();
   });
+  document.getElementById("ajmz_export").addEventListener("click",()=>exportToCSV("AJMZ"));
 
-  document.getElementById("ajmz_export").addEventListener("click", () =>
-    exportToCSV("AJMZ")
-  );
-
-  /* CALIB FILTERS */
-  document.getElementById("calib_filter_party").addEventListener("change", renderCALIB);
-  document.getElementById("calib_filter_lot").addEventListener("change", renderCALIB);
-  document.getElementById("calib_filter_date_from").addEventListener("change", renderCALIB);
-  document.getElementById("calib_filter_date_to").addEventListener("change", renderCALIB);
-
-  document.getElementById("calib_clear").addEventListener("click", () => {
-    document.getElementById("calib_filter_party").value = "";
-    document.getElementById("calib_filter_lot").value = "";
-    document.getElementById("calib_filter_date_from").value = "";
-    document.getElementById("calib_filter_date_to").value = "";
-    document.getElementById("globalSearch").value = "";
+  document.getElementById("calib_filter_party").addEventListener("change",renderCALIB);
+  document.getElementById("calib_filter_lot").addEventListener("change",renderCALIB);
+  document.getElementById("calib_filter_date_from").addEventListener("change",renderCALIB);
+  document.getElementById("calib_filter_date_to").addEventListener("change",renderCALIB);
+  document.getElementById("calib_clear").addEventListener("click",()=>{
+    document.getElementById("calib_filter_party").value="";
+    document.getElementById("calib_filter_lot").value="";
+    document.getElementById("calib_filter_date_from").value="";
+    document.getElementById("calib_filter_date_to").value="";
+    document.getElementById("globalSearch").value="";
     renderCALIB();
   });
+  document.getElementById("calib_export").addEventListener("click",()=>exportToCSV("CALIB"));
 
-  document.getElementById("calib_export").addEventListener("click", () =>
-    exportToCSV("CALIB")
-  );
-
-  /* ALL FILTERS */
-  document.getElementById("all_filter_party").addEventListener("change", renderALL);
-  document.getElementById("all_filter_lot").addEventListener("change", renderALL);
-  document.getElementById("all_filter_date_from").addEventListener("change", renderALL);
-  document.getElementById("all_filter_date_to").addEventListener("change", renderALL);
-
-  document.getElementById("all_clear").addEventListener("click", () => {
-    document.getElementById("all_filter_party").value = "";
-    document.getElementById("all_filter_lot").value = "";
-    document.getElementById("all_filter_date_from").value = "";
-    document.getElementById("all_filter_date_to").value = "";
-    document.getElementById("globalSearch").value = "";
+  document.getElementById("all_filter_party").addEventListener("change",renderALL);
+  document.getElementById("all_filter_lot").addEventListener("change",renderALL);
+  document.getElementById("all_filter_date_from").addEventListener("change",renderALL);
+  document.getElementById("all_filter_date_to").addEventListener("change",renderALL);
+  document.getElementById("all_clear").addEventListener("click",()=>{
+    document.getElementById("all_filter_party").value="";
+    document.getElementById("all_filter_lot").value="";
+    document.getElementById("all_filter_date_from").value="";
+    document.getElementById("all_filter_date_to").value="";
+    document.getElementById("globalSearch").value="";
     renderALL();
   });
-
-  document.getElementById("all_export").addEventListener("click", () =>
-    exportToCSV("ALL")
-  );
+  document.getElementById("all_export").addEventListener("click",()=>exportToCSV("ALL"));
 });
 </script>
 
