@@ -95,10 +95,6 @@ body{
   font-weight:700;
   margin-bottom:4px;
 }
-.page-sub{
-  font-size:12px;
-  color:var(--ink-soft);
-}
 .search-box-global{
   background:#fff;
   border:1px solid var(--line);
@@ -246,9 +242,6 @@ body{
   background:var(--accent);
   color:#fff;
 }
-.searchable-select-option.hidden{
-  display:none;
-}
 
 .slicer-clear-btn, .action-btn{
   height:26px;
@@ -326,48 +319,15 @@ body{
 
 /* Print styles */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .nav-vertical,
-  .panel,
-  .tab-row,
-  .kpi-row,
-  .slicer-row {
-    display: none !important;
-  }
-  .print-area,
-  .print-area * {
-    visibility: visible;
-  }
-  .print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
-  .card {
-    box-shadow: none;
-    border: 1px solid #000;
-  }
-  .table {
-    font-size: 10px;
-  }
-  .table thead th {
-    background: #e0e0e0 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .add-row {
-    background: #e9f7ec !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .sell-row {
-    background: #fce9e9 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+  body * { visibility: hidden; }
+  .nav-vertical, .panel, .tab-row, .kpi-row, .slicer-row { display: none !important; }
+  .print-area, .print-area * { visibility: visible; }
+  .print-area { position: absolute; left: 0; top: 0; width: 100%; }
+  .card { box-shadow: none; border: 1px solid #000; }
+  .table { font-size: 10px; }
+  .table thead th { background: #e0e0e0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .add-row { background: #e9f7ec !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .sell-row { background: #fce9e9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 </style>
 </head>
@@ -376,10 +336,10 @@ body{
 
 <!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
-  <a href="index.html"   class="nav-item"        title="Add">➕</a>
-  <a href="added.html"   class="nav-item"        title="Added">📝</a>
-  <a href="sell.html"    class="nav-item"        title="Sell">💎</a>
-  <a href="reports.html" class="nav-item active"        title="Reports">📊</a>
+  <a href="index.html" class="nav-item" title="Add">➕</a>
+  <a href="added.html" class="nav-item" title="Added">📝</a>
+  <a href="sell.html" class="nav-item" title="Sell">💎</a>
+  <a href="reports.html" class="nav-item active" title="Reports">📊</a>
   <a href="reports2.html" class="nav-item" title="Reports">📊</a>
 </div>
 
@@ -387,12 +347,8 @@ body{
 
   <!-- TOP PANEL -->
   <div class="panel">
-    <div>
-      <div class="page-title">REPORTS (1)</div>
-    </div>
-    <div class="search-box-global">
-      🔍 <input id="searchGlobal" placeholder="Search across all sections…">
-    </div>
+    <div><div class="page-title">REPORTS (1)</div></div>
+    <div class="search-box-global">🔍 <input id="searchGlobal" placeholder="Search across all sections…"></div>
   </div>
 
   <!-- TAB BUTTONS -->
@@ -405,87 +361,27 @@ body{
 
   <!-- ========================= AJMZ TAB ========================= -->
   <div class="tab-section active" id="tabAJMZ">
-    <!-- KPI row -->
     <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Added</div>
-        <div class="kpi-main" id="aj_kpi_added_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="aj_kpi_added_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Total Sold</div>
-        <div class="kpi-main" id="aj_kpi_sold_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="aj_kpi_sold_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Current Inventory</div>
-        <div class="kpi-main" id="aj_kpi_inv_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="aj_kpi_inv_sub">Remaining quantity</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Profit</div>
-        <div class="kpi-main" id="aj_kpi_profit_main">0.00</div>
-        <div class="kpi-sub" id="aj_kpi_profit_sub">Sold amount</div>
-      </div>
+      <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="aj_kpi_added_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="aj_kpi_added_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="aj_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="aj_kpi_sold_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Current Inventory</div><div class="kpi-main" id="aj_kpi_inv_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="aj_kpi_inv_sub">Remaining quantity</div></div>
+      <div class="kpi-card"><div class="kpi-label">Profit</div><div class="kpi-main" id="aj_kpi_profit_main">0.00</div><div class="kpi-sub" id="aj_kpi_profit_sub">Sold amount</div></div>
     </div>
 
-    <!-- Slicers -->
     <div class="slicer-row">
-      <div class="slicer-group">
-        <label class="slicer-label">Type</label>
-        <select id="aj_filter_type" class="slicer-select">
-          <option value="">All</option>
-          <option value="ADD">ADD only</option>
-          <option value="SELL">SELL only</option>
-        </select>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Lot</label>
-        <div id="aj_filter_lot" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Format</label>
-        <div id="aj_filter_format" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Shape</label>
-        <div id="aj_filter_shape" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date from</label>
-        <input id="aj_filter_date_from" type="date" class="slicer-input">
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date to</label>
-        <input id="aj_filter_date_to" type="date" class="slicer-input">
-      </div>
-      <button class="slicer-clear-btn" id="aj_clear_filters">Clear Filters</button>
-      <button class="action-btn" id="aj_export_csv">📊 Export CSV</button>
-      <button class="action-btn" id="aj_print_table">🖨️ Print</button>
+      <div class="slicer-group"><label class="slicer-label">Lot</label><div id="aj_filter_lot" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Format</label><div id="aj_filter_format" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Party</label><div id="aj_filter_party" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Date from</label><input id="aj_filter_date_from" type="date" class="slicer-input"></div>
+      <div class="slicer-group"><label class="slicer-label">Date to</label><input id="aj_filter_date_to" type="date" class="slicer-input"></div>
+      <button class="slicer-clear-btn" id="aj_clear_filters">Clear</button>
+      <button class="action-btn" id="aj_export_csv">📊 CSV</button>
     </div>
 
-    <!-- Table -->
     <div class="card print-area" id="aj_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead>
-            <tr>
-              <th style="width:60px;">Type</th>
-              <th>Date</th>
-              <th>Tx ID</th>
-              <th>Lot</th>
-              <th>Format</th>
-              <th>Description</th>
-              <th>Shape</th>
-              <th>CTS</th>
-              <th>PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Party</th>
-              <th>Remarks</th>
-              <th>Source</th>
-            </tr>
-          </thead>
+          <thead><tr><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Format</th><th>Description</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyAJMZ"></tbody>
         </table>
       </div>
@@ -495,83 +391,26 @@ body{
   <!-- ====================== CALIB TAB ========================== -->
   <div class="tab-section" id="tabCALIB">
     <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Added</div>
-        <div class="kpi-main" id="cb_kpi_added_main">0.00 CTS</div>
-        <div class="kpi-sub" id="cb_kpi_added_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Total Sold</div>
-        <div class="kpi-main" id="cb_kpi_sold_main">0.00 CTS</div>
-        <div class="kpi-sub" id="cb_kpi_sold_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Current Inventory</div>
-        <div class="kpi-main" id="cb_kpi_inv_main">0.00 CTS</div>
-        <div class="kpi-sub" id="cb_kpi_inv_sub">Remaining quantity</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Profit</div>
-        <div class="kpi-main" id="cb_kpi_profit_main">0.00</div>
-        <div class="kpi-sub" id="cb_kpi_profit_sub">Sold amount</div>
-      </div>
+      <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="cb_kpi_added_main">0.00 CTS</div><div class="kpi-sub" id="cb_kpi_added_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="cb_kpi_sold_main">0.00 CTS</div><div class="kpi-sub" id="cb_kpi_sold_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Current Inventory</div><div class="kpi-main" id="cb_kpi_inv_main">0.00 CTS</div><div class="kpi-sub" id="cb_kpi_inv_sub">Remaining quantity</div></div>
+      <div class="kpi-card"><div class="kpi-label">Profit</div><div class="kpi-main" id="cb_kpi_profit_main">0.00</div><div class="kpi-sub" id="cb_kpi_profit_sub">Sold amount</div></div>
     </div>
 
     <div class="slicer-row">
-      <div class="slicer-group">
-        <label class="slicer-label">Type</label>
-        <select id="cb_filter_type" class="slicer-select">
-          <option value="">All</option>
-          <option value="ADD">ADD only</option>
-          <option value="SELL">SELL only</option>
-        </select>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Lot</label>
-        <div id="cb_filter_lot" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Lot × Grade</label>
-        <div id="cb_filter_lotgrade" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Shape × Size</label>
-        <div id="cb_filter_shapesize" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date from</label>
-        <input id="cb_filter_date_from" type="date" class="slicer-input">
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date to</label>
-        <input id="cb_filter_date_to" type="date" class="slicer-input">
-      </div>
-      <button class="slicer-clear-btn" id="cb_clear_filters">Clear Filters</button>
-      <button class="action-btn" id="cb_export_csv">📊 Export CSV</button>
-      <button class="action-btn" id="cb_print_table">🖨️ Print</button>
+      <div class="slicer-group"><label class="slicer-label">Lot</label><div id="cb_filter_lot" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Grade</label><div id="cb_filter_grade" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Party</label><div id="cb_filter_party" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Date from</label><input id="cb_filter_date_from" type="date" class="slicer-input"></div>
+      <div class="slicer-group"><label class="slicer-label">Date to</label><input id="cb_filter_date_to" type="date" class="slicer-input"></div>
+      <button class="slicer-clear-btn" id="cb_clear_filters">Clear</button>
+      <button class="action-btn" id="cb_export_csv">📊 CSV</button>
     </div>
 
     <div class="card print-area" id="cb_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead>
-            <tr>
-              <th style="width:60px;">Type</th>
-              <th>Date</th>
-              <th>Tx ID</th>
-              <th>Lot</th>
-              <th>Grade</th>
-              <th>Description</th>
-              <th>Shape</th>
-              <th>Size</th>
-              <th>CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Party</th>
-              <th>Remarks</th>
-              <th>Source</th>
-            </tr>
-          </thead>
+          <thead><tr><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Grade</th><th>Description</th><th>CTS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyCALIB"></tbody>
         </table>
       </div>
@@ -581,82 +420,26 @@ body{
   <!-- ===================== ALL STONES TAB ====================== -->
   <div class="tab-section" id="tabALL">
     <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Added</div>
-        <div class="kpi-main" id="all_kpi_added_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="all_kpi_added_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Total Sold</div>
-        <div class="kpi-main" id="all_kpi_sold_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="all_kpi_sold_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Current Inventory</div>
-        <div class="kpi-main" id="all_kpi_inv_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="all_kpi_inv_sub">Remaining quantity</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Profit</div>
-        <div class="kpi-main" id="all_kpi_profit_main">0.00</div>
-        <div class="kpi-sub" id="all_kpi_profit_sub">Sold amount</div>
-      </div>
+      <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="all_kpi_added_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_added_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="all_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_sold_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Current Inventory</div><div class="kpi-main" id="all_kpi_inv_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_inv_sub">Remaining quantity</div></div>
+      <div class="kpi-card"><div class="kpi-label">Profit</div><div class="kpi-main" id="all_kpi_profit_main">0.00</div><div class="kpi-sub" id="all_kpi_profit_sub">Sold amount</div></div>
     </div>
 
     <div class="slicer-row">
-      <div class="slicer-group">
-        <label class="slicer-label">Source</label>
-        <select id="all_filter_source" class="slicer-select">
-          <option value="">All</option>
-          <option value="AJMZ">AJMZ</option>
-          <option value="CALIB">CALIB</option>
-        </select>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Lot</label>
-        <div id="all_filter_lot" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Grade / Format</label>
-        <div id="all_filter_gradefmt" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Party</label>
-        <div id="all_filter_party" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date from</label>
-        <input id="all_filter_date_from" type="date" class="slicer-input">
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date to</label>
-        <input id="all_filter_date_to" type="date" class="slicer-input">
-      </div>
-      <button class="slicer-clear-btn" id="all_clear_filters">Clear Filters</button>
-      <button class="action-btn" id="all_export_csv">📊 Export CSV</button>
-      <button class="action-btn" id="all_print_table">🖨️ Print</button>
+      <div class="slicer-group"><label class="slicer-label">Source</label><select id="all_filter_source" class="slicer-select"><option value="">All</option><option value="AJMZ">AJMZ</option><option value="CALIB">CALIB</option></select></div>
+      <div class="slicer-group"><label class="slicer-label">Lot</label><div id="all_filter_lot" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Party</label><div id="all_filter_party" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Date from</label><input id="all_filter_date_from" type="date" class="slicer-input"></div>
+      <div class="slicer-group"><label class="slicer-label">Date to</label><input id="all_filter_date_to" type="date" class="slicer-input"></div>
+      <button class="slicer-clear-btn" id="all_clear_filters">Clear</button>
+      <button class="action-btn" id="all_export_csv">📊 CSV</button>
     </div>
 
     <div class="card print-area" id="all_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead>
-            <tr>
-              <th style="width:70px;">Source</th>
-              <th>Type</th>
-              <th>Date</th>
-              <th>Tx ID</th>
-              <th>Lot</th>
-              <th>Grade / Format</th>
-              <th>Description</th>
-              <th>CTS</th>
-              <th>PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Party</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
+          <thead><tr><th style="width:70px;">Source</th><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Description</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyALL"></tbody>
         </table>
       </div>
@@ -666,84 +449,34 @@ body{
   <!-- ======================= PARTY TAB ========================= -->
   <div class="tab-section" id="tabPARTY">
     <div class="kpi-row">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Sold</div>
-        <div class="kpi-main" id="py_kpi_sold_main">0.00 CTS / 0 PCS</div>
-        <div class="kpi-sub" id="py_kpi_sold_sub">Amount: 0.00</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Distinct Parties</div>
-        <div class="kpi-main" id="py_kpi_party_main">0</div>
-        <div class="kpi-sub" id="py_kpi_party_sub">Parties with sell records</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">AJMZ vs CALIB</div>
-        <div class="kpi-main" id="py_kpi_split_main">0 / 0</div>
-        <div class="kpi-sub" id="py_kpi_split_sub">AJMZ CTS / CALIB CTS</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Profit</div>
-        <div class="kpi-main" id="py_kpi_profit_main">0.00</div>
-        <div class="kpi-sub" id="py_kpi_profit_sub">Sold amount</div>
-      </div>
+      <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="py_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="py_kpi_sold_sub">Amount: 0.00</div></div>
+      <div class="kpi-card"><div class="kpi-label">Distinct Parties</div><div class="kpi-main" id="py_kpi_party_main">0</div><div class="kpi-sub" id="py_kpi_party_sub">Parties with sells</div></div>
+      <div class="kpi-card"><div class="kpi-label">AJMZ vs CALIB</div><div class="kpi-main" id="py_kpi_split_main">0 / 0</div><div class="kpi-sub" id="py_kpi_split_sub">AJMZ CTS / CALIB CTS</div></div>
+      <div class="kpi-card"><div class="kpi-label">Profit</div><div class="kpi-main" id="py_kpi_profit_main">0.00</div><div class="kpi-sub" id="py_kpi_profit_sub">Sold amount</div></div>
     </div>
 
     <div class="slicer-row">
-      <div class="slicer-group">
-        <label class="slicer-label">Party</label>
-        <div id="py_filter_party" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Stone Type</label>
-        <select id="py_filter_source" class="slicer-select">
-          <option value="">All</option>
-          <option value="AJMZ">AJMZ</option>
-          <option value="CALIB">CALIB</option>
-        </select>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date from</label>
-        <input id="py_filter_date_from" type="date" class="slicer-input">
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date to</label>
-        <input id="py_filter_date_to" type="date" class="slicer-input">
-      </div>
-      <button class="slicer-clear-btn" id="py_clear_filters">Clear Filters</button>
-      <button class="action-btn" id="py_export_csv">📊 Export CSV</button>
-      <button class="action-btn" id="py_print_table">🖨️ Print</button>
+      <div class="slicer-group"><label class="slicer-label">Party</label><div id="py_filter_party" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Stone Type</label><select id="py_filter_source" class="slicer-select"><option value="">All</option><option value="AJMZ">AJMZ</option><option value="CALIB">CALIB</option></select></div>
+      <div class="slicer-group"><label class="slicer-label">Date from</label><input id="py_filter_date_from" type="date" class="slicer-input"></div>
+      <div class="slicer-group"><label class="slicer-label">Date to</label><input id="py_filter_date_to" type="date" class="slicer-input"></div>
+      <button class="slicer-clear-btn" id="py_clear_filters">Clear</button>
+      <button class="action-btn" id="py_export_csv">📊 CSV</button>
     </div>
 
     <div class="card print-area" id="py_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead>
-            <tr>
-              <th>Party</th>
-              <th>Source</th>
-              <th>Date</th>
-              <th>Tx ID</th>
-              <th>Lot</th>
-              <th>Grade / Format</th>
-              <th>CTS</th>
-              <th>PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Cost</th>
-              <th>Profit</th>
-              <th>Remarks</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Party</th><th>Source</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyPARTY"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-</div> <!-- /workspace -->
+</div>
 
 <script>
-/* ======================= FIREBASE ======================== */
 const firebaseConfig = {
   apiKey: "AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
   authDomain: "ajmzinventory.firebaseapp.com",
@@ -756,1110 +489,372 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* ======================= UTILS =========================== */
 function esc(v){
-  if(v === null || v === undefined) return "";
-  return String(v)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;");
+  if(v===null||v===undefined)return"";
+  return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
 function num(v){
-  if(v === null || v === undefined || v === "") return 0;
+  if(v===null||v===undefined||v==="")return 0;
   const n=Number(String(v).replace(/,/g,""));
   return isNaN(n)?0:n;
 }
 function fmt(v){
-  return Number(v||0).toLocaleString("en-US",{
-    minimumFractionDigits:2,
-    maximumFractionDigits:2
-  });
+  return Number(v||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function parseDateToComparable(d){
-  if(!d) return null;
+  if(!d)return null;
   const t=Date.parse(d);
   return isNaN(t)?null:t;
 }
 
-/* ================== DATA CONTAINERS ====================== */
-let AJMZ_PARENTS=[], AJMZ_SELLS=[], AJMZ_TREE=[];
-let CALIB_PARENTS=[], CALIB_SELLS=[], CALIB_TREE=[];
-let ALL_ROWS=[];
-let PARTY_ROWS=[];
+let AJMZ_PARENTS=[],CALIB_PARENTS=[],ALL_ROWS=[],PARTY_ROWS=[];
 
-/* =================== LOAD PARENTS ======================== */
-async function loadParents(){
-  const [ajSnap, cbSnap] = await Promise.all([
+async function loadAllData(){
+  const [ajSnap,cbSnap,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
-    db.ref("calibRecords").once("value")
+    db.ref("calibRecords").once("value"),
+    db.ref("sellRecords").once("value")
   ]);
 
-  AJMZ_PARENTS=[]; CALIB_PARENTS=[];
+  AJMZ_PARENTS=[];
+  CALIB_PARENTS=[];
+  const sellMap={};
+
+  if(sellSnap.exists()){
+    sellSnap.forEach(parentSnap=>{
+      const parentKey=parentSnap.key;
+      sellMap[parentKey]=[];
+      parentSnap.forEach(childSnap=>{
+        const obj=childSnap.val();
+        obj.key=childSnap.key;
+        obj.cts=num(obj.cts);
+        obj.pcs=num(obj.pcs);
+        obj.price=num(obj.price);
+        obj.amount=num(obj.amount||(obj.cts*obj.price));
+        sellMap[parentKey].push(obj);
+      });
+    });
+  }
 
   if(ajSnap.exists()){
     ajSnap.forEach(s=>{
-      const o=s.val(); o.key=s.key;
-      o.cts=num(o.cts); o.pcs=num(o.pcs);
+      const o=s.val();o.key=s.key;
+      o.cts=num(o.cts);o.pcs=num(o.pcs);
       o.price=num(o.price);
-      o.amount=num(o.amount || o.cts*o.price);
+      o.amount=num(o.amount||(o.cts*o.price));
+      o.__sells=sellMap[o.key]||[];
       AJMZ_PARENTS.push(o);
     });
   }
 
   if(cbSnap.exists()){
     cbSnap.forEach(s=>{
-      const o=s.val(); o.key=s.key;
+      const o=s.val();o.key=s.key;
       o.cts=num(o.cts);
       o.price=num(o.price);
-      o.amount=num(o.amount || o.cts*o.price);
+      o.amount=num(o.amount||(o.cts*o.price));
+      o.__sells=sellMap[o.key]||[];
       CALIB_PARENTS.push(o);
     });
   }
 
-  AJMZ_PARENTS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
-  CALIB_PARENTS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
+  buildUnifiedRows();
+  populateSlicers();
 }
 
-/* ==================== LOAD SELLS ========================= */
-async function loadSellRecords(){
-  const [ajSnap, cbSnap] = await Promise.all([
-    db.ref("sellRecords/ajmz").once("value"),
-    db.ref("sellRecords/calib").once("value")
-  ]);
-
-  AJMZ_SELLS=[]; CALIB_SELLS=[];
-
-  if(ajSnap.exists()){
-    ajSnap.forEach(snap=>{
-      const s=snap.val(); s.key=snap.key;
-      s.cts=num(s.cts); s.pcs=num(s.pcs);
-      s.sellPrice=num(s.sellPrice);
-      s.amount=num(s.amount || s.cts*s.sellPrice);
-      s.cost=num(s.cost || 0);
-      AJMZ_SELLS.push(s);
-    });
-  }
-
-  if(cbSnap.exists()){
-    cbSnap.forEach(snap=>{
-      const s=snap.val(); s.key=snap.key;
-      s.cts=num(s.cts);
-      s.sellPrice=num(s.sellPrice);
-      s.amount=num(s.amount || s.cts*s.sellPrice);
-      s.cost=num(s.cost || 0);
-      CALIB_SELLS.push(s);
-    });
-  }
-
-  AJMZ_SELLS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
-  CALIB_SELLS.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
-}
-
-/* ===================== BUILD TREES ======================= */
-function buildTrees(){
-  AJMZ_TREE = AJMZ_PARENTS.map(p=>{
-    const sells=AJMZ_SELLS.filter(s=>s.parentKey===p.key);
-    return {parent:p, sells};
-  });
-
-  CALIB_TREE = CALIB_PARENTS.map(p=>{
-    const sells=CALIB_SELLS.filter(s=>s.parentKey===p.key);
-    return {parent:p, sells};
-  });
-}
-
-/* ========== BUILD UNIFIED ALL_ROWS + PARTY_ROWS ========== */
 function buildUnifiedRows(){
   ALL_ROWS=[];
   PARTY_ROWS=[];
 
-  // AJMZ
-  AJMZ_TREE.forEach(row=>{
-    const p=row.parent;
-    const lot=p.lotName || "";
-    const fmtTxt=p.lotFormat || "";
-    const shape=p.shape || "";
-    const gradeOrFormat=fmtTxt;
-
-    const totalSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
-    const totalSellPCS=row.sells.reduce((a,s)=>a+s.pcs,0);
-    const origCTS=p.cts + totalSellCTS;
-    const origPCS=p.pcs + totalSellPCS;
-
-    ALL_ROWS.push({
-      source:"AJMZ",
-      type:"ADD",
-      date:p.date || "",
-      txId:p.txId || "",
-      lot,
-      gradeFmt:gradeOrFormat,
-      description:p.description || "",
-      cts:origCTS,
-      pcs:origPCS,
-      price:p.price,
-      amount:origCTS * p.price,
-      party:p.party || "",
-      remarks:p.remarks || "",
-      shape
-    });
-
-    row.sells.forEach(s=>{
-      const gradeFmtSell=s.parentFormat || fmtTxt || "";
-      const lotSell=s.parentLot || lot;
-      const descSell=s.parentDescription || p.description || "";
-      const party=s.party || "";
-      const cost = s.cost || 0;
-      const profit = s.amount - cost;
-
-      ALL_ROWS.push({
-        source:"AJMZ",
-        type:"SELL",
-        date:s.date || "",
-        txId:s.txId || s.key,
-        lot:lotSell,
-        gradeFmt:gradeFmtSell,
-        description:descSell,
-        cts:s.cts,
-        pcs:s.pcs,
-        price:s.sellPrice,
-        amount:s.amount,
-        party,
-        remarks:s.remarks || "",
-        shape:shape,
-        cost:cost,
-        profit:profit
-      });
-
-      PARTY_ROWS.push({
-        source:"AJMZ",
-        party,
-        date:s.date || "",
-        txId:s.txId || s.key,
-        lot:lotSell,
-        gradeFmt:gradeFmtSell,
-        cts:s.cts,
-        pcs:s.pcs,
-        price:s.sellPrice,
-        amount:s.amount,
-        cost,
-        profit,
-        remarks:s.remarks || ""
-      });
+  AJMZ_PARENTS.forEach(p=>{
+    ALL_ROWS.push({source:"AJMZ",type:"ADD",date:p.date||"",txId:p.txId||"",lot:p.lotName||"",desc:p.description||"",cts:p.cts,pcs:p.pcs,price:p.price,amount:p.amount,party:p.party||"",remarks:p.remarks||""});
+    
+    (p.__sells||[]).forEach(s=>{
+      ALL_ROWS.push({source:"AJMZ",type:"SELL",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",desc:p.description||"",cts:s.cts,pcs:s.pcs,price:s.price,amount:s.amount,party:s.party||"",remarks:s.remarks||""});
+      PARTY_ROWS.push({source:"AJMZ",party:s.party||"",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",cts:s.cts,pcs:s.pcs,price:s.price,amount:s.amount,remarks:s.remarks||""});
     });
   });
 
-  // CALIB
-  CALIB_TREE.forEach(row=>{
-    const p=row.parent;
-    const lot=p.lotName || "";
-    const grade=p.grade || "";
-    const shape=p.shape || "";
-    const size=p.size || "";
-    const gradeOrFormat=grade || "";
-
-    const totalSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
-    const origCTS=p.cts + totalSellCTS;
-
-    ALL_ROWS.push({
-      source:"CALIB",
-      type:"ADD",
-      date:p.date || "",
-      txId:p.txId || "",
-      lot,
-      gradeFmt:gradeOrFormat,
-      description:p.description || "",
-      cts:origCTS,
-      pcs:0,
-      price:p.price,
-      amount:origCTS * p.price,
-      party:p.party || "",
-      remarks:p.remarks || "",
-      shape:`${shape} ${size}`.trim()
-    });
-
-    row.sells.forEach(s=>{
-      const gradeFmtSell=s.parentGrade || grade || "";
-      const lotSell=s.parentLot || lot;
-      const descSell=s.parentDescription || p.description || "";
-      const party=s.party || "";
-      const cost = s.cost || 0;
-      const profit = s.amount - cost;
-
-      ALL_ROWS.push({
-        source:"CALIB",
-        type:"SELL",
-        date:s.date || "",
-        txId:s.txId || s.key,
-        lot:lotSell,
-        gradeFmt:gradeFmtSell,
-        description:descSell,
-        cts:s.cts,
-        pcs:0,
-        price:s.sellPrice,
-        amount:s.amount,
-        party,
-        remarks:s.remarks || "",
-        shape:`${shape} ${size}`.trim(),
-        cost:cost,
-        profit:profit
-      });
-
-      PARTY_ROWS.push({
-        source:"CALIB",
-        party,
-        date:s.date || "",
-        txId:s.txId || s.key,
-        lot:lotSell,
-        gradeFmt:gradeFmtSell,
-        cts:s.cts,
-        pcs:0,
-        price:s.sellPrice,
-        amount:s.amount,
-        cost,
-        profit,
-        remarks:s.remarks || ""
-      });
+  CALIB_PARENTS.forEach(p=>{
+    ALL_ROWS.push({source:"CALIB",type:"ADD",date:p.date||"",txId:p.txId||"",lot:p.lotName||"",desc:p.description||"",cts:p.cts,pcs:0,price:p.price,amount:p.amount,party:p.party||"",remarks:p.remarks||""});
+    
+    (p.__sells||[]).forEach(s=>{
+      ALL_ROWS.push({source:"CALIB",type:"SELL",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",desc:p.description||"",cts:s.cts,pcs:0,price:s.price,amount:s.amount,party:s.party||"",remarks:s.remarks||""});
+      PARTY_ROWS.push({source:"CALIB",party:s.party||"",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",cts:s.cts,pcs:0,price:s.price,amount:s.amount,remarks:s.remarks||""});
     });
   });
-
-  ALL_ROWS.sort((a,b)=>parseDateToComparable(b.date||"")-parseDateToComparable(a.date||""));
-  PARTY_ROWS.sort((a,b)=>parseDateToComparable(b.date||"")-parseDateToComparable(a.date||""));
 }
 
-/* ============= SEARCHABLE SELECT COMPONENT =============== */
-function createSearchableSelect(wrapperId, values, includeAll=true){
-  const wrapper = document.getElementById(wrapperId);
-  if(!wrapper) return null;
-  
-  wrapper.innerHTML = `
-    <input type="text" class="searchable-select-input" placeholder="${includeAll ? 'All' : 'Select...'}" readonly>
-    <div class="searchable-select-dropdown"></div>
-  `;
-  
-  const input = wrapper.querySelector('.searchable-select-input');
-  const dropdown = wrapper.querySelector('.searchable-select-dropdown');
-  
-  let selectedValue = "";
-  
-  const options = includeAll ? ["All", ...values] : values;
-  options.forEach(val => {
-    const opt = document.createElement('div');
-    opt.className = 'searchable-select-option';
-    opt.textContent = val === "All" ? "All" : val;
-    opt.dataset.value = val === "All" ? "" : val;
-    
-    if(val === "All") opt.classList.add('selected');
-    
-    opt.addEventListener('click', () => {
-      selectedValue = opt.dataset.value;
-      input.value = opt.textContent;
-      input.setAttribute('data-value', selectedValue);
-      
-      dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
-        o.classList.remove('selected');
-      });
+function createSearchableSelect(wrapperId,values){
+  const wrapper=document.getElementById(wrapperId);
+  if(!wrapper)return null;
+  wrapper.innerHTML=`<input type="text" class="searchable-select-input" placeholder="All" readonly><div class="searchable-select-dropdown"></div>`;
+  const input=wrapper.querySelector('.searchable-select-input');
+  const dropdown=wrapper.querySelector('.searchable-select-dropdown');
+  let selectedValue="";
+  const opts=["All",...values];
+  opts.forEach(val=>{
+    const opt=document.createElement('div');
+    opt.className='searchable-select-option';
+    opt.textContent=val;
+    opt.dataset.value=val==="All"?"":val;
+    if(val==="All")opt.classList.add('selected');
+    opt.addEventListener('click',()=>{
+      selectedValue=opt.dataset.value;
+      input.value=opt.textContent;
+      input.setAttribute('data-value',selectedValue);
+      dropdown.querySelectorAll('.searchable-select-option').forEach(o=>o.classList.remove('selected'));
       opt.classList.add('selected');
-      
       dropdown.classList.remove('active');
-      
-      const event = new Event('change', { bubbles: true });
-      wrapper.dispatchEvent(event);
+      wrapper.dispatchEvent(new Event('change',{bubbles:true}));
     });
-    
     dropdown.appendChild(opt);
   });
-  
-  input.addEventListener('click', (e) => {
+  input.addEventListener('click',e=>{
     e.stopPropagation();
-    const isActive = dropdown.classList.contains('active');
-    
-    document.querySelectorAll('.searchable-select-dropdown').forEach(d => {
-      d.classList.remove('active');
-    });
-    
-    if(!isActive){
-      dropdown.classList.add('active');
-      input.removeAttribute('readonly');
-      input.focus();
-      input.select();
-    }
+    const isActive=dropdown.classList.contains('active');
+    document.querySelectorAll('.searchable-select-dropdown').forEach(d=>d.classList.remove('active'));
+    if(!isActive){dropdown.classList.add('active');input.removeAttribute('readonly');input.focus();input.select();}
   });
-  
-  input.addEventListener('input', () => {
-    const searchTerm = input.value.toLowerCase();
-    dropdown.querySelectorAll('.searchable-select-option').forEach(opt => {
-      const text = opt.textContent.toLowerCase();
-      if(text.includes(searchTerm) || opt.dataset.value === ""){
-        opt.classList.remove('hidden');
-      } else {
-        opt.classList.add('hidden');
-      }
+  input.addEventListener('input',()=>{
+    const term=input.value.toLowerCase();
+    dropdown.querySelectorAll('.searchable-select-option').forEach(opt=>{
+      const text=opt.textContent.toLowerCase();
+      opt.classList.toggle('hidden',!text.includes(term)&&opt.dataset.value!=="");
     });
   });
+  input.addEventListener('blur',()=>{setTimeout(()=>{if(!dropdown.matches(':hover')){dropdown.classList.remove('active');input.setAttribute('readonly',true);}},200);});
+  document.addEventListener('click',e=>{if(!wrapper.contains(e.target)){dropdown.classList.remove('active');input.setAttribute('readonly',true);}});
+  return{getValue:()=>selectedValue,setValue:(val)=>{selectedValue=val||"";const opt=dropdown.querySelector(`[data-value="${val||""}"]`);if(opt){input.value=opt.textContent;input.setAttribute('data-value',selectedValue);dropdown.querySelectorAll('.searchable-select-option').forEach(o=>o.classList.remove('selected'));opt.classList.add('selected');}},reset:()=>{selectedValue="";input.value="All";input.setAttribute('data-value',"");dropdown.querySelectorAll('.searchable-select-option').forEach(o=>{o.classList.remove('selected');if(o.dataset.value==="")o.classList.add('selected');});}};
+}
+
+function uniqueValues(arr,key){const set=new Set();arr.forEach(o=>{const v=(o[key]??"").toString().trim();if(v)set.add(v);});return Array.from(set).sort();}
+
+const selects={};
+function populateSlicers(){
+  selects.aj_lot=createSearchableSelect("aj_filter_lot",uniqueValues(AJMZ_PARENTS,"lotName"));
+  selects.aj_format=createSearchableSelect("aj_filter_format",uniqueValues(AJMZ_PARENTS,"lotFormat"));
+  selects.aj_party=createSearchableSelect("aj_filter_party",uniqueValues(AJMZ_PARENTS,"party"));
   
-  input.addEventListener('blur', () => {
-    setTimeout(() => {
-      if(!dropdown.matches(':hover')){
-        dropdown.classList.remove('active');
-        input.setAttribute('readonly', true);
-        const selected = dropdown.querySelector('.searchable-select-option.selected');
-        if(selected){
-          input.value = selected.textContent;
-        }
-      }
-    }, 200);
-  });
+  selects.cb_lot=createSearchableSelect("cb_filter_lot",uniqueValues(CALIB_PARENTS,"lotName"));
+  selects.cb_grade=createSearchableSelect("cb_filter_grade",uniqueValues(CALIB_PARENTS,"grade"));
+  selects.cb_party=createSearchableSelect("cb_filter_party",uniqueValues(CALIB_PARENTS,"party"));
   
-  document.addEventListener('click', (e) => {
-    if(!wrapper.contains(e.target)){
-      dropdown.classList.remove('active');
-      input.setAttribute('readonly', true);
-      const selected = dropdown.querySelector('.searchable-select-option.selected');
-      if(selected){
-        input.value = selected.textContent;
-      }
-    }
-  });
+  selects.all_lot=createSearchableSelect("all_filter_lot",uniqueValues(ALL_ROWS,"lot"));
+  selects.all_party=createSearchableSelect("all_filter_party",uniqueValues(ALL_ROWS,"party"));
   
-  return {
-    getValue: () => selectedValue,
-    setValue: (val) => {
-      selectedValue = val || "";
-      const opt = dropdown.querySelector(`[data-value="${val || ""}"]`);
-      if(opt){
-        input.value = opt.textContent;
-        input.setAttribute('data-value', selectedValue);
-        dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
-          o.classList.remove('selected');
-        });
-        opt.classList.add('selected');
-      }
-    },
-    reset: () => {
-      selectedValue = "";
-      input.value = includeAll ? "All" : "";
-      input.setAttribute('data-value', "");
-      dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
-        o.classList.remove('selected');
-        if(o.dataset.value === "") o.classList.add('selected');
-      });
-    }
-  };
+  selects.py_party=createSearchableSelect("py_filter_party",uniqueValues(PARTY_ROWS,"party"));
 }
 
-/* ================= POPULATE SLICERS ====================== */
-function uniqueValues(arr, key){
-  const set=new Set();
-  arr.forEach(o=>{
-    const v=(o[key] ?? "").toString().trim();
-    if(v) set.add(v);
-  });
-  return Array.from(set).sort();
-}
+function dateInRange(d,from,to){const dt=parseDateToComparable(d);if(dt===null)return false;if(from){const df=parseDateToComparable(from);if(df!==null&&dt<df)return false;}if(to){const dtt=parseDateToComparable(to);if(dtt!==null&&dt>dtt)return false;}return true;}
 
-const searchableSelects = {};
+function exportCSV(tableId,filename){const table=document.querySelector(`#${tableId} table`);if(!table)return;const rows=Array.from(table.querySelectorAll('tr'));const csv=rows.map(row=>{const cells=Array.from(row.querySelectorAll('th, td'));return cells.map(cell=>{let text=cell.textContent.trim();text=text.replace(/\s+/g,' ');if(text.includes(',')||text.includes('"')||text.includes('\n'))text='"'+text.replace(/"/g,'""')+'"';return text;}).join(',');}).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const link=document.createElement('a');link.setAttribute('href',URL.createObjectURL(blob));link.setAttribute('download',filename);document.body.appendChild(link);link.click();document.body.removeChild(link);}
 
-function populateAllSlicers(){
-  const lotVals   = uniqueValues(AJMZ_PARENTS,"lotName");
-  const fmtVals   = uniqueValues(AJMZ_PARENTS,"lotFormat");
-  const shapeVals = uniqueValues(AJMZ_PARENTS,"shape");
-
-  searchableSelects.aj_lot = createSearchableSelect("aj_filter_lot", lotVals);
-  searchableSelects.aj_format = createSearchableSelect("aj_filter_format", fmtVals);
-  searchableSelects.aj_shape = createSearchableSelect("aj_filter_shape", shapeVals);
-
-  const cbLotVals   = uniqueValues(CALIB_PARENTS,"lotName");
-  
-  const lotGradeSet=new Set();
-  CALIB_PARENTS.forEach(p=>{
-    const pair=`${p.lotName||""} | ${p.grade||""}`.trim();
-    if(pair!=="|") lotGradeSet.add(pair);
-  });
-  const lotGradeVals=Array.from(lotGradeSet).sort();
-
-  const shapeSizeSet=new Set();
-  CALIB_PARENTS.forEach(p=>{
-    const pair=`${p.shape||""} | ${p.size||""}`.trim();
-    if(pair!=="|") shapeSizeSet.add(pair);
-  });
-  const shapeSizeVals=Array.from(shapeSizeSet).sort();
-
-  searchableSelects.cb_lot = createSearchableSelect("cb_filter_lot", cbLotVals);
-  searchableSelects.cb_lotgrade = createSearchableSelect("cb_filter_lotgrade", lotGradeVals);
-  searchableSelects.cb_shapesize = createSearchableSelect("cb_filter_shapesize", shapeSizeVals);
-
-  searchableSelects.all_lot = createSearchableSelect("all_filter_lot", uniqueValues(ALL_ROWS,"lot"));
-  searchableSelects.all_gradefmt = createSearchableSelect("all_filter_gradefmt", uniqueValues(ALL_ROWS,"gradeFmt"));
-  searchableSelects.all_party = createSearchableSelect("all_filter_party", uniqueValues(ALL_ROWS,"party"));
-
-  searchableSelects.py_party = createSearchableSelect("py_filter_party", uniqueValues(PARTY_ROWS,"party"));
-}
-
-async function loadAll(){
-  await loadParents();
-  await loadSellRecords();
-  buildTrees();
-  buildUnifiedRows();
-  populateAllSlicers();
-}
-
-/* ===================== FILTER HELPERS ===================== */
-function dateInRange(dateStr, fromStr, toStr){
-  const d=parseDateToComparable(dateStr);
-  if(d===null) return false;
-  if(fromStr){
-    const df=parseDateToComparable(fromStr);
-    if(df!==null && d<df) return false;
-  }
-  if(toStr){
-    const dt=parseDateToComparable(toStr);
-    if(dt!==null && d>dt) return false;
-  }
-  return true;
-}
-
-/* ================= CSV EXPORT & PRINT ==================== */
-function exportTableToCSV(tableId, filename){
-  const table = document.querySelector(`#${tableId} table`);
-  if(!table) return;
-  
-  const rows = Array.from(table.querySelectorAll('tr'));
-  const csvContent = rows.map(row => {
-    const cells = Array.from(row.querySelectorAll('th, td'));
-    return cells.map(cell => {
-      let text = cell.textContent.trim();
-      text = text.replace(/\s+/g, ' ');
-      if(text.includes(',') || text.includes('"') || text.includes('\n')){
-        text = '"' + text.replace(/"/g, '""') + '"';
-      }
-      return text;
-    }).join(',');
-  }).join('\n');
-  
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  const url = URL.createObjectURL(blob);
-  link.setAttribute('href', url);
-  link.setAttribute('download', filename);
-  link.style.visibility = 'hidden';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-function printTable(printAreaId){
-  window.print();
-}
-
-
-/* ===================== AJMZ VIEW ========================= */
-function applyAJMZFilters(globalSearch=""){
-  const typeVal   = document.getElementById("aj_filter_type").value;
-  const lotVal    = searchableSelects.aj_lot?.getValue() || "";
-  const fmtVal    = searchableSelects.aj_format?.getValue() || "";
-  const shapeVal  = searchableSelects.aj_shape?.getValue() || "";
-  const dateFrom  = document.getElementById("aj_filter_date_from").value;
-  const dateTo    = document.getElementById("aj_filter_date_to").value;
-  const q = (globalSearch||"").toLowerCase();
-
+function applyAJMZFilters(q=""){
+  const lotVal=selects.aj_lot?.getValue()||"";
+  const fmtVal=selects.aj_format?.getValue()||"";
+  const partyVal=selects.aj_party?.getValue()||"";
+  const dateFrom=document.getElementById("aj_filter_date_from").value;
+  const dateTo=document.getElementById("aj_filter_date_to").value;
   const tbody=document.getElementById("tbodyAJMZ");
   tbody.innerHTML="";
-
-  let totalAddedCTS=0,totalAddedPCS=0,totalAddedAmt=0;
-  let totalSoldCTS=0,totalSoldPCS=0,totalSoldAmt=0;
-  let totalInvCTS=0,totalInvPCS=0;
-  let totalCostSold=0;
-
-  AJMZ_TREE.forEach(row=>{
-    const p=row.parent;
-    const lot=p.lotName || "";
-    const fmtTxt=p.lotFormat || "";
-    const shape=p.shape || "";
-
-    const parentText=(JSON.stringify(p)||"").toLowerCase();
-
-    const sumSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
-    const sumSellPCS=row.sells.reduce((a,s)=>a+s.pcs,0);
-    const origCTS=p.cts + sumSellCTS;
-    const origPCS=p.pcs + sumSellPCS;
-
-    const parentDate=p.date || "";
-    if(lotVal && lotVal!==lot) return;
-    if(fmtVal && fmtVal!==fmtTxt) return;
-    if(shapeVal && shapeVal!==shape) return;
-    if((dateFrom || dateTo) && !dateInRange(parentDate,dateFrom,dateTo)) return;
-
-    if(q && !parentText.includes(q)){
-      const hasChild=row.sells.some(s=>{
-        const txt=JSON.stringify(s).toLowerCase();
-        if(q && !txt.includes(q)) return false;
-        return true;
-      });
-      if(!hasChild) return;
-    }
-
-    if(!typeVal || typeVal==="ADD"){
-      const addRowHtml = `
-        <tr class="add-row">
-          <td><span class="badge badge-add">ADD</span></td>
-          <td>${esc(parentDate)}</td>
-          <td>${esc(p.txId || "")}</td>
-          <td>${esc(lot)}</td>
-          <td>${esc(fmtTxt)}</td>
-          <td>${esc(p.description || "")}</td>
-          <td>${esc(shape)}</td>
-          <td>${fmt(origCTS)}</td>
-          <td>${fmt(origPCS)}</td>
-          <td>${fmt(p.price)}</td>
-          <td>${fmt(origCTS * p.price)}</td>
-          <td>${esc(p.party || "")}</td>
-          <td>${esc(p.remarks || "")}</td>
-          <td></td>
-        </tr>`;
-      tbody.insertAdjacentHTML("beforeend",addRowHtml);
-
-      totalAddedCTS += origCTS;
-      totalAddedPCS += origPCS;
-      totalAddedAmt += origCTS * p.price;
-    }
-
-    totalInvCTS += p.cts;
-    totalInvPCS += p.pcs;
-
-    row.sells.forEach(s=>{
-      const sDate=s.date || parentDate;
-      if((dateFrom || dateTo) && !dateInRange(sDate,dateFrom,dateTo)) return;
-
-      const childTxt=JSON.stringify(s).toLowerCase();
-      if(q && !childTxt.includes(q) && !parentText.includes(q)) return;
-
-      if(!typeVal || typeVal==="SELL"){
-        const sourceFrom=s.sourceFrom || `${p.txId||""} | ${lot} | ${fmtTxt}`;
-        const sellHTML=`
-          <tr class="sell-row">
-            <td><span class="badge badge-sell">SELL</span></td>
-            <td>${esc(sDate)}</td>
-            <td>${esc(s.txId || s.key)}</td>
-            <td>${esc(s.parentLot || lot)}</td>
-            <td>${esc(s.parentFormat || fmtTxt)}</td>
-            <td>${esc(s.parentDescription || p.description || "")}</td>
-            <td>${esc(shape)}</td>
-            <td>${fmt(s.cts)}</td>
-            <td>${fmt(s.pcs)}</td>
-            <td>${fmt(s.sellPrice)}</td>
-            <td>${fmt(s.amount)}</td>
-            <td>${esc(s.party || "")}</td>
-            <td>${esc(s.remarks || "")}</td>
-            <td>${esc(sourceFrom)}</td>
-          </tr>`;
-        tbody.insertAdjacentHTML("beforeend",sellHTML);
-      }
-
-      totalSoldCTS += s.cts;
-      totalSoldPCS += s.pcs;
-      totalSoldAmt += s.amount;
-
-      const cost = s.cost || 0;
-      totalCostSold += cost;
+  
+  let addCTS=0,addPCS=0,addAmt=0,soldCTS=0,soldPCS=0,soldAmt=0,invCTS=0,invPCS=0;
+  
+  AJMZ_PARENTS.forEach(p=>{
+    const lot=p.lotName||"";
+    const fmt=p.lotFormat||"";
+    if(lotVal&&lotVal!==lot)return;
+    if(fmtVal&&fmtVal!==fmt)return;
+    if(partyVal&&partyVal!==p.party)return;
+    if((dateFrom||dateTo)&&!dateInRange(p.date,dateFrom,dateTo))return;
+    
+    const txt=JSON.stringify(p).toLowerCase();
+    if(q&&!txt.includes(q)){const hasChild=(p.__sells||[]).some(s=>JSON.stringify(s).toLowerCase().includes(q));if(!hasChild)return;}
+    
+    tbody.innerHTML+=`<tr class="add-row"><td><span class="badge badge-add">ADD</span></td><td>${esc(p.date)}</td><td>${esc(p.txId)}</td><td>${esc(lot)}</td><td>${esc(fmt)}</td><td>${esc(p.description)}</td><td>${fmt(p.cts)}</td><td>${fmt(p.pcs)}</td><td>${fmt(p.price)}</td><td>${fmt(p.amount)}</td><td>${esc(p.party)}</td><td>${esc(p.remarks)}</td></tr>`;
+    addCTS+=p.cts;addPCS+=p.pcs;addAmt+=p.amount;invCTS+=p.cts;invPCS+=p.pcs;
+    
+    (p.__sells||[]).forEach(s=>{
+      const sDate=s.date||p.date;
+      if((dateFrom||dateTo)&&!dateInRange(sDate,dateFrom,dateTo))return;
+      const stxt=JSON.stringify(s).toLowerCase();
+      if(q&&!stxt.includes(q)&&!txt.includes(q))return;
+      tbody.innerHTML+=`<tr class="sell-row"><td><span class="badge badge-sell">SELL</span></td><td>${esc(sDate)}</td><td>${esc(s.sellId)}</td><td>${esc(lot)}</td><td>${esc(fmt)}</td><td>${esc(p.description)}</td><td>${fmt(s.cts)}</td><td>${fmt(s.pcs)}</td><td>${fmt(s.price)}</td><td>${fmt(s.amount)}</td><td>${esc(s.party)}</td><td>${esc(s.remarks)}</td></tr>`;
+      soldCTS+=s.cts;soldPCS+=s.pcs;soldAmt+=s.amount;
     });
   });
-
-  const profit = totalSoldAmt - totalCostSold;
-  document.getElementById("aj_kpi_added_main").textContent =
-    `${fmt(totalAddedCTS)} CTS / ${fmt(totalAddedPCS)} PCS`;
-  document.getElementById("aj_kpi_added_sub").textContent =
-    `Amount: ${fmt(totalAddedAmt)}`;
-
-  document.getElementById("aj_kpi_sold_main").textContent =
-    `${fmt(totalSoldCTS)} CTS / ${fmt(totalSoldPCS)} PCS`;
-  document.getElementById("aj_kpi_sold_sub").textContent =
-    `Amount: ${fmt(totalSoldAmt)}`;
-
-  document.getElementById("aj_kpi_inv_main").textContent =
-    `${fmt(totalInvCTS)} CTS / ${fmt(totalInvPCS)} PCS`;
-  document.getElementById("aj_kpi_inv_sub").textContent = `Remaining quantity`;
-
+  
+  document.getElementById("aj_kpi_added_main").textContent=`${fmt(addCTS)} CTS / ${fmt(addPCS)} PCS`;
+  document.getElementById("aj_kpi_added_sub").textContent=`Amount: ${fmt(addAmt)}`;
+  document.getElementById("aj_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
+  document.getElementById("aj_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
+  document.getElementById("aj_kpi_inv_main").textContent=`${fmt(invCTS)} CTS / ${fmt(invPCS)} PCS`;
   const profitEl=document.getElementById("aj_kpi_profit_main");
-  profitEl.textContent = fmt(profit);
-  profitEl.classList.remove("kpi-profit","kpi-loss");
-  if(profit>0) profitEl.classList.add("kpi-profit");
-  else if(profit<0) profitEl.classList.add("kpi-loss");
+  profitEl.textContent=fmt(soldAmt);profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(soldAmt>0)profitEl.classList.add("kpi-profit");
 }
 
-
-/* ==================== CALIB VIEW ========================= */
-function applyCALIBFilters(globalSearch=""){
-  const typeVal  = document.getElementById("cb_filter_type").value;
-  const lotVal   = searchableSelects.cb_lot?.getValue() || "";
-  const lotGrade = searchableSelects.cb_lotgrade?.getValue() || "";
-  const shapeSize= searchableSelects.cb_shapesize?.getValue() || "";
-  const dateFrom = document.getElementById("cb_filter_date_from").value;
-  const dateTo   = document.getElementById("cb_filter_date_to").value;
-  const q = (globalSearch||"").toLowerCase();
-
+function applyCALIBFilters(q=""){
+  const lotVal=selects.cb_lot?.getValue()||"";
+  const gradeVal=selects.cb_grade?.getValue()||"";
+  const partyVal=selects.cb_party?.getValue()||"";
+  const dateFrom=document.getElementById("cb_filter_date_from").value;
+  const dateTo=document.getElementById("cb_filter_date_to").value;
   const tbody=document.getElementById("tbodyCALIB");
   tbody.innerHTML="";
-
-  let totalAddedCTS=0,totalAddedAmt=0;
-  let totalSoldCTS=0,totalSoldAmt=0;
-  let totalInvCTS=0;
-  let totalCostSold=0;
-
-  CALIB_TREE.forEach(row=>{
-    const p=row.parent;
-    const lot=p.lotName || "";
-    const grade=p.grade || "";
-    const shape=p.shape || "";
-    const size=p.size || "";
-    const shapesz=`${shape} | ${size}`.trim();
-    const lotGradePair=`${lot} | ${grade}`.trim();
-
-    const parentText=JSON.stringify(p).toLowerCase();
-    const parentDate=p.date || "";
-
-    if(lotVal && lotVal!==lot) return;
-    if(lotGrade && lotGrade!==lotGradePair) return;
-    if(shapeSize && shapeSize!==shapesz) return;
-    if((dateFrom || dateTo) && !dateInRange(parentDate,dateFrom,dateTo)) return;
-
-    if(q && !parentText.includes(q)){
-      const hasChild=row.sells.some(s=>JSON.stringify(s).toLowerCase().includes(q));
-      if(!hasChild) return;
-    }
-
-    const sumSellCTS=row.sells.reduce((a,s)=>a+s.cts,0);
-    const origCTS=p.cts + sumSellCTS;
-
-    if(!typeVal || typeVal==="ADD"){
-      const addHTML=`
-        <tr class="add-row">
-          <td><span class="badge badge-add">ADD</span></td>
-          <td>${esc(parentDate)}</td>
-          <td>${esc(p.txId || "")}</td>
-          <td>${esc(lot)}</td>
-          <td>${esc(grade)}</td>
-          <td>${esc(p.description || "")}</td>
-          <td>${esc(shape)}</td>
-          <td>${esc(size)}</td>
-          <td>${fmt(origCTS)}</td>
-          <td>${fmt(p.price)}</td>
-          <td>${fmt(origCTS * p.price)}</td>
-          <td>${esc(p.party || "")}</td>
-          <td>${esc(p.remarks || "")}</td>
-          <td></td>
-        </tr>`;
-      tbody.insertAdjacentHTML("beforeend",addHTML);
-      totalAddedCTS += origCTS;
-      totalAddedAmt += origCTS * p.price;
-    }
-
-    totalInvCTS += p.cts;
-
-    row.sells.forEach(s=>{
-      const sDate=s.date || parentDate;
-      if((dateFrom || dateTo) && !dateInRange(sDate,dateFrom,dateTo)) return;
-      
-      const childTxt=JSON.stringify(s).toLowerCase();
-      if(q && !childTxt.includes(q) && !parentText.includes(q)) return;
-
-      if(!typeVal || typeVal==="SELL"){
-        const sourceFrom=s.sourceFrom || `${p.txId||""} | ${lot} | ${grade}`;
-        const sellHTML=`
-          <tr class="sell-row">
-            <td><span class="badge badge-sell">SELL</span></td>
-            <td>${esc(sDate)}</td>
-            <td>${esc(s.txId || s.key)}</td>
-            <td>${esc(s.parentLot || lot)}</td>
-            <td>${esc(s.parentGrade || grade)}</td>
-            <td>${esc(s.parentDescription || p.description || "")}</td>
-            <td>${esc(shape)}</td>
-            <td>${esc(size)}</td>
-            <td>${fmt(s.cts)}</td>
-            <td>${fmt(s.sellPrice)}</td>
-            <td>${fmt(s.amount)}</td>
-            <td>${esc(s.party || "")}</td>
-            <td>${esc(s.remarks || "")}</td>
-            <td>${esc(sourceFrom)}</td>
-          </tr>`;
-        tbody.insertAdjacentHTML("beforeend",sellHTML);
-      }
-
-      totalSoldCTS += s.cts;
-      totalSoldAmt += s.amount;
-      const cost = s.cost || 0;
-      totalCostSold += cost;
+  
+  let addCTS=0,addAmt=0,soldCTS=0,soldAmt=0,invCTS=0;
+  
+  CALIB_PARENTS.forEach(p=>{
+    const lot=p.lotName||"";
+    const grade=p.grade||"";
+    if(lotVal&&lotVal!==lot)return;
+    if(gradeVal&&gradeVal!==grade)return;
+    if(partyVal&&partyVal!==p.party)return;
+    if((dateFrom||dateTo)&&!dateInRange(p.date,dateFrom,dateTo))return;
+    
+    const txt=JSON.stringify(p).toLowerCase();
+    if(q&&!txt.includes(q)){const hasChild=(p.__sells||[]).some(s=>JSON.stringify(s).toLowerCase().includes(q));if(!hasChild)return;}
+    
+    tbody.innerHTML+=`<tr class="add-row"><td><span class="badge badge-add">ADD</span></td><td>${esc(p.date)}</td><td>${esc(p.txId)}</td><td>${esc(lot)}</td><td>${esc(grade)}</td><td>${esc(p.description)}</td><td>${fmt(p.cts)}</td><td>${fmt(p.price)}</td><td>${fmt(p.amount)}</td><td>${esc(p.party)}</td><td>${esc(p.remarks)}</td></tr>`;
+    addCTS+=p.cts;addAmt+=p.amount;invCTS+=p.cts;
+    
+    (p.__sells||[]).forEach(s=>{
+      const sDate=s.date||p.date;
+      if((dateFrom||dateTo)&&!dateInRange(sDate,dateFrom,dateTo))return;
+      const stxt=JSON.stringify(s).toLowerCase();
+      if(q&&!stxt.includes(q)&&!txt.includes(q))return;
+      tbody.innerHTML+=`<tr class="sell-row"><td><span class="badge badge-sell">SELL</span></td><td>${esc(sDate)}</td><td>${esc(s.sellId)}</td><td>${esc(lot)}</td><td>${esc(grade)}</td><td>${esc(p.description)}</td><td>${fmt(s.cts)}</td><td>${fmt(s.price)}</td><td>${fmt(s.amount)}</td><td>${esc(s.party)}</td><td>${esc(s.remarks)}</td></tr>`;
+      soldCTS+=s.cts;soldAmt+=s.amount;
     });
   });
-
-  const profit=totalSoldAmt-totalCostSold;
-
-  document.getElementById("cb_kpi_added_main").textContent = `${fmt(totalAddedCTS)} CTS`;
-  document.getElementById("cb_kpi_added_sub").textContent  = `Amount: ${fmt(totalAddedAmt)}`;
-  document.getElementById("cb_kpi_sold_main").textContent  = `${fmt(totalSoldCTS)} CTS`;
-  document.getElementById("cb_kpi_sold_sub").textContent   = `Amount: ${fmt(totalSoldAmt)}`;
-  document.getElementById("cb_kpi_inv_main").textContent   = `${fmt(totalInvCTS)} CTS`;
-  document.getElementById("cb_kpi_inv_sub").textContent    = `Remaining quantity`;
-
+  
+  document.getElementById("cb_kpi_added_main").textContent=`${fmt(addCTS)} CTS`;
+  document.getElementById("cb_kpi_added_sub").textContent=`Amount: ${fmt(addAmt)}`;
+  document.getElementById("cb_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS`;
+  document.getElementById("cb_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
+  document.getElementById("cb_kpi_inv_main").textContent=`${fmt(invCTS)} CTS`;
   const profitEl=document.getElementById("cb_kpi_profit_main");
-  profitEl.textContent = fmt(profit);
-  profitEl.classList.remove("kpi-profit","kpi-loss");
-  if(profit>0) profitEl.classList.add("kpi-profit");
-  else if(profit<0) profitEl.classList.add("kpi-loss");
+  profitEl.textContent=fmt(soldAmt);profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(soldAmt>0)profitEl.classList.add("kpi-profit");
 }
 
-/* ================== ALL STONES VIEW ====================== */
-function applyALLFilters(globalSearch=""){
-  const srcVal   = document.getElementById("all_filter_source").value;
-  const lotVal   = searchableSelects.all_lot?.getValue() || "";
-  const gfVal    = searchableSelects.all_gradefmt?.getValue() || "";
-  const partyVal = searchableSelects.all_party?.getValue() || "";
-  const dateFrom = document.getElementById("all_filter_date_from").value;
-  const dateTo   = document.getElementById("all_filter_date_to").value;
-  const q=(globalSearch||"").toLowerCase();
-
+function applyALLFilters(q=""){
+  const srcVal=document.getElementById("all_filter_source").value;
+  const lotVal=selects.all_lot?.getValue()||"";
+  const partyVal=selects.all_party?.getValue()||"";
+  const dateFrom=document.getElementById("all_filter_date_from").value;
+  const dateTo=document.getElementById("all_filter_date_to").value;
   const tbody=document.getElementById("tbodyALL");
   tbody.innerHTML="";
-
-  let totalAddedCTS=0,totalAddedPCS=0,totalAddedAmt=0;
-  let totalSoldCTS=0,totalSoldPCS=0,totalSoldAmt=0;
-  let totalInvCTS=0,totalInvPCS=0;
-  let totalCostSold=0;
-
-  const invMap=new Map();
+  
+  let addCTS=0,addPCS=0,addAmt=0,soldCTS=0,soldPCS=0,soldAmt=0;
+  
   ALL_ROWS.forEach(r=>{
-    const key=`${r.source}|${r.lot}|${r.gradeFmt}`;
-    const entry=invMap.get(key) || {addCTS:0,addPCS:0,soldCTS:0,soldPCS:0,price:r.price};
-    if(r.type==="ADD"){
-      entry.addCTS+=r.cts;
-      entry.addPCS+=r.pcs;
-      if(r.price) entry.price=r.price;
-    }else if(r.type==="SELL"){
-      entry.soldCTS+=r.cts;
-      entry.soldPCS+=r.pcs;
-    }
-    invMap.set(key,entry);
-  });
-
-  ALL_ROWS.forEach(r=>{
-    if(srcVal && r.source!==srcVal) return;
-    if(lotVal && r.lot!==lotVal) return;
-    if(gfVal && r.gradeFmt!==gfVal) return;
-    if(partyVal && r.party!==partyVal) return;
-    if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
-
+    if(srcVal&&r.source!==srcVal)return;
+    if(lotVal&&r.lot!==lotVal)return;
+    if(partyVal&&r.party!==partyVal)return;
+    if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
     const txt=JSON.stringify(r).toLowerCase();
-    if(q && !txt.includes(q)) return;
-
-    const keyRow=`${r.source}|${r.lot}|${r.gradeFmt}`;
-    const inv=invMap.get(keyRow) || {addCTS:0,addPCS:0,soldCTS:0,soldPCS:0,price:r.price};
-
-    if(r.type==="ADD"){
-      totalAddedCTS+=r.cts;
-      totalAddedPCS+=r.pcs;
-      totalAddedAmt+=r.amount;
-    }else if(r.type==="SELL"){
-      totalSoldCTS+=r.cts;
-      totalSoldPCS+=r.pcs;
-      totalSoldAmt+=r.amount;
-      const cost = r.cost || 0;
-      totalCostSold+=cost;
-    }
-
-    const remCTS=inv.addCTS - inv.soldCTS;
-    const remPCS=inv.addPCS - inv.soldPCS;
-    if(remCTS>0 || remPCS>0){
-      totalInvCTS += remCTS;
-      totalInvPCS += remPCS;
-    }
-
-    const srcBadge = r.source==="AJMZ"
-      ? `<span class="badge badge-source-ajmz">AJMZ</span>`
-      : `<span class="badge badge-source-calib">CALIB</span>`;
-
-    const tr=`
-      <tr class="${r.type==="ADD"?"add-row":"sell-row"}">
-        <td>${srcBadge}</td>
-        <td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td>
-        <td>${esc(r.date||"")}</td>
-        <td>${esc(r.txId||"")}</td>
-        <td>${esc(r.lot||"")}</td>
-        <td>${esc(r.gradeFmt||"")}</td>
-        <td>${esc(r.description||"")}</td>
-        <td>${fmt(r.cts)}</td>
-        <td>${fmt(r.pcs)}</td>
-        <td>${fmt(r.price)}</td>
-        <td>${fmt(r.amount)}</td>
-        <td>${esc(r.party||"")}</td>
-        <td>${esc(r.remarks||"")}</td>
-      </tr>`;
-    tbody.insertAdjacentHTML("beforeend",tr);
+    if(q&&!txt.includes(q))return;
+    
+    const srcBadge=r.source==="AJMZ"?`<span class="badge badge-source-ajmz">AJMZ</span>`:`<span class="badge badge-source-calib">CALIB</span>`;
+    tbody.innerHTML+=`<tr class="${r.type==="ADD"?"add-row":"sell-row"}"><td>${srcBadge}</td><td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td><td>${esc(r.date)}</td><td>${esc(r.txId)}</td><td>${esc(r.lot)}</td><td>${esc(r.desc)}</td><td>${fmt(r.cts)}</td><td>${fmt(r.pcs)}</td><td>${fmt(r.price)}</td><td>${fmt(r.amount)}</td><td>${esc(r.party)}</td><td>${esc(r.remarks)}</td></tr>`;
+    
+    if(r.type==="ADD"){addCTS+=r.cts;addPCS+=r.pcs;addAmt+=r.amount;}
+    else{soldCTS+=r.cts;soldPCS+=r.pcs;soldAmt+=r.amount;}
   });
-
-  const profit=totalSoldAmt-totalCostSold;
-  document.getElementById("all_kpi_added_main").textContent =
-    `${fmt(totalAddedCTS)} CTS / ${fmt(totalAddedPCS)} PCS`;
-  document.getElementById("all_kpi_added_sub").textContent  =
-    `Amount: ${fmt(totalAddedAmt)}`;
-
-  document.getElementById("all_kpi_sold_main").textContent =
-    `${fmt(totalSoldCTS)} CTS / ${fmt(totalSoldPCS)} PCS`;
-  document.getElementById("all_kpi_sold_sub").textContent  =
-    `Amount: ${fmt(totalSoldAmt)}`;
-
-  document.getElementById("all_kpi_inv_main").textContent =
-    `${fmt(totalInvCTS)} CTS / ${fmt(totalInvPCS)} PCS`;
-  document.getElementById("all_kpi_inv_sub").textContent = `Approx. remaining quantity`;
-
+  
+  document.getElementById("all_kpi_added_main").textContent=`${fmt(addCTS)} CTS / ${fmt(addPCS)} PCS`;
+  document.getElementById("all_kpi_added_sub").textContent=`Amount: ${fmt(addAmt)}`;
+  document.getElementById("all_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
+  document.getElementById("all_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
+  document.getElementById("all_kpi_inv_main").textContent=`${fmt(addCTS-soldCTS)} CTS / ${fmt(addPCS-soldPCS)} PCS`;
   const profitEl=document.getElementById("all_kpi_profit_main");
-  profitEl.textContent=fmt(profit);
-  profitEl.classList.remove("kpi-profit","kpi-loss");
-  if(profit>0) profitEl.classList.add("kpi-profit");
-  else if(profit<0) profitEl.classList.add("kpi-loss");
+  profitEl.textContent=fmt(soldAmt);profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(soldAmt>0)profitEl.classList.add("kpi-profit");
 }
 
-/* ==================== PARTY VIEW ========================= */
-function applyPARTYFilters(globalSearch=""){
-  const partyVal = searchableSelects.py_party?.getValue() || "";
-  const srcVal   = document.getElementById("py_filter_source").value;
-  const dateFrom = document.getElementById("py_filter_date_from").value;
-  const dateTo   = document.getElementById("py_filter_date_to").value;
-  const q=(globalSearch||"").toLowerCase();
-
+function applyPARTYFilters(q=""){
+  const partyVal=selects.py_party?.getValue()||"";
+  const srcVal=document.getElementById("py_filter_source").value;
+  const dateFrom=document.getElementById("py_filter_date_from").value;
+  const dateTo=document.getElementById("py_filter_date_to").value;
   const tbody=document.getElementById("tbodyPARTY");
   tbody.innerHTML="";
-
-  let totalSoldCTS=0,totalSoldPCS=0,totalSoldAmt=0,totalProfit=0;
+  
+  let soldCTS=0,soldPCS=0,soldAmt=0;
   const partySet=new Set();
-  let ajCTS=0, cbCTS=0;
-
+  let ajCTS=0,cbCTS=0;
+  
   PARTY_ROWS.forEach(r=>{
-    if(partyVal && r.party!==partyVal) return;
-    if(srcVal && r.source!==srcVal) return;
-    if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
-
+    if(partyVal&&r.party!==partyVal)return;
+    if(srcVal&&r.source!==srcVal)return;
+    if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
     const txt=JSON.stringify(r).toLowerCase();
-    if(q && !txt.includes(q)) return;
-
+    if(q&&!txt.includes(q))return;
+    
     partySet.add(r.party);
-
-    totalSoldCTS+=r.cts;
-    totalSoldPCS+=r.pcs;
-    totalSoldAmt+=r.amount;
-    totalProfit+=r.profit;
-
-    if(r.source==="AJMZ") ajCTS+=r.cts;
-    else if(r.source==="CALIB") cbCTS+=r.cts;
-
-    const srcBadge = r.source==="AJMZ"
-      ? `<span class="badge badge-source-ajmz">AJMZ</span>`
-      : `<span class="badge badge-source-calib">CALIB</span>`;
-
-    const tr=`
-      <tr class="sell-row">
-        <td>${esc(r.party||"")}</td>
-        <td>${srcBadge}</td>
-        <td>${esc(r.date||"")}</td>
-        <td>${esc(r.txId||"")}</td>
-        <td>${esc(r.lot||"")}</td>
-        <td>${esc(r.gradeFmt||"")}</td>
-        <td>${fmt(r.cts)}</td>
-        <td>${fmt(r.pcs)}</td>
-        <td>${fmt(r.price)}</td>
-        <td>${fmt(r.amount)}</td>
-        <td>${fmt(r.cost)}</td>
-        <td>${fmt(r.profit)}</td>
-        <td>${esc(r.remarks||"")}</td>
-      </tr>`;
-    tbody.insertAdjacentHTML("beforeend",tr);
+    const srcBadge=r.source==="AJMZ"?`<span class="badge badge-source-ajmz">AJMZ</span>`:`<span class="badge badge-source-calib">CALIB</span>`;
+    tbody.innerHTML+=`<tr class="sell-row"><td>${esc(r.party)}</td><td>${srcBadge}</td><td>${esc(r.date)}</td><td>${esc(r.txId)}</td><td>${esc(r.lot)}</td><td>${fmt(r.cts)}</td><td>${fmt(r.pcs)}</td><td>${fmt(r.price)}</td><td>${fmt(r.amount)}</td><td>${esc(r.remarks)}</td></tr>`;
+    
+    soldCTS+=r.cts;soldPCS+=r.pcs;soldAmt+=r.amount;
+    if(r.source==="AJMZ")ajCTS+=r.cts;else cbCTS+=r.cts;
   });
-
-  document.getElementById("py_kpi_sold_main").textContent =
-    `${fmt(totalSoldCTS)} CTS / ${fmt(totalSoldPCS)} PCS`;
-  document.getElementById("py_kpi_sold_sub").textContent =
-    `Amount: ${fmt(totalSoldAmt)}`;
-
-  document.getElementById("py_kpi_party_main").textContent = partySet.size;
-  document.getElementById("py_kpi_party_sub").textContent  = `Parties with sell records`;
-
-  document.getElementById("py_kpi_split_main").textContent =
-    `${fmt(ajCTS)} / ${fmt(cbCTS)}`;
-  document.getElementById("py_kpi_split_sub").textContent  =
-    `AJMZ CTS / CALIB CTS`;
-
+  
+  document.getElementById("py_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
+  document.getElementById("py_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
+  document.getElementById("py_kpi_party_main").textContent=partySet.size;
+  document.getElementById("py_kpi_split_main").textContent=`${fmt(ajCTS)} / ${fmt(cbCTS)}`;
   const profitEl=document.getElementById("py_kpi_profit_main");
-  profitEl.textContent=fmt(totalProfit);
-  profitEl.classList.remove("kpi-profit","kpi-loss");
-  if(totalProfit>0) profitEl.classList.add("kpi-profit");
-  else if(totalProfit<0) profitEl.classList.add("kpi-loss");
+  profitEl.textContent=fmt(soldAmt);profitEl.classList.remove("kpi-profit","kpi-loss");
+  if(soldAmt>0)profitEl.classList.add("kpi-profit");
 }
 
-/* ==================== CLEAR FILTERS ====================== */
-function clearAJMZFilters(){
-  document.getElementById("aj_filter_type").value="";
-  searchableSelects.aj_lot?.reset();
-  searchableSelects.aj_format?.reset();
-  searchableSelects.aj_shape?.reset();
-  document.getElementById("aj_filter_date_from").value="";
-  document.getElementById("aj_filter_date_to").value="";
-}
-function clearCALIBFilters(){
-  document.getElementById("cb_filter_type").value="";
-  searchableSelects.cb_lot?.reset();
-  searchableSelects.cb_lotgrade?.reset();
-  searchableSelects.cb_shapesize?.reset();
-  document.getElementById("cb_filter_date_from").value="";
-  document.getElementById("cb_filter_date_to").value="";
-}
-function clearALLFilters(){
-  document.getElementById("all_filter_source").value="";
-  searchableSelects.all_lot?.reset();
-  searchableSelects.all_gradefmt?.reset();
-  searchableSelects.all_party?.reset();
-  document.getElementById("all_filter_date_from").value="";
-  document.getElementById("all_filter_date_to").value="";
-}
-function clearPARTYFilters(){
-  searchableSelects.py_party?.reset();
-  document.getElementById("py_filter_source").value="";
-  document.getElementById("py_filter_date_from").value="";
-  document.getElementById("py_filter_date_to").value="";
-}
-
-/* ====================== TABS ============================= */
 function bindTabs(){
-  const buttons=document.querySelectorAll(".tab-btn");
-  buttons.forEach(btn=>{
+  document.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.addEventListener("click",()=>{
-      buttons.forEach(b=>b.classList.remove("active"));
+      document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
       const target=btn.dataset.tab;
-      document.querySelectorAll(".tab-section").forEach(sec=>{
-        sec.classList.remove("active");
-      });
+      document.querySelectorAll(".tab-section").forEach(sec=>sec.classList.remove("active"));
       document.getElementById(target).classList.add("active");
       const q=document.getElementById("searchGlobal").value;
-      if(target==="tabAJMZ") applyAJMZFilters(q);
-      else if(target==="tabCALIB") applyCALIBFilters(q);
-      else if(target==="tabALL") applyALLFilters(q);
-      else if(target==="tabPARTY") applyPARTYFilters(q);
+      if(target==="tabAJMZ")applyAJMZFilters(q);else if(target==="tabCALIB")applyCALIBFilters(q);else if(target==="tabALL")applyALLFilters(q);else if(target==="tabPARTY")applyPARTYFilters(q);
     });
   });
 }
 
-/* ====================== INIT ============================= */
-document.addEventListener("DOMContentLoaded", async ()=>{
-  await loadAll();
+document.addEventListener("DOMContentLoaded",async()=>{
+  await loadAllData();
   bindTabs();
-
+  
   const globalInput=document.getElementById("searchGlobal");
-  globalInput.addEventListener("input",()=>{
-    const q=globalInput.value;
-    applyAJMZFilters(q);
-    applyCALIBFilters(q);
-    applyALLFilters(q);
-    applyPARTYFilters(q);
-  });
-
-  ["aj_filter_type","aj_filter_date_from","aj_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyAJMZFilters(globalInput.value);
-    });
-  });
+  globalInput.addEventListener("input",()=>{const q=globalInput.value;applyAJMZFilters(q);applyCALIBFilters(q);applyALLFilters(q);applyPARTYFilters(q);});
   
-  ["aj_filter_lot","aj_filter_format","aj_filter_shape"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyAJMZFilters(globalInput.value);
-    });
-  });
+  ["aj_filter_date_from","aj_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyAJMZFilters(globalInput.value));});
+  ["aj_filter_lot","aj_filter_format","aj_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyAJMZFilters(globalInput.value));});
+  document.getElementById("aj_clear_filters").addEventListener("click",()=>{selects.aj_lot?.reset();selects.aj_format?.reset();selects.aj_party?.reset();document.getElementById("aj_filter_date_from").value="";document.getElementById("aj_filter_date_to").value="";applyAJMZFilters(globalInput.value);});
+  document.getElementById("aj_export_csv").addEventListener("click",()=>exportCSV("aj_print_area","AJMZ_Export.csv"));
   
-  document.getElementById("aj_clear_filters").addEventListener("click",()=>{
-    clearAJMZFilters();
-    applyAJMZFilters(globalInput.value);
-  });
-
-  ["cb_filter_type","cb_filter_date_from","cb_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyCALIBFilters(globalInput.value);
-    });
-  });
+  ["cb_filter_date_from","cb_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyCALIBFilters(globalInput.value));});
+  ["cb_filter_lot","cb_filter_grade","cb_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyCALIBFilters(globalInput.value));});
+  document.getElementById("cb_clear_filters").addEventListener("click",()=>{selects.cb_lot?.reset();selects.cb_grade?.reset();selects.cb_party?.reset();document.getElementById("cb_filter_date_from").value="";document.getElementById("cb_filter_date_to").value="";applyCALIBFilters(globalInput.value);});
+  document.getElementById("cb_export_csv").addEventListener("click",()=>exportCSV("cb_print_area","Calibration_Export.csv"));
   
-  ["cb_filter_lot","cb_filter_lotgrade","cb_filter_shapesize"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyCALIBFilters(globalInput.value);
-    });
-  });
+  ["all_filter_source","all_filter_date_from","all_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));});
+  ["all_filter_lot","all_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));});
+  document.getElementById("all_clear_filters").addEventListener("click",()=>{document.getElementById("all_filter_source").value="";selects.all_lot?.reset();selects.all_party?.reset();document.getElementById("all_filter_date_from").value="";document.getElementById("all_filter_date_to").value="";applyALLFilters(globalInput.value);});
+  document.getElementById("all_export_csv").addEventListener("click",()=>exportCSV("all_print_area","All_Stones_Export.csv"));
   
-  document.getElementById("cb_clear_filters").addEventListener("click",()=>{
-    clearCALIBFilters();
-    applyCALIBFilters(globalInput.value);
-  });
-
-  ["all_filter_source","all_filter_date_from","all_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyALLFilters(globalInput.value);
-    });
-  });
+  ["py_filter_source","py_filter_date_from","py_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyPARTYFilters(globalInput.value));});
+  document.getElementById("py_filter_party").addEventListener("change",()=>applyPARTYFilters(globalInput.value));
+  document.getElementById("py_clear_filters").addEventListener("click",()=>{selects.py_party?.reset();document.getElementById("py_filter_source").value="";document.getElementById("py_filter_date_from").value="";document.getElementById("py_filter_date_to").value="";applyPARTYFilters(globalInput.value);});
+  document.getElementById("py_export_csv").addEventListener("click",()=>exportCSV("py_print_area","Party_Export.csv"));
   
-  ["all_filter_lot","all_filter_gradefmt","all_filter_party"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyALLFilters(globalInput.value);
-    });
-  });
-  
-  document.getElementById("all_clear_filters").addEventListener("click",()=>{
-    clearALLFilters();
-    applyALLFilters(globalInput.value);
-  });
-
-  ["py_filter_source","py_filter_date_from","py_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>{
-      applyPARTYFilters(globalInput.value);
-    });
-  });
-  
-  document.getElementById("py_filter_party").addEventListener("change",()=>{
-    applyPARTYFilters(globalInput.value);
-  });
-  
-  document.getElementById("py_clear_filters").addEventListener("click",()=>{
-    clearPARTYFilters();
-    applyPARTYFilters(globalInput.value);
-  });
-
-  document.getElementById("aj_export_csv").addEventListener("click", () => {
-    exportTableToCSV("aj_print_area", "AJMZ_Export.csv");
-  });
-  document.getElementById("aj_print_table").addEventListener("click", () => {
-    printTable("aj_print_area");
-  });
-
-  document.getElementById("cb_export_csv").addEventListener("click", () => {
-    exportTableToCSV("cb_print_area", "Calibration_Export.csv");
-  });
-  document.getElementById("cb_print_table").addEventListener("click", () => {
-    printTable("cb_print_area");
-  });
-
-  document.getElementById("all_export_csv").addEventListener("click", () => {
-    exportTableToCSV("all_print_area", "All_Stones_Export.csv");
-  });
-  document.getElementById("all_print_table").addEventListener("click", () => {
-    printTable("all_print_area");
-  });
-
-  document.getElementById("py_export_csv").addEventListener("click", () => {
-    exportTableToCSV("py_print_area", "Party_Export.csv");
-  });
-  document.getElementById("py_print_table").addEventListener("click", () => {
-    printTable("py_print_area");
-  });
-
-  applyAJMZFilters("");
-  applyCALIBFilters("");
-  applyALLFilters("");
-  applyPARTYFilters("");
+  applyAJMZFilters("");applyCALIBFilters("");applyALLFilters("");applyPARTYFilters("");
 });
 </script>
-
 </body>
 </html>
