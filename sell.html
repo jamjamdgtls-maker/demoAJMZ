@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>SELL — Combined View (AJMZ & CALIB)</title>
+<title>SELL – AJMZ & CALIBRATE</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -21,13 +21,20 @@
   --ink:#2f3b33;
   --ink-soft:#5b6a5f;
   --line:#d9cbb1;
+  --line-strong:#c5b28f;
   --shadow:rgba(93,134,108,.18);
   --muted:#f9f7f1;
   --danger:#c75252;
-  --add-row:#E9F7ED;
-  --sell-row:#FDEDEC;
+  --info:#4A70A9;
+
+  /* exact colors from screenshot */
+  --row-add:#E9F7EC;   /* parent ADD rows */
+  --row-sell:#FDECEA;  /* child SELL rows */
 }
 
+/* -------------------------------------------------
+   RESET + BASE
+   ------------------------------------------------- */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
@@ -39,6 +46,9 @@ body{
   overflow:hidden;
 }
 
+/* -------------------------------------------------
+   LEFT FIXED NAV
+   ------------------------------------------------- */
 .nav-vertical{
   width:60px;
   background:#fff;
@@ -50,12 +60,18 @@ body{
   padding:14px 0;
   box-shadow:6px 0 20px var(--shadow);
   position:fixed;
-  left:0;top:0;bottom:0;
+  left:0;
+  top:0;
+  bottom:0;
   z-index:2000;
 }
 .nav-item{
-  width:44px;height:44px;border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-size:22px;
   text-decoration:none;
   color:var(--ink);
@@ -64,27 +80,35 @@ body{
   cursor:pointer;
   font-weight:600;
   transition:.15s;
+  user-select:none;
 }
+.nav-item:hover{background:#faf8f0}
 .nav-item.active{
   background:var(--accent);
   color:#fff;
   border-color:transparent;
 }
 
+/* -------------------------------------------------
+   WORKSPACE
+   ------------------------------------------------- */
 .workspace{
   flex:1;
   margin-left:60px;
   height:100vh;
-  padding:18px 18px 120px;
+  padding:18px 24px 90px;
   overflow:auto;
 }
 
+/* -------------------------------------------------
+   TOP PANEL
+   ------------------------------------------------- */
 .panel{
   background:#fff;
   border:1px solid var(--line);
   border-radius:16px;
   box-shadow:0 8px 22px var(--shadow);
-  padding:12px 14px;
+  padding:12px 16px;
   display:flex;
   align-items:center;
   gap:10px;
@@ -100,8 +124,55 @@ body{
   font-weight:600;
   font-size:15px;
 }
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px 8px;
+  background:#fff;
+  font-size:11px;
+  color:var(--ink-soft);
+}
+.badge-dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:var(--accent);
+}
 .spacer{flex:1}
+.button{
+  height:32px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:#fff;
+  padding:0 12px;
+  font-size:12px;
+  color:var(--ink);
+  outline:none;
+  font-weight:600;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:.15s border-color,.15s background;
+}
+.button:hover{background:#faf8f0}
+.button.soft{background:var(--muted);}
+.button.danger{
+  border-color:var(--danger);
+  color:var(--danger);
+}
+.button.icon-only{
+  width:32px;
+  justify-content:center;
+  padding:0;
+}
 
+/* -------------------------------------------------
+   RECORD TABS
+   ------------------------------------------------- */
 .record-tabs{
   margin-top:14px;
   display:flex;
@@ -109,7 +180,7 @@ body{
   gap:8px;
 }
 .rtab{
-  padding:8px 14px;
+  padding:8px 16px;
   border-radius:999px;
   border:1px solid var(--line);
   background:#fff;
@@ -117,12 +188,20 @@ body{
   font-weight:600;
   color:var(--ink-soft);
   cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
 }
+.rtab span.icon{font-size:16px}
 .rtab.active{
   background:var(--accent);
   color:#fff;
+  border-color:transparent;
 }
 
+/* -------------------------------------------------
+   CARD WRAPPER
+   ------------------------------------------------- */
 .card{
   background:var(--card);
   border:1px solid var(--line);
@@ -131,52 +210,67 @@ body{
   margin-top:14px;
   padding:12px 14px 16px;
 }
+.record-section{margin-top:8px;}
 
+/* -------------------------------------------------
+   TOOLBAR ROW
+   ------------------------------------------------- */
 .toolbar-row{
   display:flex;
+  flex-wrap:wrap;
   gap:10px;
   align-items:center;
-  margin-bottom:8px;
+  margin-bottom:10px;
 }
 .search-box{
-  position:relative;
-  min-width:240px;
+  min-width:220px;
+  flex:1;
+  max-width:420px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:#faf8f4;
+  border-radius:999px;
+  border:1px solid var(--line);
+  padding:4px 10px;
 }
 .search-box input{
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:13px;
   width:100%;
-  padding:6px 8px 6px 28px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  font-size:12px;
+  color:var(--ink);
 }
-.search-icon{
-  position:absolute;
-  left:8px;
-  top:6px;
-  font-size:14px;
-}
+.search-icon{font-size:14px;opacity:.7;}
 .metric-chip{
-  padding:6px 10px;
-  border-radius:8px;
-  background:var(--accent-soft);
-  font-size:11px;
-  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  padding:5px 10px;
+  background:#fff;
+  font-size:12px;
   color:var(--ink-soft);
 }
 .metric-value{
-  color:var(--accent);
   font-weight:700;
+  color:var(--ink);
 }
 
+/* -------------------------------------------------
+   TABLE SHELL + SCROLL + PAGINATION
+   ------------------------------------------------- */
 .table-shell{
-  margin-top:8px;
+  margin-top:4px;
   border:1px solid var(--line);
   border-radius:14px;
   overflow:hidden;
   background:#fff;
 }
 .table-scroll{
-  max-height:62vh;
+  max-height:60vh;
   overflow:auto;
 }
 .table{
@@ -184,60 +278,87 @@ body{
   border-collapse:separate;
   border-spacing:0;
   table-layout:fixed;
-  font-size:12px;
+  font-size:13px;
 }
 .table thead th{
   position:sticky;
   top:0;
-  background:#f3efe6;
+  background:#faf7ef;
   border-bottom:1px solid var(--line);
-  padding:6px;
+  padding:6px 6px;
   text-align:left;
   color:var(--ink-soft);
-  font-weight:700;
-  font-size:11px;
-  z-index:10;
+  font-weight:600;
+  white-space:normal;
+  word-break:break-word;
+  z-index:1;
 }
 .table thead tr.filter-row th{
-  top:29px;
-  background:#faf8f4;
-  padding:4px 6px;
-  border-bottom:2px solid var(--line);
+  top:32px;
+  background:#fdf9f1;
+  border-bottom:1px solid var(--line);
+  z-index:1;
 }
 .filter-input{
   width:100%;
-  padding:4px 6px;
-  border:1px solid #e0d8c8;
-  border-radius:4px;
-  font-size:10px;
+  border-radius:7px;
+  border:1px solid var(--line);
+  padding:3px 6px;
+  font-size:11px;
+  outline:none;
   background:#fff;
-  font-family:inherit;
 }
 .filter-input:focus{
-  outline:none;
   border-color:var(--accent);
-  background:#fafff7;
-}
-.filter-input::placeholder{
-  color:#b5aca0;
-  font-size:10px;
+  box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
 
-.add-row{
-  background:var(--add-row) !important;
-}
-.sell-row{
-  background:var(--sell-row) !important;
-}
-
+/* -------------------------------------------------
+   TABLE CELLS
+   ------------------------------------------------- */
 .table tbody td{
   border-bottom:1px solid var(--line);
-  padding:4px 6px;
+  padding:5px 6px;
+  vertical-align:middle;
+  white-space:nowrap;
+  word-break:break-word;
+}
+.cell{
+  min-height:24px;
+  border-radius:7px;
+  border:1px solid transparent;
+  padding:3px 4px;
+  display:flex;
+  align-items:center;
 }
 .cell.readonly{
-  background:transparent;
-  color:var(--ink);
-  padding:3px 4px;
+  background:transparent !important;
+}
+
+/* -------------------------------------------------
+   ACTIONS + PAGER
+   ------------------------------------------------- */
+.td-actions{white-space:nowrap;text-align:center;}
+.row-actions{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+}
+.icon-pill{
+  border-radius:999px;
+  border:1px solid #d0d0d0;
+  padding:3px 7px;
+  font-size:13px;
+  background:#fff;
+  cursor:pointer;
+}
+.icon-pill.delete{
+  border-color:var(--danger);
+  color:var(--danger);
+}
+.icon-pill.delete:hover{
+  background:#ffeaea;
 }
 
 .pager{
@@ -250,1227 +371,1343 @@ body{
   font-size:11px;
   color:var(--ink-soft);
 }
+.pager-controls{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
 .page-btn{
-  min-width:26px;height:24px;border-radius:7px;
+  min-width:26px;
+  height:24px;
+  border-radius:7px;
   border:1px solid var(--line);
-  background:#fff;cursor:pointer;
+  background:#fff;
   font-size:11px;
+  cursor:pointer;
+  padding:0 6px;
 }
 .page-btn:hover{background:#f3f0e7}
-
-.button{
-  height:32px;border-radius:9px;
-  border:1px solid var(--line);
-  background:#fff;padding:0 12px;
-  font-size:12px;color:var(--ink);
-  outline:none;font-weight:600;cursor:pointer;
-  transition:.15s;
+.page-btn.disabled{
+  opacity:.4;
+  cursor:default;
 }
-.button:hover{background:#faf8f0}
-.button.icon-only{
-  width:32px;
-  padding:0;
-  font-size:14px;
-}
-.button.primary{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent;
-}
-.button.primary:hover{
-  background:#4a6d56;
-}
-.button.danger{
-  background:var(--danger);
-  color:#fff;
-  border-color:transparent;
-}
-.button.danger:hover{
-  background:#a64343;
-}
-
-.modal-overlay{
-  display:none;
-  position:fixed;
-  top:0;left:0;right:0;bottom:0;
-  background:rgba(0,0,0,0.5);
-  z-index:9999;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-}
-.modal-panel{
-  background:#fff;
-  border-radius:16px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.3);
-  padding:24px;
-  max-height:90vh;
-  overflow:auto;
-}
-.modal-header{
-  margin-bottom:20px;
-  padding-bottom:16px;
-  border-bottom:2px solid var(--line);
-}
-.modal-title{
-  font-size:18px;
+.page-indicator b{
   font-weight:700;
   color:var(--ink);
 }
-.modal-subtitle{
-  font-size:13px;
-  color:var(--ink-soft);
-  margin-top:4px;
+
+/* -------------------------------------------------
+   MODALS
+   ------------------------------------------------- */
+.modal-overlay{
+  position:fixed;
+  left:0;top:0;right:0;bottom:0;
+  background:rgba(0,0,0,.25);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:5000;
 }
-.modal-footer{
-  margin-top:20px;
-  padding-top:16px;
-  border-top:2px solid var(--line);
-  display:flex;
-  gap:10px;
-  justify-content:flex-end;
+.modal-panel{
+  background:#fff;
+  border-radius:14px;
+  padding:16px 18px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
-.form-row{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:16px;
-  margin-bottom:16px;
-}
-.form-row.three-col{
-  grid-template-columns:repeat(2,1fr);
-}
-.form-row.four-col{
-  grid-template-columns:repeat(2,1fr);
-}
-.form-group{
+/* -------------------------------------------------
+   SELL MODAL
+   ------------------------------------------------- */
+.sell-modal-header{
   display:flex;
-  flex-direction:column;
-  gap:6px;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  font-size:12px;
+  margin-bottom:10px;
 }
-.form-label{
-  font-size:11px;
-  font-weight:700;
+.sell-modal-header label{
+  font-weight:600;
   color:var(--ink-soft);
-  text-transform:uppercase;
-  letter-spacing:0.03em;
 }
-.form-input{
-  padding:10px 12px;
+.sell-modal-header input[type="text"],
+.sell-modal-header input[type="date"]{
+  border-radius:8px;
+  border:1px solid var(--line);
+  padding:4px 8px;
+  font-size:12px;
+  outline:none;
+  background:#faf8f4;
+}
+.sell-modal-header input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px rgba(93,134,108,.2);
+}
+
+/* Custom dropdown for party selector */
+.party-dropdown-wrapper{
+  position:relative;
+  min-width:200px;
+}
+.party-dropdown-input{
+  width:100%;
+  border-radius:8px;
+  border:1px solid var(--line);
+  padding:4px 8px;
+  font-size:12px;
+  outline:none;
+  background:#faf8f4;
+  cursor:pointer;
+}
+.party-dropdown-input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px rgba(93,134,108,.2);
+}
+.party-dropdown-menu{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  max-height:200px;
+  overflow-y:auto;
+  background:#fff;
   border:1px solid var(--line);
   border-radius:8px;
-  font-size:13px;
-  font-family:inherit;
-  background:#fff;
+  margin-top:2px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
+  z-index:1000;
+  display:none;
 }
-.form-input:focus{
-  outline:none;
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-soft);
+.party-dropdown-menu.show{
+  display:block;
 }
-.form-input:disabled{
-  background:#f9f7f4;
-  color:var(--ink-soft);
-  cursor:not-allowed;
-}
-.form-input.small{
-  padding:8px 10px;
+.party-dropdown-item{
+  padding:6px 10px;
   font-size:12px;
+  cursor:pointer;
+  border-bottom:1px solid var(--line);
 }
-
-/* Sell Modal Table */
-.sell-table-wrapper{
-  margin:0 -24px;
-  padding:0 24px;
-  max-height:400px;
-  overflow-x:auto;
-  overflow-y:auto;
+.party-dropdown-item:last-child{
+  border-bottom:none;
+}
+.party-dropdown-item:hover{
+  background:var(--accent-soft);
+}
+.party-dropdown-item.no-results{
+  color:var(--ink-soft);
+  cursor:default;
+  font-style:italic;
+}
+.party-dropdown-item.no-results:hover{
+  background:transparent;
 }
 .sell-table{
   width:100%;
   border-collapse:collapse;
-  font-size:12px;
-}
-.sell-table thead th{
-  background:#f9f7f4;
-  padding:10px 8px;
-  text-align:left;
-  font-weight:700;
-  font-size:10px;
-  text-transform:uppercase;
-  color:var(--ink-soft);
-  border-bottom:2px solid var(--line);
-  position:sticky;
-  top:0;
-  white-space:nowrap;
-}
-.sell-table tbody td{
-  padding:12px 8px;
-  border-bottom:1px solid #f0ebe3;
-  vertical-align:middle;
-}
-.sell-table tbody tr:hover{
-  background:#fafaf8;
-}
-.sell-table .read-only{
-  color:var(--ink-soft);
   font-size:11px;
+}
+.sell-table th,
+.sell-table td{
+  border:1px solid var(--line);
+  padding:4px 5px;
+  text-align:left;
+}
+.sell-table thead{
+  background:#f3efe6;
 }
 .sell-table input{
   width:100%;
-  min-width:80px;
+  border-radius:6px;
+  border:1px solid var(--line);
+  padding:2px 4px;
+  font-size:11px;
+  outline:none;
+}
+.sell-table input:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
 
-.over-limit{
-  background:#ffe6e6 !important;
+/* -------------------------------------------------
+   RESPONSIVE
+   ------------------------------------------------- */
+@media (max-width:1100px){
+  .workspace{padding:16px}
+}
+@media (max-width:920px){
+  .workspace{padding:12px}
+  .panel{flex-wrap:wrap;row-gap:8px}
+}
+
+/* -------------------------------------------------
+   STRICT ROW COLOR CONTROL — FINAL
+   ------------------------------------------------- */
+
+/* 1. Remove ALL default backgrounds and zebra effects */
+.table tbody tr,
+.table tbody tr:nth-child(even),
+.table tbody tr:nth-child(odd){
+  background:transparent !important;
+}
+
+.table tbody td{
+  background:transparent;
+}
+
+.table tbody td .cell{
+  background:transparent;
+}
+
+/* 2. Parent (ADD) Rows — SOLID GREEN - highest priority */
+.ajmz-main,
+.calib-main{
+  background:var(--row-add) !important;
+}
+
+.ajmz-main td,
+.calib-main td{
+  background:var(--row-add) !important;
+}
+
+.ajmz-main .cell,
+.calib-main .cell{
+  background:var(--row-add) !important;
+}
+
+/* 3. Child (SELL) Rows — SOLID RED - highest priority */
+.sell-row{
+  background:var(--row-sell) !important;
+}
+
+.sell-row td{
+  background:var(--row-sell) !important;
+}
+
+.sell-row .cell{
+  background:var(--row-sell) !important;
+}
+
+/* 4. Hover effects - maintain row colors */
+.table tbody tr:hover,
+.table tbody tr:hover td,
+.table tbody tr:hover .cell{
+  background:inherit !important;
+}
+
+.ajmz-main:hover,
+.ajmz-main:hover td,
+.ajmz-main:hover .cell,
+.calib-main:hover,
+.calib-main:hover td,
+.calib-main:hover .cell{
+  background:var(--row-add) !important;
+  filter:brightness(0.97);
+}
+
+.sell-row:hover,
+.sell-row:hover td,
+.sell-row:hover .cell{
+  background:var(--row-sell) !important;
+  filter:brightness(0.97);
 }
 </style>
 </head>
 <body>
 
+<!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
   <a href="index.html" class="nav-item" title="Add">➕</a>
-  <a href="added.html" class="nav-item" title="Added">📝</a>
+  <a href="added.html" class="nav-item" title="Added">📋</a>
   <a href="sell.html" class="nav-item active" title="Sell">💎</a>
   <a href="reports.html" class="nav-item" title="Reports">📊</a>
-  <a href="reports2.html" class="nav-item" title="Reports">📊</a>
+  <a href="reports2.html" class="nav-item" title="Reports 2">📊</a>
 </div>
 
+<!-- MAIN WORKSPACE -->
 <div class="workspace">
 
   <div class="panel">
     <div>
-      <div class="panel-title">SELL MODULE</div>
+      <div class="panel-title">SELL RECORDS</div>
+      <div class="panel-main">AJMZ & Calibrates – Remaining Inventory</div>
     </div>
+    <span class="badge">
+      <span class="badge-dot"></span>
+      <span>Live Data</span>
+    </span>
     <div class="spacer"></div>
-    <button class="button" id="btnRefresh">🔄 Refresh</button>
+    <button class="button soft" type="button" id="btnRefresh">🔄 Refresh</button>
   </div>
 
+  <!-- TABS -->
   <div class="record-tabs">
-    <button class="rtab active" data-target="tabAJMZ">
-      <span class="icon">💎</span>AJMZ
+    <button class="rtab active" data-target="sectionAJMZ">
+      <span class="icon">💎</span>
+      <span>AJMZ</span>
     </button>
-    <button class="rtab" data-target="tabCALIB">
-      <span class="icon">📏</span>CALIB
+    <button class="rtab" data-target="sectionCALIB">
+      <span class="icon">📏</span>
+      <span>CALIB</span>
     </button>
   </div>
 
-  <div class="card" id="tabAJMZ">
-    <div class="toolbar-row">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input id="ajmzSearch" placeholder="Search AJMZ (Tx, Lot, Party, Description)…">
+  <div class="card">
+
+    <!-- AJMZ SECTION -->
+    <section class="record-section" id="sectionAJMZ">
+      <div class="toolbar-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="ajmzSearch" placeholder="Search AJMZ (Tx, Lot, Party, Description)…"/>
+        </div>
+        <div class="metric-chip">
+          Parents: <span class="metric-value" id="ajmzParentsCount">0</span>
+        </div>
+        <div class="metric-chip">
+          Total CTS: <span class="metric-value" id="ajmzTotalCTS">0.00</span>
+        </div>
+        <div class="metric-chip">
+          Total Amount: <span class="metric-value" id="ajmzTotalAmount">0.00</span>
+        </div>
+        <div class="spacer"></div>
+        <button class="button" id="btnAjmzSellSelected">💎 Sell Selected</button>
       </div>
 
-      <div class="metric-chip">Parents: <span class="metric-value" id="ajmzParentCount">0</span></div>
-      <div class="metric-chip">Total CTS: <span class="metric-value" id="ajmzTotalCTS">0.00</span></div>
-      <div class="metric-chip">Total Amount: <span class="metric-value" id="ajmzTotalAmount">0.00</span></div>
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table class="table" id="tableAJMZ">
+            <thead>
+              <tr>
+                <th style="width:32px;text-align:center;">✔</th>
+                <th style="width:120px;">Tx ID</th>
+                <th style="width:90px;">Date</th>
+                <th style="width:120px;">Party</th>
+                <th style="width:110px;">Lot</th>
+                <th style="width:90px;">Format</th>
+                <th style="width:160px;">Description</th>
+                <th style="width:90px;">Total CTS</th>
+                <th style="width:90px;">Total PCS</th>
+                <th style="width:90px;">Price</th>
+                <th style="width:110px;">Amount</th>
+                <th style="width:90px;">Rem. CTS</th>
+                <th style="width:90px;">Rem. PCS</th>
+                <th style="width:160px;">Remarks</th>
+                <th style="width:80px;">Actions</th>
+              </tr>
+              <tr class="filter-row">
+                <th></th>
+                <th><input class="filter-input" id="ajmzFilter_txId" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="ajmzFilter_date" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="ajmzFilter_party" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="ajmzFilter_lotName" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="ajmzFilter_format" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="ajmzFilter_desc" placeholder="Filter…"></th>
+                <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyAJMZ"></tbody>
+          </table>
+        </div>
 
-      <div class="spacer"></div>
-
-      <button class="button" id="btnClearAJMZ">🔄 Clear Filters</button>
-      <button class="button primary" id="btnSellAJMZ">💎 Sell Selected</button>
-    </div>
-
-    <div class="table-shell">
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr>
-              <th style="width:32px;text-align:center;">✓</th>
-              <th>Tx ID</th>
-              <th>Date</th>
-              <th>Party</th>
-              <th>Lot</th>
-              <th>Format</th>
-              <th>Description</th>
-              <th>Total CTS</th>
-              <th>Total PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Rem. CTS</th>
-              <th>Rem. PCS</th>
-              <th>Remarks</th>
-              <th style="width:40px;text-align:center;">✏️</th>
-              <th style="width:40px;text-align:center;">❌</th>
-            </tr>
-            <tr class="filter-row">
-              <th></th>
-              <th><input type="text" class="filter-input" data-col="txId" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="date" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="party" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="lotName" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="lotFormat" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="description" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="cts" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="pcs" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="price" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="amount" placeholder="Filter..."></th>
-              <th></th>
-              <th></th>
-              <th><input type="text" class="filter-input" data-col="remarks" placeholder="Filter..."></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tbodyAJMZCombined"></tbody>
-        </table>
-      </div>
-
-      <div class="pager">
-        <div>Showing <b id="ajmzPageFrom">0</b>–<b id="ajmzPageTo">0</b> of <b id="ajmzPageTotal">0</b></div>
-        <div style="display:flex;gap:4px;">
-          <button class="page-btn" id="ajPrev">&lt;</button>
-          <button class="page-btn" id="ajNext">&gt;</button>
+        <div class="pager" id="pagerAJMZ">
+          <div class="page-indicator">
+            Showing <b id="ajmzPageFrom">0</b>–<b id="ajmzPageTo">0</b> of <b id="ajmzPageTotal">0</b> parents
+          </div>
+          <div class="pager-controls">
+            <button class="page-btn" id="ajmzPrevPage">&lt;</button>
+            <span class="page-indicator">Page <b id="ajmzPageNumber">1</b></span>
+            <button class="page-btn" id="ajmzNextPage">&gt;</button>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <div class="card" id="tabCALIB" style="display:none;">
-    <div class="toolbar-row">
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input id="calibSearch" placeholder="Search CALIB (Tx, Lot, Party, Grade)…">
+    <!-- CALIB SECTION -->
+    <section class="record-section" id="sectionCALIB" style="display:none">
+      <div class="toolbar-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="calibSearch" placeholder="Search CALIB (Tx, Lot, Party, Description)…"/>
+        </div>
+        <div class="metric-chip">
+          Parents: <span class="metric-value" id="calibParentsCount">0</span>
+        </div>
+        <div class="metric-chip">
+          Total CTS: <span class="metric-value" id="calibTotalCTS">0.00</span>
+        </div>
+        <div class="metric-chip">
+          Total Amount: <span class="metric-value" id="calibTotalAmount">0.00</span>
+        </div>
+        <div class="spacer"></div>
+        <button class="button" id="btnCalibSellSelected">💎 Sell Selected</button>
       </div>
 
-      <div class="metric-chip">Parents: <span class="metric-value" id="calibParentCount">0</span></div>
-      <div class="metric-chip">Total CTS: <span class="metric-value" id="calibTotalCTS">0.00</span></div>
-      <div class="metric-chip">Total Amount: <span class="metric-value" id="calibTotalAmount">0.00</span></div>
+      <div class="table-shell">
+        <div class="table-scroll">
+          <table class="table" id="tableCALIB">
+            <thead>
+              <tr>
+                <th style="width:32px;text-align:center;">✔</th>
+                <th style="width:120px;">Tx ID</th>
+                <th style="width:90px;">Date</th>
+                <th style="width:120px;">Party</th>
+                <th style="width:110px;">Lot</th>
+                <th style="width:90px;">Grade</th>
+                <th style="width:160px;">Description</th>
+                <th style="width:90px;">Total CTS</th>
+                <th style="width:90px;">Price</th>
+                <th style="width:110px;">Amount</th>
+                <th style="width:90px;">Rem. CTS</th>
+                <th style="width:160px;">Remarks</th>
+                <th style="width:80px;">Actions</th>
+              </tr>
+              <tr class="filter-row">
+                <th></th>
+                <th><input class="filter-input" id="calibFilter_txId" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="calibFilter_date" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="calibFilter_party" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="calibFilter_lotName" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="calibFilter_grade" placeholder="Filter…"></th>
+                <th><input class="filter-input" id="calibFilter_desc" placeholder="Filter…"></th>
+                <th></th><th></th><th></th><th></th><th></th><th></th>
+              </tr>
+            </thead>
+            <tbody id="tbodyCALIB"></tbody>
+          </table>
+        </div>
 
-      <div class="spacer"></div>
-
-      <button class="button" id="btnClearCALIB">🔄 Clear Filters</button>
-      <button class="button primary" id="btnSellCALIB">💎 Sell Selected</button>
-    </div>
-
-    <div class="table-shell">
-      <div class="table-scroll">
-        <table class="table">
-          <thead>
-            <tr>
-              <th style="width:32px;text-align:center;">✓</th>
-              <th>Tx ID</th>
-              <th>Date</th>
-              <th>Party</th>
-              <th>Lot</th>
-              <th>Grade</th>
-              <th>Description</th>
-              <th>Total CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th>Rem. CTS</th>
-              <th>Remarks</th>
-              <th style="width:40px;text-align:center;">✏️</th>
-              <th style="width:40px;text-align:center;">❌</th>
-            </tr>
-            <tr class="filter-row">
-              <th></th>
-              <th><input type="text" class="filter-input" data-col="txId" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="date" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="party" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="lotName" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="grade" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="description" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="cts" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="price" placeholder="Filter..."></th>
-              <th><input type="text" class="filter-input" data-col="amount" placeholder="Filter..."></th>
-              <th></th>
-              <th><input type="text" class="filter-input" data-col="remarks" placeholder="Filter..."></th>
-              <th></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="tbodyCALIBCombined"></tbody>
-        </table>
-      </div>
-
-      <div class="pager">
-        <div>Showing <b id="calibPageFrom">0</b>–<b id="calibPageTo">0</b> of <b id="calibPageTotal">0</b></div>
-        <div style="display:flex;gap:4px;">
-          <button class="page-btn" id="calPrev">&lt;</button>
-          <button class="page-btn" id="calNext">&gt;</button>
+        <div class="pager" id="pagerCALIB">
+          <div class="page-indicator">
+            Showing <b id="calibPageFrom">0</b>–<b id="calibPageTo">0</b> of <b id="calibPageTotal">0</b> parents
+          </div>
+          <div class="pager-controls">
+            <button class="page-btn" id="calibPrevPage">&lt;</button>
+            <span class="page-indicator">Page <b id="calibPageNumber">1</b></span>
+            <button class="page-btn" id="calibNextPage">&gt;</button>
+          </div>
         </div>
       </div>
+    </section>
+
+  </div> <!-- end .card -->
+</div> <!-- end .workspace -->
+
+<!-- SELL MODAL -->
+<div id="sellModal" class="modal-overlay">
+  <div class="modal-panel" style="width:950px;max-width:98%;max-height:90%;overflow:auto;">
+    <h3 style="margin-bottom:12px;font-size:17px;font-weight:700">
+      Sell Selected – <span id="sellIdLabel">(auto)</span>
+    </h3>
+
+    <div class="sell-modal-header">
+      <label for="sellPartyInput">Party</label>
+      <div class="party-dropdown-wrapper">
+        <input type="text" id="sellPartyInput" class="party-dropdown-input" placeholder="Select or type party name..." autocomplete="off"/>
+        <div id="partyDropdownMenu" class="party-dropdown-menu"></div>
+      </div>
+
+      <label for="sellDateInput">Date</label>
+      <input type="date" id="sellDateInput"/>
+
+      <span style="font-size:11px;color:var(--ink-soft);">
+        • Same <b>SELL ID</b> will be applied to all rows in this selling.
+      </span>
+    </div>
+
+    <div id="sellModalTableWrapper" style="
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:8px;
+      background:#faf8f4;
+      max-height:420px;
+      overflow:auto;
+      margin-bottom:10px;
+    "></div>
+
+    <div style="text-align:right;margin-top:10px;">
+      <button class="button" type="button" id="sellCancelBtn">Cancel</button>
+      <button class="button" type="button" id="sellSaveBtn" style="background:var(--accent);color:#fff;border-color:transparent">
+        Save Sell
+      </button>
     </div>
   </div>
-
 </div>
 
 <script>
-let AJMZ_ALL = [];
-let CALIB_ALL = [];
-let AJMZ_SELL_ALL = [];
-let CALIB_SELL_ALL = [];
-let AJMZ_FILTERED = [];
-let CALIB_FILTERED = [];
-let ajPage = 1;
-let calPage = 1;
-const PAGE_SIZE = 200;
-
-let ajmzColFilters = {};
-let calibColFilters = {};
-
+/* ============================================================
+   UTILITIES
+   ============================================================ */
 function esc(s){
-  return s == null ? "" : String(s)
+  if(s===null||s===undefined)return "";
+  return String(s)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;");
 }
-function fmt(n){
-  return Number(n || 0).toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
+function fmtNumber(n){
+  const num = Number(n || 0);
+  if(!isFinite(num)) return "0.00";
+  return num.toLocaleString("en-US",{
+    minimumFractionDigits:2,
+    maximumFractionDigits:2
   });
 }
-function parseNum(v){
-  return Number(String(v || "0").replace(/,/g,"")) || 0;
-}
-function nowDate(){
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+function parseMulti(str){
+  if(!str)return [];
+  if(Array.isArray(str))return str;
+  return String(str).split(",").map(s=>s.trim()).filter(Boolean);
 }
 function nowStamp(){
-  const d=new Date();
-  return `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()}`;
+  const dt=new Date();
+  const y=dt.getFullYear();
+  const m=String(dt.getMonth()+1).padStart(2,"0");
+  const d=String(dt.getDate()).padStart(2,"0");
+  const hh=String(dt.getHours()).padStart(2,"0");
+  const mm=String(dt.getMinutes()).padStart(2,"0");
+  return `${y}-${m}-${d} ${hh}:${mm}`;
+}
+function todayISO(){
+  const dt=new Date();
+  const y=dt.getFullYear();
+  const m=String(dt.getMonth()+1).padStart(2,"0");
+  const d=String(dt.getDate()).padStart(2,"0");
+  return `${y}-${m}-${d}`;
 }
 
-function renderAJMZCombined(){
-  const tbody = document.getElementById("tbodyAJMZCombined");
-  tbody.innerHTML = "";
-
-  const start = (ajPage - 1) * PAGE_SIZE;
-  const parents = AJMZ_FILTERED.slice(start, start + PAGE_SIZE);
-
-  let html = "";
-
-  parents.forEach(parent => {
-    const parentKey = parent.key;
-    const sells = AJMZ_SELL_ALL.filter(s => s.parentKey === parentKey);
-
-    const soldCTS = sells.reduce((t,s)=> t + parseNum(s.cts), 0);
-    const soldPCS = sells.reduce((t,s)=> t + parseNum(s.pcs), 0);
-    const origCTS = parseNum(parent.cts);
-    const origPCS = parseNum(parent.pcs);
-    const totalCTS = origCTS + soldCTS;
-    const totalPCS = origPCS + soldPCS;
-
-    html += `
-      <tr class="add-row">
-        <td style="text-align:center;">
-          <input type="checkbox" class="row-select" data-type="AJMZ" data-key="${esc(parentKey)}">
-        </td>
-        <td><div class="cell readonly">${esc(parent.txId)}</div></td>
-        <td><div class="cell readonly">${esc(parent.date)}</div></td>
-        <td><div class="cell readonly">${esc(parent.party)}</div></td>
-        <td><div class="cell readonly">${esc(parent.lotName || "")}</div></td>
-        <td><div class="cell readonly">${esc(parent.lotFormat || "")}</div></td>
-        <td><div class="cell readonly">${esc(parent.description || "")}</div></td>
-        <td><div class="cell readonly">${fmt(totalCTS)}</div></td>
-        <td><div class="cell readonly">${fmt(totalPCS)}</div></td>
-        <td><div class="cell readonly">${fmt(parent.price)}</div></td>
-        <td><div class="cell readonly">${fmt(parent.amount)}</div></td>
-        <td><div class="cell readonly">${fmt(origCTS)}</div></td>
-        <td><div class="cell readonly">${fmt(origPCS)}</div></td>
-        <td><div class="cell readonly">${esc(parent.remarks || "")}</div></td>
-        <td></td>
-        <td></td>
-      </tr>
-    `;
-
-    sells.forEach(sell => {
-      html += `
-        <tr class="sell-row">
-          <td></td>
-          <td><div class="cell readonly">${esc(sell.txId)}</div></td>
-          <td><div class="cell readonly">${esc(sell.date)}</div></td>
-          <td><div class="cell readonly">${esc(sell.party)}</div></td>
-          <td><div class="cell readonly">${esc(sell.parentLot || "")}</div></td>
-          <td><div class="cell readonly">${esc(sell.parentFormat || "")}</div></td>
-          <td><div class="cell readonly">${esc(sell.parentDescription || "")}</div></td>
-          <td><div class="cell readonly">${fmt(sell.cts)}</div></td>
-          <td><div class="cell readonly">${fmt(sell.pcs)}</div></td>
-          <td><div class="cell readonly">${fmt(sell.sellPrice)}</div></td>
-          <td><div class="cell readonly">${fmt(sell.amount)}</div></td>
-          <td></td>
-          <td></td>
-          <td><div class="cell readonly">${esc(sell.remarks || "")}</div></td>
-          <td style="text-align:center;">
-            <button class="button icon-only btn-edit-sell" data-type="AJMZ" data-key="${esc(sell.key)}">✏️</button>
-          </td>
-          <td style="text-align:center;">
-            <button class="button icon-only btn-delete-sell" data-type="AJMZ" data-key="${esc(sell.key)}">❌</button>
-          </td>
-        </tr>
-      `;
-    });
-  });
-
-  tbody.innerHTML = html;
-  document.getElementById("ajmzPageFrom").textContent = parents.length ? start + 1 : 0;
-  document.getElementById("ajmzPageTo").textContent = start + parents.length;
-  document.getElementById("ajmzPageTotal").textContent = AJMZ_FILTERED.length;
-}
-
-function renderCALIBCombined(){
-  const tbody = document.getElementById("tbodyCALIBCombined");
-  tbody.innerHTML = "";
-
-  const start = (calPage - 1) * PAGE_SIZE;
-  const parents = CALIB_FILTERED.slice(start, start + PAGE_SIZE);
-
-  let html = "";
-
-  parents.forEach(parent => {
-    const parentKey = parent.key;
-    const sells = CALIB_SELL_ALL.filter(s => s.parentKey === parentKey);
-    const soldCTS = sells.reduce((t,s)=> t + parseNum(s.cts), 0);
-    const origCTS = parseNum(parent.cts);
-    const totalCTS = origCTS + soldCTS;
-
-    html += `
-      <tr class="add-row">
-        <td style="text-align:center;">
-          <input type="checkbox" class="row-select" data-type="CALIB" data-key="${esc(parentKey)}">
-        </td>
-        <td><div class="cell readonly">${esc(parent.txId)}</div></td>
-        <td><div class="cell readonly">${esc(parent.date)}</div></td>
-        <td><div class="cell readonly">${esc(parent.party)}</div></td>
-        <td><div class="cell readonly">${esc(parent.lotName || "")}</div></td>
-        <td><div class="cell readonly">${esc(parent.grade || "")}</div></td>
-        <td><div class="cell readonly">${esc(parent.description || "")}</div></td>
-        <td><div class="cell readonly">${fmt(totalCTS)}</div></td>
-        <td><div class="cell readonly">${fmt(parent.price)}</div></td>
-        <td><div class="cell readonly">${fmt(parent.amount)}</div></td>
-        <td><div class="cell readonly">${fmt(origCTS)}</div></td>
-        <td><div class="cell readonly">${esc(parent.remarks || "")}</div></td>
-        <td></td>
-        <td></td>
-      </tr>
-    `;
-
-    sells.forEach(sell => {
-      html += `
-        <tr class="sell-row">
-          <td></td>
-          <td><div class="cell readonly">${esc(sell.txId)}</div></td>
-          <td><div class="cell readonly">${esc(sell.date)}</div></td>
-          <td><div class="cell readonly">${esc(sell.party)}</div></td>
-          <td><div class="cell readonly">${esc(sell.parentLot || "")}</div></td>
-          <td><div class="cell readonly">${esc(sell.parentGrade || "")}</div></td>
-          <td><div class="cell readonly">${esc(sell.parentDescription || "")}</div></td>
-          <td><div class="cell readonly">${fmt(sell.cts)}</div></td>
-          <td><div class="cell readonly">${fmt(sell.sellPrice)}</div></td>
-          <td><div class="cell readonly">${fmt(sell.amount)}</div></td>
-          <td></td>
-          <td><div class="cell readonly">${esc(sell.remarks || "")}</div></td>
-          <td style="text-align:center;">
-            <button class="button icon-only btn-edit-sell" data-type="CALIB" data-key="${esc(sell.key)}">✏️</button>
-          </td>
-          <td style="text-align:center;">
-            <button class="button icon-only btn-delete-sell" data-type="CALIB" data-key="${esc(sell.key)}">❌</button>
-          </td>
-        </tr>
-      `;
-    });
-  });
-
-  tbody.innerHTML = html;
-  document.getElementById("calibPageFrom").textContent = parents.length ? start + 1 : 0;
-  document.getElementById("calibPageTo").textContent = start + parents.length;
-  document.getElementById("calibPageTotal").textContent = CALIB_FILTERED.length;
-}
-
-const firebaseConfig = {
+/* ============================================================
+   FIREBASE INIT
+   ============================================================ */
+const firebaseConfig={
   apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
   authDomain:"ajmzinventory.firebaseapp.com",
   databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId:"ajmzinventory",
-  storageBucket:"ajmzinventory.firebasestorage.app",
-  messagingSenderId:"1069845316242",
-  appId:"1:1069845316242:web:c55be9de3724734f88dc4b"
+  storageBucket:"ajmzinventory.appspot.com",
+  messagingSenderId:"729766579875",
+  appId:"1:729766579875:web:0dfbbaf0f5f87c3b38d4c4"
 };
 firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
+const db=firebase.database();
 
-async function loadParents(){
-  const [ajSnap, calibSnap] = await Promise.all([
+/* ============================================================
+   GLOBAL DATA
+   ============================================================ */
+let AJMZ_ALL=[], CALIB_ALL=[], SELLS={};
+let AJMZ_FILTERED=[], CALIB_FILTERED=[];
+let PARTIES=[];
+let ajmzPage=1, calibPage=1;
+const PARENTS_PER_PAGE=50;
+
+/* Sell modal globals */
+let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput,
+    sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu;
+
+let allUniqueParties = [];
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+function getRemainingForRow(row,type){
+  const hasRemCts = Object.prototype.hasOwnProperty.call(row,"remainingCts") &&
+                    row.remainingCts !== null && row.remainingCts !== undefined && row.remainingCts !== "";
+  const hasRemPcs = Object.prototype.hasOwnProperty.call(row,"remainingPcs") &&
+                    row.remainingPcs !== null && row.remainingPcs !== undefined && row.remainingPcs !== "";
+
+  const baseCts = Number(row.cts||0);
+  const basePcs = type==="AJMZ" ? Number(row.pcs||0) : 0;
+
+  const remainingCts = hasRemCts ? Number(row.remainingCts||0) : baseCts;
+  const remainingPcs = type==="AJMZ" ? (hasRemPcs ? Number(row.remainingPcs||0) : basePcs) : 0;
+
+  return {remainingCts,remainingPcs};
+}
+function findRowByKey(type,key){
+  const arr = type==="AJMZ" ? AJMZ_ALL : CALIB_ALL;
+  return arr.find(r=>r.key===key) || null;
+}
+
+/* ============================================================
+   DATA LOADING
+   ============================================================ */
+async function loadAllData(){
+  const [ajSnap,calSnap,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
-    db.ref("calibRecords").once("value")
+    db.ref("calibRecords").once("value"),
+    db.ref("sellRecords").once("value")
   ]);
 
-  AJMZ_ALL = [];
-  CALIB_ALL = [];
+  AJMZ_ALL=[]; CALIB_ALL=[]; SELLS={};
+  const partySet=new Set();
 
-  if (ajSnap.exists()) {
-    ajSnap.forEach(r => {
-      const v = r.val();
-      v.key = r.key;
-      v.cts = parseNum(v.cts);
-      v.pcs = parseNum(v.pcs);
-      v.price = parseNum(v.price);
-      v.amount = parseNum(v.amount || (v.cts * v.price));
-      AJMZ_ALL.push(v);
+  if(sellSnap.exists()){
+    sellSnap.forEach(p=>{
+      const parentKey=p.key;
+      SELLS[parentKey]=[];
+      p.forEach(c=>{
+        const obj=c.val();
+        obj.key=c.key;
+        obj.cts=Number(obj.cts||0);
+        obj.pcs=Number(obj.pcs||0);
+        obj.price=Number(obj.price||0);
+        obj.amount=Number(obj.amount|| (obj.cts*obj.price));
+        SELLS[parentKey].push(obj);
+      });
+      SELLS[parentKey].sort((a,b)=>{
+        const ta=(a.createdAt||a.date||"")+"";
+        const tb=(b.createdAt||b.date||"")+"";
+        return ta<tb?1:ta>tb?-1:0;
+      });
     });
   }
 
-  if (calibSnap.exists()) {
-    calibSnap.forEach(r => {
-      const v = r.val();
-      v.key = r.key;
-      v.cts = parseNum(v.cts);
-      v.price = parseNum(v.price);
-      v.amount = parseNum(v.amount || (v.cts * v.price));
-      CALIB_ALL.push(v);
+  if(ajSnap.exists()){
+    ajSnap.forEach(r=>{
+      const obj=r.val();
+      obj.key=r.key;
+      obj.shape=parseMulti(obj.shape);
+      obj.cts=Number(obj.cts||0);
+      obj.pcs=Number(obj.pcs||0);
+      obj.price=Number(obj.price||0);
+      obj.amount=Number(obj.amount|| (obj.cts*obj.price));
+      const rem=getRemainingForRow(obj,"AJMZ");
+      obj.remainingCts = rem.remainingCts;
+      obj.remainingPcs = rem.remainingPcs;
+      obj.remainingAmount = Object.prototype.hasOwnProperty.call(obj,"remainingAmount")
+        ? Number(obj.remainingAmount||0)
+        : (obj.remainingCts * obj.price);
+      obj.__sells = SELLS[obj.key] || [];
+      if(obj.party) partySet.add(obj.party);
+      AJMZ_ALL.push(obj);
     });
   }
 
-  AJMZ_ALL.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
-  CALIB_ALL.sort((a,b)=>String(b.txId||"").localeCompare(String(a.txId||"")));
-  applyFilters();
-}
-
-async function loadSellRecords(){
-  const [ajSnap, calibSnap] = await Promise.all([
-    db.ref("sellRecords/ajmz").once("value"),
-    db.ref("sellRecords/calib").once("value")
-  ]);
-
-  AJMZ_SELL_ALL = [];
-  CALIB_SELL_ALL = [];
-
-  if (ajSnap.exists()) {
-    ajSnap.forEach(s => {
-      const r = s.val();
-      r.key = s.key;
-      r.cts = parseNum(r.cts);
-      r.pcs = parseNum(r.pcs);
-      r.sellPrice = parseNum(r.sellPrice || r.price);
-      r.amount = parseNum(r.amount || r.cts * r.sellPrice);
-      AJMZ_SELL_ALL.push(r);
+  if(calSnap.exists()){
+    calSnap.forEach(r=>{
+      const obj=r.val();
+      obj.key=r.key;
+      obj.shape=parseMulti(obj.shape);
+      obj.size=parseMulti(obj.size);
+      obj.cts=Number(obj.cts||0);
+      obj.price=Number(obj.price||0);
+      obj.amount=Number(obj.amount|| (obj.cts*obj.price));
+      const rem=getRemainingForRow(obj,"CALIB");
+      obj.remainingCts = rem.remainingCts;
+      obj.remainingAmount = Object.prototype.hasOwnProperty.call(obj,"remainingAmount")
+        ? Number(obj.remainingAmount||0)
+        : (obj.remainingCts * obj.price);
+      obj.__sells = SELLS[obj.key] || [];
+      if(obj.party) partySet.add(obj.party);
+      CALIB_ALL.push(obj);
     });
   }
 
-  if (calibSnap.exists()) {
-    calibSnap.forEach(s => {
-      const r = s.val();
-      r.key = s.key;
-      r.cts = parseNum(r.cts);
-      r.sellPrice = parseNum(r.sellPrice || r.price);
-      r.amount = parseNum(r.amount || r.cts * r.sellPrice);
-      CALIB_SELL_ALL.push(r);
+  AJMZ_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
+  CALIB_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
+
+  // Collect all unique parties from ADD records and SELL records
+  const allParties = new Set();
+  AJMZ_ALL.forEach(r => { if(r.party) allParties.add(r.party); });
+  CALIB_ALL.forEach(r => { if(r.party) allParties.add(r.party); });
+  
+  // Add parties from sell records
+  Object.values(SELLS).forEach(sellArray => {
+    sellArray.forEach(sell => {
+      if(sell.party) allParties.add(sell.party);
     });
-  }
-
-  AJMZ_SELL_ALL.sort((a,b)=> (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
-  CALIB_SELL_ALL.sort((a,b)=> (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
-  applyFilters();
-}
-
-function applyFilters(){
-  const qA = document.getElementById("ajmzSearch").value.toLowerCase();
-  const qC = document.getElementById("calibSearch").value.toLowerCase();
-
-  AJMZ_FILTERED = AJMZ_ALL.filter(p => {
-    // Global search
-    if(qA && !JSON.stringify(p).toLowerCase().includes(qA)) return false;
-    
-    // Column filters
-    for (const [col, val] of Object.entries(ajmzColFilters)) {
-      if (!val) continue;
-      const fieldVal = String(p[col] || '').toLowerCase();
-      if (!fieldVal.includes(val.toLowerCase())) return false;
-    }
-    
-    return true;
   });
 
-  CALIB_FILTERED = CALIB_ALL.filter(p => {
-    // Global search
-    if(qC && !JSON.stringify(p).toLowerCase().includes(qC)) return false;
-    
-    // Column filters
-    for (const [col, val] of Object.entries(calibColFilters)) {
-      if (!val) continue;
-      const fieldVal = String(p[col] || '').toLowerCase();
-      if (!fieldVal.includes(val.toLowerCase())) return false;
-    }
-    
-    return true;
-  });
+  allUniqueParties = Array.from(allParties).filter(Boolean).sort();
+  PARTIES = Array.from(partySet).filter(Boolean).sort();
+  
+  applyFiltersAndRender();
+}
 
-  ajPage = 1;
-  calPage = 1;
+/* ============================================================
+   PARTY DROPDOWN
+   ============================================================ */
+function updatePartyDropdown(searchTerm = ""){
+  if(!partyDropdownMenu) return;
+  
+  const term = searchTerm.toLowerCase().trim();
+  let filtered = allUniqueParties;
+  
+  if(term){
+    filtered = allUniqueParties.filter(p => 
+      p.toLowerCase().includes(term)
+    );
+  }
+  
+  partyDropdownMenu.innerHTML = "";
+  
+  if(filtered.length === 0){
+    const noResult = document.createElement("div");
+    noResult.className = "party-dropdown-item no-results";
+    noResult.textContent = term ? `No matches found. Type to add "${searchTerm}" as new party.` : "No parties available";
+    partyDropdownMenu.appendChild(noResult);
+  } else {
+    filtered.forEach(party => {
+      const item = document.createElement("div");
+      item.className = "party-dropdown-item";
+      item.textContent = party;
+      item.addEventListener("click", () => {
+        sellPartyInput.value = party;
+        partyDropdownMenu.classList.remove("show");
+      });
+      partyDropdownMenu.appendChild(item);
+    });
+  }
+}
+
+function showPartyDropdown(){
+  if(!partyDropdownMenu) return;
+  updatePartyDropdown(sellPartyInput.value);
+  partyDropdownMenu.classList.add("show");
+}
+
+function hidePartyDropdown(){
+  if(!partyDropdownMenu) return;
+  setTimeout(() => {
+    partyDropdownMenu.classList.remove("show");
+  }, 200);
+}
+
+/* ============================================================
+   FILTERS + RENDER
+   ============================================================ */
+function applyFiltersAndRender(){
+  filterAJMZ();
+  filterCALIB();
+  renderAJMZ();
+  renderCALIB();
   updateMetrics();
-  renderAJMZCombined();
-  renderCALIBCombined();
 }
 
+/* AJMZ filters */
+function filterAJMZ(){
+  const search=(document.getElementById("ajmzSearch").value||"").toLowerCase();
+  const f_txId=(document.getElementById("ajmzFilter_txId").value||"").toLowerCase();
+  const f_date=(document.getElementById("ajmzFilter_date").value||"").toLowerCase();
+  const f_party=(document.getElementById("ajmzFilter_party").value||"").toLowerCase();
+  const f_lotName=(document.getElementById("ajmzFilter_lotName").value||"").toLowerCase();
+  const f_format=(document.getElementById("ajmzFilter_format").value||"").toLowerCase();
+  const f_desc=(document.getElementById("ajmzFilter_desc").value||"").toLowerCase();
+
+  function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
+
+  AJMZ_FILTERED=AJMZ_ALL.filter(r=>{
+    const text=JSON.stringify(r).toLowerCase();
+    if(search && !text.includes(search))return false;
+    if(!pass(r.txId,f_txId))return false;
+    if(!pass(r.date,f_date))return false;
+    if(!pass(r.party,f_party))return false;
+    if(!pass(r.lotName,f_lotName))return false;
+    if(!pass(r.lotFormat,f_format))return false;
+    if(!pass(r.description,f_desc))return false;
+    return true;
+  });
+  ajmzPage=1;
+}
+
+/* CALIB filters */
+function filterCALIB(){
+  const search=(document.getElementById("calibSearch").value||"").toLowerCase();
+  const f_txId=(document.getElementById("calibFilter_txId").value||"").toLowerCase();
+  const f_date=(document.getElementById("calibFilter_date").value||"").toLowerCase();
+  const f_party=(document.getElementById("calibFilter_party").value||"").toLowerCase();
+  const f_lotName=(document.getElementById("calibFilter_lotName").value||"").toLowerCase();
+  const f_grade=(document.getElementById("calibFilter_grade").value||"").toLowerCase();
+  const f_desc=(document.getElementById("calibFilter_desc").value||"").toLowerCase();
+
+  function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
+
+  CALIB_FILTERED=CALIB_ALL.filter(r=>{
+    const text=JSON.stringify(r).toLowerCase();
+    if(search && !text.includes(search))return false;
+    if(!pass(r.txId,f_txId))return false;
+    if(!pass(r.date,f_date))return false;
+    if(!pass(r.party,f_party))return false;
+    if(!pass(r.lotName,f_lotName))return false;
+    if(!pass(r.grade,f_grade))return false;
+    if(!pass(r.description,f_desc))return false;
+    return true;
+  });
+  calibPage=1;
+}
+
+/* ============================================================
+   RENDERERS
+   ============================================================ */
+function renderAJMZ(){
+  const tbody=document.getElementById("tbodyAJMZ");
+  tbody.innerHTML="";
+
+  const totalParents=AJMZ_FILTERED.length;
+  const startIndex=(ajmzPage-1)*PARENTS_PER_PAGE;
+  const pageParents=AJMZ_FILTERED.slice(startIndex,startIndex+PARENTS_PER_PAGE);
+
+  let html="";
+  pageParents.forEach(r=>{
+    html+=renderAJMZRow(r);
+    (r.__sells||[]).forEach(sell=>{
+      html+=renderSellChildRow(r.key,sell,"AJMZ");
+    });
+  });
+  tbody.innerHTML=html;
+
+  document.getElementById("ajmzPageFrom").textContent=totalParents===0?0:startIndex+1;
+  document.getElementById("ajmzPageTo").textContent=startIndex+pageParents.length;
+  document.getElementById("ajmzPageTotal").textContent=totalParents;
+  document.getElementById("ajmzPageNumber").textContent=ajmzPage;
+
+  document.getElementById("ajmzPrevPage").classList.toggle("disabled",ajmzPage===1);
+  document.getElementById("ajmzNextPage").classList.toggle("disabled",startIndex+PARENTS_PER_PAGE>=totalParents);
+}
+
+function renderCALIB(){
+  const tbody=document.getElementById("tbodyCALIB");
+  tbody.innerHTML="";
+
+  const totalParents=CALIB_FILTERED.length;
+  const startIndex=(calibPage-1)*PARENTS_PER_PAGE;
+  const pageParents=CALIB_FILTERED.slice(startIndex,startIndex+PARENTS_PER_PAGE);
+
+  let html="";
+  pageParents.forEach(r=>{
+    html+=renderCALIBRow(r);
+    (r.__sells||[]).forEach(sell=>{
+      html+=renderSellChildRow(r.key,sell,"CALIB");
+    });
+  });
+  tbody.innerHTML=html;
+
+  document.getElementById("calibPageFrom").textContent=totalParents===0?0:startIndex+1;
+  document.getElementById("calibPageTo").textContent=startIndex+pageParents.length;
+  document.getElementById("calibPageTotal").textContent=totalParents;
+  document.getElementById("calibPageNumber").textContent=calibPage;
+
+  document.getElementById("calibPrevPage").classList.toggle("disabled",calibPage===1);
+  document.getElementById("calibNextPage").classList.toggle("disabled",startIndex+PARENTS_PER_PAGE>=totalParents);
+}
+
+/* Metrics */
 function updateMetrics(){
-  let totalCTS = 0, totalAmount = 0;
-  AJMZ_FILTERED.forEach(p => {
-    totalCTS += p.cts;
-    totalAmount += p.amount;
+  // AJMZ
+  const parentsCountA = AJMZ_FILTERED.length;
+  let tCtsA=0,tAmtA=0;
+  AJMZ_FILTERED.forEach(r=>{
+    const rem=getRemainingForRow(r,"AJMZ");
+    const price=Number(r.price||0);
+    const remAmt = Object.prototype.hasOwnProperty.call(r,"remainingAmount")
+      ? Number(r.remainingAmount||0)
+      : rem.remainingCts*price;
+    tCtsA+=rem.remainingCts;
+    tAmtA+=remAmt;
   });
-  document.getElementById("ajmzParentCount").textContent = AJMZ_FILTERED.length;
-  document.getElementById("ajmzTotalCTS").textContent = fmt(totalCTS);
-  document.getElementById("ajmzTotalAmount").textContent = fmt(totalAmount);
+  document.getElementById("ajmzParentsCount").textContent=parentsCountA;
+  document.getElementById("ajmzTotalCTS").textContent=fmtNumber(tCtsA);
+  document.getElementById("ajmzTotalAmount").textContent=fmtNumber(tAmtA);
 
-  let totalCTS2 = 0, totalAmount2 = 0;
-  CALIB_FILTERED.forEach(p => {
-    totalCTS2 += p.cts;
-    totalAmount2 += p.amount;
+  // CALIB
+  const parentsCountC = CALIB_FILTERED.length;
+  let tCtsC=0,tAmtC=0;
+  CALIB_FILTERED.forEach(r=>{
+    const rem=getRemainingForRow(r,"CALIB");
+    const price=Number(r.price||0);
+    const remAmt = Object.prototype.hasOwnProperty.call(r,"remainingAmount")
+      ? Number(r.remainingAmount||0)
+      : rem.remainingCts*price;
+    tCtsC+=rem.remainingCts;
+    tAmtC+=remAmt;
   });
-  document.getElementById("calibParentCount").textContent = CALIB_FILTERED.length;
-  document.getElementById("calibTotalCTS").textContent = fmt(totalCTS2);
-  document.getElementById("calibTotalAmount").textContent = fmt(totalAmount2);
+  document.getElementById("calibParentsCount").textContent=parentsCountC;
+  document.getElementById("calibTotalCTS").textContent=fmtNumber(tCtsC);
+  document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
 
-let currentSellType = null;
-let sellInputBound = false;
+/* Row renderers */
+function renderAJMZRow(row){
+  const key=row.key||"";
+  const rem=getRemainingForRow(row,"AJMZ");
+  const remainingAmount = Object.prototype.hasOwnProperty.call(row,"remainingAmount")
+    ? Number(row.remainingAmount||0)
+    : rem.remainingCts*Number(row.price||0);
 
-function openSellModal(type, parents){
-  if (!parents.length){
-    alert("Select at least one parent row.");
+  return `
+  <tr data-key="${key}" data-type="AJMZ" class="ajmz-main">
+    <td style="text-align:center;">
+      <input type="checkbox" class="row-select" data-key="${key}" data-type="AJMZ">
+    </td>
+    <td><div class="cell readonly">${esc(row.txId||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.date||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.party||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.lotName||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.lotFormat||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.description||"")}</div></td>
+    <td><div class="cell readonly">${fmtNumber(row.cts)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(row.pcs)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(row.price)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(remainingAmount)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(rem.remainingCts)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(rem.remainingPcs)}</div></td>
+    <td><div class="cell readonly">${esc(row.remarks||"")}</div></td>
+    <td class="td-actions"></td>
+  </tr>`;
+}
+
+function renderCALIBRow(row){
+  const key=row.key||"";
+  const rem=getRemainingForRow(row,"CALIB");
+  const remainingAmount = Object.prototype.hasOwnProperty.call(row,"remainingAmount")
+    ? Number(row.remainingAmount||0)
+    : rem.remainingCts*Number(row.price||0);
+
+  return `
+  <tr data-key="${key}" data-type="CALIB" class="calib-main">
+    <td style="text-align:center;">
+      <input type="checkbox" class="row-select" data-key="${key}" data-type="CALIB">
+    </td>
+    <td><div class="cell readonly">${esc(row.txId||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.date||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.party||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.lotName||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.grade||"")}</div></td>
+    <td><div class="cell readonly">${esc(row.description||"")}</div></td>
+    <td><div class="cell readonly">${fmtNumber(row.cts)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(row.price)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(remainingAmount)}</div></td>
+    <td><div class="cell readonly">${fmtNumber(rem.remainingCts)}</div></td>
+    <td><div class="cell readonly">${esc(row.remarks||"")}</div></td>
+    <td class="td-actions"></td>
+  </tr>`;
+}
+
+/* SELL child rows (with delete button) */
+function renderSellChildRow(parentKey,sell,type){
+  const isAJMZ=(type==="AJMZ");
+  const price=fmtNumber(sell.price);
+  const amount=fmtNumber(sell.amount);
+  const remarks=esc(sell.remarks||"");
+
+  const deleteBtn=`
+    <button class="icon-pill delete delete-sell"
+      data-parent="${parentKey}" data-id="${sell.key}" data-type="${type}">
+      ✕
+    </button>
+  `;
+
+  if(isAJMZ){
+    return `
+    <tr class="sell-row" data-parent-key="${parentKey}">
+      <td></td>
+      <td><div class="cell readonly">${esc(sell.sellId||"")}</div></td>
+      <td><div class="cell readonly">${esc(sell.date||"")}</div></td>
+      <td><div class="cell readonly">${esc(sell.party||"")}</div></td>
+      <td><div class="cell readonly">AJMZ SELL</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">${fmtNumber(sell.cts)}</div></td>
+      <td><div class="cell readonly">${fmtNumber(sell.pcs)}</div></td>
+      <td><div class="cell readonly">${price}</div></td>
+      <td><div class="cell readonly">${amount}</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">${remarks}</div></td>
+      <td class="td-actions"><div class="row-actions">${deleteBtn}</div></td>
+    </tr>`;
+  }else{
+    return `
+    <tr class="sell-row" data-parent-key="${parentKey}">
+      <td></td>
+      <td><div class="cell readonly">${esc(sell.sellId||"")}</div></td>
+      <td><div class="cell readonly">${esc(sell.date||"")}</div></td>
+      <td><div class="cell readonly">${esc(sell.party||"")}</div></td>
+      <td><div class="cell readonly">CALIB SELL</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">${fmtNumber(sell.cts)}</div></td>
+      <td><div class="cell readonly">${price}</div></td>
+      <td><div class="cell readonly">${amount}</div></td>
+      <td><div class="cell readonly">–</div></td>
+      <td><div class="cell readonly">${remarks}</div></td>
+      <td class="td-actions"><div class="row-actions">${deleteBtn}</div></td>
+    </tr>`;
+  }
+}
+
+/* ============================================================
+   SELL MODAL + SAVE
+   ============================================================ */
+function buildSellModalTable(type,keys){
+  const rows=[];
+  keys.forEach(k=>{
+    const r=findRowByKey(type,k);
+    if(r)rows.push(r);
+  });
+  if(!rows.length){
+    sellModalTableWrapper.innerHTML="<div style='font-size:12px;color:#777;'>No rows found.</div>";
     return;
   }
 
-  currentSellType = type;
-  const today = nowDate();
-
-  document.getElementById("sellModalTitle").textContent = `Create Sell Records`;
-  document.getElementById("sellModalSubtitle").textContent = `${type} • ${parents.length} parent(s) selected`;
-
-  let html = `
+  let header=`
     <table class="sell-table">
-    <thead>
-      <tr>
-        <th>Parent Tx</th>
-        <th>Lot/Grade</th>
-        <th>Rem. CTS</th>
-        ${type==="AJMZ" ? '<th>Rem. PCS</th>' : ''}
-        <th>Parent $</th>
-        <th>Date</th>
-        <th>Party</th>
-        <th>Sell CTS</th>
-        ${type==="AJMZ" ? '<th>Sell PCS</th>' : ''}
-        <th>Sell $</th>
-        <th>Amount</th>
-        <th>Remarks</th>
-      </tr>
-    </thead>
-    <tbody>
+      <thead>
+        <tr>
+          <th>Tx ID</th>
+          <th>Stone</th>
+          <th>Lot / Grade</th>
+          <th>Description</th>
+          <th>Remain CTS</th>
+          ${type==="AJMZ" ? "<th>Remain PCS</th>" : ""}
+          <th>Sell CTS</th>
+          ${type==="AJMZ" ? "<th>Sell PCS</th>" : ""}
+          <th>Price</th>
+          <th>Amount</th>
+          <th>Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
   `;
+  let body="";
+  rows.forEach(r=>{
+    const rem=getRemainingForRow(r,type);
+    const price=Number(r.price||0);
+    const initAmt=rem.remainingCts*price;
+    const lotOrGrade = type==="AJMZ"
+      ? (r.lotName||"") + (r.lotFormat?(" / "+r.lotFormat):"")
+      : (r.lotName||"") + (r.grade?(" / "+r.grade):"");
 
-  parents.forEach(p=>{
-    const lotDisplay = type==="AJMZ"
-      ? `${p.lotName || ""} ${p.lotFormat || ""}`
-      : `${p.lotName || ""} ${p.grade || ""}`;
-
-    html += `
-      <tr data-parent="${p.key}" data-rem-cts="${p.cts}" data-rem-pcs="${p.pcs || 0}">
-        <td class="read-only">${esc(p.txId)}</td>
-        <td class="read-only">${esc(lotDisplay)}</td>
-        <td class="read-only">${fmt(p.cts)}</td>
-        ${type==="AJMZ" ? `<td class="read-only">${fmt(p.pcs)}</td>` : ''}
-        <td class="read-only">${fmt(p.price)}</td>
-
-        <td><input type="date" class="form-input small sell-input" data-field="date" value="${today}"></td>
-        <td><input type="text" class="form-input small sell-input" data-field="party" value="${esc(p.party || '')}"></td>
-        <td><input type="number" step="0.0001" class="form-input small sell-input" data-field="cts"></td>
-
-        ${type==="AJMZ" ? `<td><input type="number" step="1" class="form-input small sell-input" data-field="pcs"></td>` : ''}
-
-        <td><input type="number" step="0.0001" class="form-input small sell-input" data-field="price" value="${p.price}"></td>
-        <td><input type="text" class="form-input small sell-input" data-field="amount" readonly style="background:#f9f7f4;"></td>
-        <td><input type="text" class="form-input small sell-input" data-field="remarks"></td>
+    body+=`
+      <tr data-key="${r.key}" data-type="${type}">
+        <td>${esc(r.txId||"")}</td>
+        <td>${type==="AJMZ"?"AJMZ":"CALIB"}</td>
+        <td>${esc(lotOrGrade)}</td>
+        <td>${esc(r.description||"")}</td>
+        <td>${fmtNumber(rem.remainingCts)}</td>
+        ${type==="AJMZ" ? `<td>${fmtNumber(rem.remainingPcs)}</td>` : ""}
+        <td><input type="number" step="0.0001" data-sell="cts" value="${rem.remainingCts}"></td>
+        ${type==="AJMZ" ? `<td><input type="number" step="1" data-sell="pcs" value="${rem.remainingPcs}"></td>` : ""}
+        <td><input type="number" step="0.0001" data-sell="price" value="${price}"></td>
+        <td><input type="text" data-sell="amount" value="${initAmt?fmtNumber(initAmt):""}" readonly></td>
+        <td><input type="text" data-sell="remarks" placeholder="Optional…"></td>
       </tr>
     `;
   });
+  const footer="</tbody></table>";
+  sellModalTableWrapper.innerHTML=header+body+footer;
+}
 
-  html += `</tbody></table>`;
-  document.getElementById("sellTableWrapper").innerHTML = html;
-  document.getElementById("sellModal").style.display = "flex";
+function recalcSellRowAmount(tr){
+  const ctsInput=tr.querySelector('input[data-sell="cts"]');
+  const priceInput=tr.querySelector('input[data-sell="price"]');
+  const amtInput=tr.querySelector('input[data-sell="amount"]');
+  if(!ctsInput || !priceInput || !amtInput)return;
+  const cts=Number((ctsInput.value||"").replace(/,/g,""))||0;
+  const price=Number((priceInput.value||"").replace(/,/g,""))||0;
+  const amt=cts*price;
+  amtInput.value = amt ? fmtNumber(amt) : "";
+}
 
-  if (!sellInputBound){
-    document.getElementById("sellTableWrapper").addEventListener("input", onSellInput);
-    sellInputBound = true;
+function openSellModal(type){
+  const selector = type==="AJMZ"
+    ? "#tbodyAJMZ .row-select:checked"
+    : "#tbodyCALIB .row-select:checked";
+
+  const checked=Array.from(document.querySelectorAll(selector));
+  const keys=checked.map(c=>c.dataset.key);
+  if(!keys.length){
+    alert("Please select at least one parent row.");
+    return;
+  }
+
+  sellIdLabelEl.textContent="(auto)";
+  sellPartyInput.value="";
+  sellDateInput.value=todayISO();
+
+  buildSellModalTable(type,keys);
+  sellModalEl.dataset.type=type;
+  sellModalEl.dataset.keys=JSON.stringify(keys);
+  sellModalEl.style.display="flex";
+}
+function closeSellModal(){
+  sellModalEl.style.display="none";
+  sellModalEl.dataset.type="";
+  sellModalEl.dataset.keys="[]";
+  sellModalTableWrapper.innerHTML="";
+}
+
+/* SELL ID generator */
+async function generateSellId(){
+  try{
+    const counterRef=db.ref("counters/sell");
+    const result=await counterRef.transaction(current=>{
+      if(typeof current!=="number") return 1;
+      return current+1;
+    });
+    let val=0;
+    if(result && result.snapshot){
+      const raw=result.snapshot.val();
+      if(typeof raw==="number"){val=raw;}
+      else{
+        const parsed=parseInt(raw,10);
+        val=isNaN(parsed)?1:parsed;
+      }
+    }else{
+      val=Math.floor(Date.now()/1000)%1000000;
+    }
+    return "SELL-"+String(val).padStart(6,"0");
+  }catch(e){
+    console.error("Sell counter error",e);
+    const fallback=Math.floor(Date.now()/1000)%1000000;
+    return "SELL-"+String(fallback).padStart(6,"0");
   }
 }
 
-function onSellInput(e){
-  const tr = e.target.closest("tr[data-parent]");
-  if (!tr) return;
+/* Save SELL */
+async function handleSaveSell(){
+  const type=sellModalEl.dataset.type || "";
+  const keysRaw=sellModalEl.dataset.keys || "[]";
+  let keys=[];
+  try{keys=JSON.parse(keysRaw);}catch{keys=[];}
+  if(!type || !keys.length){
+    closeSellModal();
+    return;
+  }
 
-  const cts = parseNum(tr.querySelector('[data-field="cts"]').value);
-  const price = parseNum(tr.querySelector('[data-field="price"]').value);
-  const amount = cts * price;
+  const party=(sellPartyInput.value||"").trim();
+  const date=sellDateInput.value || todayISO();
 
-  const amtInput = tr.querySelector('[data-field="amount"]');
-  amtInput.value = amount ? fmt(amount) : "";
+  const rows=sellModalTableWrapper.querySelectorAll("tbody tr[data-key]");
+  if(!rows.length){
+    alert("No rows to sell.");
+    return;
+  }
 
-  const pcsInput = tr.querySelector('[data-field="pcs"]');
-  const pcs = pcsInput ? parseNum(pcsInput.value) : 0;
+  const sellId=await generateSellId();
+  sellIdLabelEl.textContent=sellId;
 
-  const remCTS = parseNum(tr.dataset.remCts);
-  const remPCS = parseNum(tr.dataset.remPcs);
+  const tasks=[];
+  let any=false;
 
-  let over = false;
-  if (cts > remCTS) over = true;
-  if (pcsInput && pcs > remPCS) over = true;
+  rows.forEach(tr=>{
+    const parentKey=tr.dataset.key;
+    const rowType=tr.dataset.type;
+    const rowData=findRowByKey(rowType,parentKey);
+    if(!rowData)return;
 
-  if (over) tr.classList.add("over-limit");
-  else tr.classList.remove("over-limit");
-}
+    const ctsInput=tr.querySelector('input[data-sell="cts"]');
+    const pcsInput=tr.querySelector('input[data-sell="pcs"]');
+    const priceInput=tr.querySelector('input[data-sell="price"]');
+    const amtInput=tr.querySelector('input[data-sell="amount"]');
+    const remarksInput=tr.querySelector('input[data-sell="remarks"]');
 
-function generateSellTxId(num){
-  return "SELL-" + String(num).padStart(6,"0");
-}
+    const cts=Number((ctsInput?.value||"").replace(/,/g,""))||0;
+    const pcs=rowType==="AJMZ" ? (Number((pcsInput?.value||"").replace(/,/g,""))||0) : 0;
+    const price=Number((priceInput?.value||"").replace(/,/g,""))||0;
+    let amount=0;
+    if(amtInput && amtInput.value){
+      amount=Number((amtInput.value||"").replace(/,/g,""))||0;
+    }else{
+      amount=cts*price;
+    }
+    const remarks=(remarksInput?.value||"").trim();
 
-async function getNextSellNumber(type){
-  const key = type==="AJMZ" ? "ajmz" : "calib";
-  const ref = db.ref("counters/sell/" + key);
-  const snap = await ref.once("value");
-  let num = snap.exists() ? snap.val() : 0;
-  num++;
-  await ref.set(num);
-  return num;
-}
+    if(!cts && !pcs && !amount && !remarks) return;
 
-async function saveSellRecords(){
-  if (!currentSellType) return;
+    any=true;
 
-  const type = currentSellType;
-  const parentPath = type==="AJMZ" ? "ajmzRecords" : "calibRecords";
-  const sellPath = type==="AJMZ" ? "sellRecords/ajmz" : "sellRecords/calib";
+    const remBefore=getRemainingForRow(rowData,rowType);
+    const newRemCts=remBefore.remainingCts - cts;
+    const newRemPcs=rowType==="AJMZ" ? (remBefore.remainingPcs - pcs) : 0;
+    const newRemAmt=newRemCts*price;
 
-  const rows = [...document.querySelectorAll("#sellTableWrapper tbody tr[data-parent]")];
-  const tasks = [];
+    const sellData={
+      sellId,
+      parentKey,
+      stone:rowType==="AJMZ"?"AJMZ":"CALIB",
+      type:rowType,
+      party,
+      date,
+      cts,
+      pcs,
+      price,
+      amount,
+      remarks,
+      createdAt:nowStamp()
+    };
 
-  for (const tr of rows){
-    const parentKey = tr.dataset.parent;
+    const sellParentRef=db.ref("sellRecords/"+parentKey);
+    const sellKey=sellParentRef.push().key;
+    tasks.push(
+      sellParentRef.child(sellKey).set(sellData)
+    );
 
-    const cts = parseNum(tr.querySelector('[data-field="cts"]').value);
-    const pcsInput = tr.querySelector('[data-field="pcs"]');
-    const pcs = pcsInput ? parseNum(pcsInput.value) : 0;
-    const price = parseNum(tr.querySelector('[data-field="price"]').value);
-    const amount = cts * price;
-    const date = tr.querySelector('[data-field="date"]').value || nowDate();
-    const party = tr.querySelector('[data-field="party"]').value.trim();
-    const remarks = tr.querySelector('[data-field="remarks"]').value.trim();
+    const parentPath=rowType==="AJMZ"?"ajmzRecords":"calibRecords";
+    const updatePayload={
+      remainingCts:newRemCts,
+      remainingAmount:newRemAmt
+    };
+    if(rowType==="AJMZ"){
+      updatePayload.remainingPcs=newRemPcs;
+    }
+    tasks.push(
+      db.ref(parentPath+"/"+parentKey).update(updatePayload)
+    );
+  });
 
-    if (!cts && !pcs && !party && !remarks) continue;
-
-    tasks.push((async ()=>{
-      const parentSnap = await db.ref(`${parentPath}/${parentKey}`).once("value");
-      const parent = parentSnap.val();
-      if (!parent) return;
-
-      const nextNum = await getNextSellNumber(type);
-      const sellTxId = generateSellTxId(nextNum);
-
-      const newCts = parseNum(parent.cts) - cts;
-      const newPcs = type==="AJMZ" ? parseNum(parent.pcs) - pcs : parent.pcs;
-      const newAmount = newCts * parseNum(parent.price);
-
-      await db.ref(`${sellPath}/${sellTxId}`).set({
-        txId: sellTxId,
-        parentKey,
-        parentTxId: parent.txId,
-        parentLot: parent.lotName,
-        parentFormat: parent.lotFormat,
-        parentGrade: parent.grade,
-        parentDescription: parent.description,
-        date, party, cts, pcs,
-        sellPrice: price,
-        amount,
-        remarks,
-        createdAt: nowStamp()
-      });
-
-      await db.ref(`${parentPath}/${parentKey}`).update({
-        cts: newCts,
-        pcs: newPcs,
-        amount: newAmount
-      });
-    })());
+  if(!any){
+    alert("No sell values entered.");
+    return;
   }
 
   await Promise.all(tasks);
-  await loadParents();
-  await loadSellRecords();
-
-  document.getElementById("sellModal").style.display = "none";
-  alert("Sell records saved and parent balances updated!");
+  closeSellModal();
+  await loadAllData();
 }
 
-function openEditSellModal(type, sellKey){
-  const list = type==="AJMZ" ? AJMZ_SELL_ALL : CALIB_SELL_ALL;
-  const rec = list.find(r => r.key === sellKey);
-  if (!rec){
-    alert("Sell record not found.");
-    return;
-  }
+/* ============================================================
+   DELETE SELL + RECALC
+   ============================================================ */
+async function deleteSell(parentKey,sellKey,parentType){
+  const parentPath = parentType==="AJMZ" ? "ajmzRecords" : "calibRecords";
 
-  const modal = document.getElementById("editSellModal");
-  const form = document.getElementById("editSellForm");
-  
-  document.getElementById("editSellTitle").textContent = `Edit ${type} Sell Record`;
-  document.getElementById("editSellSubtitle").textContent = `${rec.txId || rec.parentTxId}`;
+  const parentSnap=await db.ref(`${parentPath}/${parentKey}`).once("value");
+  if(!parentSnap.exists())return;
+  const parent=parentSnap.val();
 
-  const lotDisplay = type==="AJMZ"
-    ? `${rec.parentLot || ""} ${rec.parentFormat || ""}`
-    : `${rec.parentLot || ""} ${rec.parentGrade || ""}`;
+  const sellSnap=await db.ref(`sellRecords/${parentKey}/${sellKey}`).once("value");
+  if(!sellSnap.exists())return;
+  const sell=sellSnap.val();
 
-  form.innerHTML = `
-    <input type="hidden" id="editSellType" value="${type}">
-    <input type="hidden" id="editSellKey" value="${sellKey}">
-    
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Sell Tx ID</label>
-        <input class="form-input" value="${esc(rec.txId)}" disabled>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Parent Tx ID</label>
-        <input class="form-input" value="${esc(rec.parentTxId)}" disabled>
-      </div>
-    </div>
+  const rem=getRemainingForRow(parent,parentType);
+  const newRemCts=rem.remainingCts + Number(sell.cts||0);
+  const newRemPcs=parentType==="AJMZ" ? (rem.remainingPcs + Number(sell.pcs||0)) : 0;
+  const newRemAmt=newRemCts*Number(parent.price||0);
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Lot/Grade</label>
-        <input class="form-input" value="${esc(lotDisplay)}" disabled>
-      </div>
-      <div class="form-group">
-        <label class="form-label">Date</label>
-        <input type="date" class="form-input" id="editSellDate" value="${rec.date || ''}">
-      </div>
-    </div>
+  const updates={remainingCts:newRemCts,remainingAmount:newRemAmt};
+  if(parentType==="AJMZ")updates.remainingPcs=newRemPcs;
 
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Party</label>
-        <input class="form-input" id="editSellParty" value="${esc(rec.party || '')}">
-      </div>
-    </div>
-
-    <div class="form-row ${type === 'AJMZ' ? 'four-col' : 'three-col'}">
-      <div class="form-group">
-        <label class="form-label">CTS</label>
-        <input type="number" step="0.0001" class="form-input calc-amount" id="editSellCts" value="${rec.cts}">
-      </div>
-      ${type === "AJMZ" ? `
-      <div class="form-group">
-        <label class="form-label">PCS</label>
-        <input type="number" step="1" class="form-input" id="editSellPcs" value="${rec.pcs || 0}">
-      </div>
-      ` : ''}
-      <div class="form-group">
-        <label class="form-label">Sell Price</label>
-        <input type="number" step="0.0001" class="form-input calc-amount" id="editSellPrice" value="${rec.sellPrice}">
-      </div>
-      <div class="form-group">
-        <label class="form-label">Amount</label>
-        <input type="text" class="form-input" id="editSellAmount" value="${fmt(rec.amount)}" readonly style="background:#f9f7f4;">
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="form-label">Remarks</label>
-      <input class="form-input" id="editSellRemarks" value="${esc(rec.remarks || '')}">
-    </div>
-  `;
-
-  modal.style.display = "flex";
-
-  // Add event listener for amount calculation
-  setTimeout(() => {
-    const calcInputs = modal.querySelectorAll('.calc-amount');
-    calcInputs.forEach(input => {
-      input.addEventListener('input', () => {
-        const cts = parseNum(document.getElementById('editSellCts').value);
-        const price = parseNum(document.getElementById('editSellPrice').value);
-        const amount = cts * price;
-        document.getElementById('editSellAmount').value = amount ? fmt(amount) : '';
-      });
-    });
-  }, 0);
+  await db.ref(`${parentPath}/${parentKey}`).update(updates);
+  await db.ref(`sellRecords/${parentKey}/${sellKey}`).remove();
+  await loadAllData();
 }
 
-async function saveEditSell(){
-  const type = document.getElementById("editSellType").value;
-  const key = document.getElementById("editSellKey").value;
-  const pathSell = type === "AJMZ" ? "sellRecords/ajmz" : "sellRecords/calib";
-  const pathParent = type === "AJMZ" ? "ajmzRecords" : "calibRecords";
+/* delegated delete click */
+document.body.addEventListener("click",async e=>{
+  const btn=e.target.closest(".delete-sell");
+  if(!btn)return;
+  const parentKey=btn.dataset.parent;
+  const sellKey=btn.dataset.id;
+  const parentType=btn.dataset.type;
+  if(!parentKey || !sellKey || !parentType)return;
 
-  const sellSnap = await db.ref(`${pathSell}/${key}`).once("value");
-  const oldSell = sellSnap.val();
-
-  const date = document.getElementById("editSellDate").value;
-  const party = document.getElementById("editSellParty").value.trim();
-  const cts = parseNum(document.getElementById("editSellCts").value);
-  const pcs = type === "AJMZ" ? parseNum(document.getElementById("editSellPcs").value) : 0;
-  const sellPrice = parseNum(document.getElementById("editSellPrice").value);
-  const remarks = document.getElementById("editSellRemarks").value.trim();
-  const amount = cts * sellPrice;
-
-  const ctsDiff = cts - parseNum(oldSell.cts);
-  const pcsDiff = type === "AJMZ" ? pcs - parseNum(oldSell.pcs) : 0;
-
-  const parentSnap = await db.ref(`${pathParent}/${oldSell.parentKey}`).once("value");
-  if (parentSnap.exists()){
-    const parent = parentSnap.val();
-    const newCts = parseNum(parent.cts) - ctsDiff;
-    const newPcs = type === "AJMZ" ? parseNum(parent.pcs) - pcsDiff : parent.pcs;
-    const newAmount = newCts * parseNum(parent.price);
-
-    await db.ref(`${pathParent}/${oldSell.parentKey}`).update({
-      cts: newCts,
-      pcs: newPcs,
-      amount: newAmount
-    });
-  }
-
-  await db.ref(`${pathSell}/${key}`).update({
-    date, party, cts, pcs, sellPrice, amount, remarks
-  });
-
-  await loadParents();
-  await loadSellRecords();
-
-  document.getElementById("editSellModal").style.display = "none";
-  alert("Sell record updated successfully!");
-}
-
-async function deleteSellRecord(type, sellKey){
-  if (!confirm("Delete this sell and restore parent balances?")) return;
-
-  const pathSell = type==="AJMZ" ? "sellRecords/ajmz" : "sellRecords/calib";
-  const pathParent = type==="AJMZ" ? "ajmzRecords" : "calibRecords";
-
-  const sellSnap = await db.ref(`${pathSell}/${sellKey}`).once("value");
-  if (!sellSnap.exists()){
-    alert("Sell record missing.");
-    return;
-  }
-
-  const rec = sellSnap.val();
-  const parentKey = rec.parentKey;
-
-  const parentSnap = await db.ref(`${pathParent}/${parentKey}`).once("value");
-  if (parentSnap.exists()){
-    const parent = parentSnap.val();
-    const newCts = parseNum(parent.cts) + parseNum(rec.cts);
-    const newPcs = type==="AJMZ" ? parseNum(parent.pcs) + parseNum(rec.pcs) : parent.pcs;
-    const newAmount = newCts * parseNum(parent.price);
-
-    await db.ref(`${pathParent}/${parentKey}`).update({
-      cts: newCts,
-      pcs: newPcs,
-      amount: newAmount
-    });
-  }
-
-  await db.ref(`${pathSell}/${sellKey}`).remove();
-  await loadParents();
-  await loadSellRecords();
-  alert("Sell record deleted and parent restored!");
-}
-
-document.addEventListener("click", e=>{
-  const editSellBtn = e.target.closest(".btn-edit-sell");
-  if (editSellBtn){
-    openEditSellModal(editSellBtn.dataset.type, editSellBtn.dataset.key);
-    return;
-  }
-
-  const delSellBtn = e.target.closest(".btn-delete-sell");
-  if (delSellBtn){
-    deleteSellRecord(delSellBtn.dataset.type, delSellBtn.dataset.key);
-    return;
-  }
+  if(!confirm("Delete this sell record and restore its quantity back to the parent row?"))return;
+  await deleteSell(parentKey,sellKey,parentType);
 });
 
-document.addEventListener("DOMContentLoaded", async ()=>{
+/* ============================================================
+   BINDINGS
+   ============================================================ */
+function bindFilters(){
+  document.getElementById("ajmzSearch").addEventListener("input",applyFiltersAndRender);
+  [
+    "ajmzFilter_txId","ajmzFilter_date","ajmzFilter_party",
+    "ajmzFilter_lotName","ajmzFilter_format","ajmzFilter_desc"
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener("input",applyFiltersAndRender);
+  });
+
+  document.getElementById("calibSearch").addEventListener("input",applyFiltersAndRender);
+  [
+    "calibFilter_txId","calibFilter_date","calibFilter_party",
+    "calibFilter_lotName","calibFilter_grade","calibFilter_desc"
+  ].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.addEventListener("input",applyFiltersAndRender);
+  });
+}
+
+function bindPagination(){
+  document.getElementById("ajmzPrevPage").addEventListener("click",()=>{
+    if(ajmzPage>1){ajmzPage--;renderAJMZ();}
+  });
+  document.getElementById("ajmzNextPage").addEventListener("click",()=>{
+    if((ajmzPage*PARENTS_PER_PAGE)<AJMZ_FILTERED.length){
+      ajmzPage++;renderAJMZ();
+    }
+  });
+  document.getElementById("calibPrevPage").addEventListener("click",()=>{
+    if(calibPage>1){calibPage--;renderCALIB();}
+  });
+  document.getElementById("calibNextPage").addEventListener("click",()=>{
+    if((calibPage*PARENTS_PER_PAGE)<CALIB_FILTERED.length){
+      calibPage++;renderCALIB();
+    }
+  });
+}
+
+function bindTabs(){
   document.querySelectorAll(".rtab").forEach(btn=>{
     btn.addEventListener("click",()=>{
-      document.querySelectorAll(".rtab").forEach(x=>x.classList.remove("active"));
-      btn.classList.add("active");
-
-      const target = btn.dataset.target;
-      document.getElementById("tabAJMZ").style.display = (target==="tabAJMZ") ? "block" : "none";
-      document.getElementById("tabCALIB").style.display = (target==="tabCALIB") ? "block" : "none";
+      const target=btn.dataset.target;
+      document.querySelectorAll(".rtab").forEach(b=>b.classList.toggle("active",b===btn));
+      document.querySelectorAll(".record-section").forEach(sec=>{
+        sec.style.display=(sec.id===target)?"block":"none";
+      });
     });
   });
+}
 
-  document.getElementById("ajPrev").addEventListener("click",()=>{
-    if(ajPage > 1){
-      ajPage--;
-      renderAJMZCombined();
+function bindSellModalEvents(){
+  sellModalTableWrapper.addEventListener("input",e=>{
+    const input=e.target;
+    const tr=input.closest("tr[data-key]");
+    if(!tr)return;
+    if(input.dataset.sell==="cts" || input.dataset.sell==="price"){
+      recalcSellRowAmount(tr);
     }
   });
-  document.getElementById("ajNext").addEventListener("click",()=>{
-    if(ajPage * PAGE_SIZE < AJMZ_FILTERED.length){
-      ajPage++;
-      renderAJMZCombined();
+}
+
+/* ============================================================
+   DOM READY
+   ============================================================ */
+window.addEventListener("DOMContentLoaded",()=>{
+  sellModalEl=document.getElementById("sellModal");
+  sellModalTableWrapper=document.getElementById("sellModalTableWrapper");
+  sellPartyInput=document.getElementById("sellPartyInput");
+  sellDateInput=document.getElementById("sellDateInput");
+  sellIdLabelEl=document.getElementById("sellIdLabel");
+  sellSaveBtn=document.getElementById("sellSaveBtn");
+  sellCancelBtn=document.getElementById("sellCancelBtn");
+  partyDropdownMenu=document.getElementById("partyDropdownMenu");
+
+  // Party dropdown events
+  sellPartyInput.addEventListener("focus", showPartyDropdown);
+  sellPartyInput.addEventListener("blur", hidePartyDropdown);
+  sellPartyInput.addEventListener("input", (e) => {
+    updatePartyDropdown(e.target.value);
+    if(!partyDropdownMenu.classList.contains("show")){
+      partyDropdownMenu.classList.add("show");
     }
   });
 
-  document.getElementById("calPrev").addEventListener("click",()=>{
-    if(calPage > 1){
-      calPage--;
-      renderCALIBCombined();
-    }
+  sellCancelBtn.addEventListener("click",closeSellModal);
+  sellModalEl.addEventListener("mousedown",e=>{
+    if(e.target===sellModalEl)closeSellModal();
   });
-  document.getElementById("calNext").addEventListener("click",()=>{
-    if(calPage * PAGE_SIZE < CALIB_FILTERED.length){
-      calPage++;
-      renderCALIBCombined();
-    }
-  });
+  sellSaveBtn.addEventListener("click",handleSaveSell);
 
-  document.getElementById("ajmzSearch").addEventListener("input",applyFilters);
-  document.getElementById("calibSearch").addEventListener("input",applyFilters);
+  document.getElementById("btnAjmzSellSelected").addEventListener("click",()=>openSellModal("AJMZ"));
+  document.getElementById("btnCalibSellSelected").addEventListener("click",()=>openSellModal("CALIB"));
+  document.getElementById("btnRefresh").addEventListener("click",loadAllData);
 
-  // Column filters for AJMZ
-  document.querySelectorAll("#tabAJMZ .filter-input").forEach(input => {
-    input.addEventListener("input", (e) => {
-      const col = e.target.dataset.col;
-      ajmzColFilters[col] = e.target.value;
-      applyFilters();
-    });
-  });
-
-  // Column filters for CALIB
-  document.querySelectorAll("#tabCALIB .filter-input").forEach(input => {
-    input.addEventListener("input", (e) => {
-      const col = e.target.dataset.col;
-      calibColFilters[col] = e.target.value;
-      applyFilters();
-    });
-  });
-
-  document.getElementById("btnRefresh").addEventListener("click",async()=>{
-    await loadParents();
-    await loadSellRecords();
-  });
-
-  // Clear filters buttons
-  document.getElementById("btnClearAJMZ").addEventListener("click", () => {
-    document.getElementById("ajmzSearch").value = "";
-    ajmzColFilters = {};
-    document.querySelectorAll("#tabAJMZ .filter-input").forEach(input => {
-      input.value = "";
-    });
-    applyFilters();
-  });
-
-  document.getElementById("btnClearCALIB").addEventListener("click", () => {
-    document.getElementById("calibSearch").value = "";
-    calibColFilters = {};
-    document.querySelectorAll("#tabCALIB .filter-input").forEach(input => {
-      input.value = "";
-    });
-    applyFilters();
-  });
-
-  document.getElementById("btnSellAJMZ").addEventListener("click",()=>{
-    const keys = [...document.querySelectorAll('.row-select[data-type="AJMZ"]:checked')].map(cb=>cb.dataset.key);
-    const parents = AJMZ_ALL.filter(p=>keys.includes(p.key));
-    openSellModal("AJMZ", parents);
-  });
-
-  document.getElementById("btnSellCALIB").addEventListener("click",()=>{
-    const keys = [...document.querySelectorAll('.row-select[data-type="CALIB"]:checked')].map(cb=>cb.dataset.key);
-    const parents = CALIB_ALL.filter(p=>keys.includes(p.key));
-    openSellModal("CALIB", parents);
-  });
-
-  createSellModal();
-  createEditSellModal();
-
-  await loadParents();
-  await loadSellRecords();
+  bindTabs();
+  bindFilters();
+  bindPagination();
+  bindSellModalEvents();
+  loadAllData();
 });
-
-function createSellModal(){
-  const modal = document.createElement("div");
-  modal.id = "sellModal";
-  modal.className = "modal-overlay";
-
-  modal.innerHTML = `
-    <div class="modal-panel" style="width:1400px;max-width:96%;">
-      <div class="modal-header">
-        <div class="modal-title" id="sellModalTitle">Create Sell Records</div>
-        <div class="modal-subtitle" id="sellModalSubtitle"></div>
-      </div>
-
-      <div class="sell-table-wrapper" id="sellTableWrapper"></div>
-
-      <div class="modal-footer">
-        <button class="button" id="sellCancel">Cancel</button>
-        <button class="button primary" id="sellSave">💎 Save Sell Records</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  document.getElementById("sellCancel").addEventListener("click",()=>{
-    modal.style.display = "none";
-  });
-
-  document.getElementById("sellSave").addEventListener("click",saveSellRecords);
-
-  modal.addEventListener("click", e=>{
-    if (e.target === modal) modal.style.display = "none";
-  });
-}
-
-function createEditSellModal(){
-  const modal = document.createElement("div");
-  modal.id = "editSellModal";
-  modal.className = "modal-overlay";
-
-  modal.innerHTML = `
-    <div class="modal-panel" style="width:600px;max-width:95%;">
-      <div class="modal-header">
-        <div class="modal-title" id="editSellTitle">Edit Sell Record</div>
-        <div class="modal-subtitle" id="editSellSubtitle"></div>
-      </div>
-
-      <form id="editSellForm"></form>
-
-      <div class="modal-footer">
-        <button class="button danger" style="margin-right:auto;" id="editSellDelete">Delete</button>
-        <button class="button" id="editSellCancel">Cancel</button>
-        <button class="button primary" id="editSellSave">Save Changes</button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(modal);
-
-  document.getElementById("editSellCancel").addEventListener("click",()=>{
-    modal.style.display = "none";
-  });
-
-  document.getElementById("editSellSave").addEventListener("click",saveEditSell);
-
-  document.getElementById("editSellDelete").addEventListener("click",()=>{
-    const type = document.getElementById("editSellType").value;
-    const key = document.getElementById("editSellKey").value;
-    modal.style.display = "none";
-    deleteSellRecord(type, key);
-  });
-
-  modal.addEventListener("click", e=>{
-    if (e.target === modal) modal.style.display = "none";
-  });
-}
 </script>
 </body>
 </html>
-
-
