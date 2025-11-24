@@ -132,6 +132,9 @@ body{
   border-color:transparent;
 }
 
+.tab-section{display:none;}
+.tab-section.active{display:block;}
+
 .toolbar{
   display:flex;
   gap:8px;
@@ -249,9 +252,6 @@ body{
   font-variant-numeric:tabular-nums;
 }
 
-.tab-section{display:none;}
-.tab-section.active{display:block;}
-
 /* Collapsible section toggles */
 .section-toggle{
   display:inline-flex;
@@ -284,18 +284,6 @@ body{
   content:"∨";
 }
 
-/* Group number badges on column headers */
-.group-badge{
-  display:inline-block;
-  background:var(--accent);
-  color:#fff;
-  font-size:9px;
-  padding:2px 5px;
-  border-radius:3px;
-  margin-left:4px;
-  font-weight:700;
-}
-
 /* Hide columns when section is collapsed */
 .ledger-table.section-hidden-total .total-col,
 .ledger-table.section-hidden-total .total-section{
@@ -308,6 +296,77 @@ body{
 .ledger-table.section-hidden-balance .balance-col,
 .ledger-table.section-hidden-balance .balance-section{
   display:none !important;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    overflow: visible;
+  }
+  
+  .nav-vertical,
+  .panel,
+  .tab-row,
+  .toolbar,
+  .no-print {
+    display: none !important;
+  }
+  
+  .workspace {
+    margin-left: 0;
+    height: auto;
+    overflow: visible;
+  }
+  
+  .tab-section {
+    display: block !important;
+    margin: 0;
+    height: auto;
+  }
+  
+  .tab-section:not(.active) {
+    display: none !important;
+  }
+  
+  .card {
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+    border-radius: 0;
+  }
+  
+  .table-wrapper {
+    overflow: visible;
+    max-height: none;
+  }
+  
+  .ledger-table {
+    page-break-inside: auto;
+  }
+  
+  .ledger-table thead {
+    display: table-header-group;
+  }
+  
+  .ledger-table tbody tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  .ledger-table tbody tr:hover {
+    background: transparent;
+  }
+  
+  /* Add page title at top of print */
+  .tab-section.active::before {
+    content: "REPORTS - " attr(data-print-title);
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
 }
 
 </style>
@@ -340,7 +399,7 @@ body{
   </div>
 
   <!-- ======================= AJMZ TAB ======================= -->
-  <div class="tab-section active" id="tabAJMZ">
+  <div class="tab-section active" id="tabAJMZ" data-print-title="AJMZ">
 
     <div class="toolbar">
       <div class="filter-group">
@@ -373,6 +432,7 @@ body{
         <span>Balance</span>
       </span>
       <button class="button" id="ajmz_clear">🔄 Clear</button>
+      <button class="button" id="ajmz_print">🖨️ Print</button>
       <button class="button" id="ajmz_export">📊 Export</button>
     </div>
 
@@ -392,18 +452,18 @@ body{
               <th colspan="4" class="section-header balance-section">BALANCE</th>
             </tr>
             <tr>
-              <th class="section-col">CTS</th>
-              <th>PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th class="section-col">CTS</th>
-              <th>PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th class="section-col">CTS</th>
-              <th>PCS</th>
-              <th>Price</th>
-              <th>Amount</th>
+              <th class="section-col total-col">CTS</th>
+              <th class="total-col">PCS</th>
+              <th class="total-col">Price</th>
+              <th class="total-col">Amount</th>
+              <th class="section-col sold-col">CTS</th>
+              <th class="sold-col">PCS</th>
+              <th class="sold-col">Price</th>
+              <th class="sold-col">Amount</th>
+              <th class="section-col balance-col">CTS</th>
+              <th class="balance-col">PCS</th>
+              <th class="balance-col">Price</th>
+              <th class="balance-col">Amount</th>
             </tr>
             <tr class="hdr-row-3">
               <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
@@ -428,7 +488,7 @@ body{
   </div>
 
   <!-- ======================= CALIB TAB ======================= -->
-  <div class="tab-section" id="tabCALIB">
+  <div class="tab-section" id="tabCALIB" data-print-title="CALIB">
 
     <div class="toolbar">
       <div class="filter-group">
@@ -461,6 +521,7 @@ body{
         <span>Balance</span>
       </span>
       <button class="button" id="calib_clear">🔄 Clear</button>
+      <button class="button" id="calib_print">🖨️ Print</button>
       <button class="button" id="calib_export">📊 Export</button>
     </div>
 
@@ -480,15 +541,15 @@ body{
               <th colspan="3" class="section-header balance-section">BALANCE</th>
             </tr>
             <tr>
-              <th class="section-col">CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th class="section-col">CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th class="section-col">CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
+              <th class="section-col total-col">CTS</th>
+              <th class="total-col">Price</th>
+              <th class="total-col">Amount</th>
+              <th class="section-col sold-col">CTS</th>
+              <th class="sold-col">Price</th>
+              <th class="sold-col">Amount</th>
+              <th class="section-col balance-col">CTS</th>
+              <th class="balance-col">Price</th>
+              <th class="balance-col">Amount</th>
             </tr>
             <tr class="hdr-row-3">
               <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
@@ -510,7 +571,7 @@ body{
   </div>
 
   <!-- ======================= ALL STONES TAB ======================= -->
-  <div class="tab-section" id="tabALL">
+  <div class="tab-section" id="tabALL" data-print-title="ALL STONES">
 
     <div class="toolbar">
       <div class="filter-group">
@@ -543,6 +604,7 @@ body{
         <span>Balance</span>
       </span>
       <button class="button" id="all_clear">🔄 Clear</button>
+      <button class="button" id="all_print">🖨️ Print</button>
       <button class="button" id="all_export">📊 Export</button>
     </div>
 
@@ -561,15 +623,15 @@ body{
               <th colspan="3" class="section-header balance-section">BALANCE</th>
             </tr>
             <tr>
-              <th class="section-col">CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th class="section-col">CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
-              <th class="section-col">CTS</th>
-              <th>Price</th>
-              <th>Amount</th>
+              <th class="section-col total-col">CTS</th>
+              <th class="total-col">Price</th>
+              <th class="total-col">Amount</th>
+              <th class="section-col sold-col">CTS</th>
+              <th class="sold-col">Price</th>
+              <th class="sold-col">Amount</th>
+              <th class="section-col balance-col">CTS</th>
+              <th class="balance-col">Price</th>
+              <th class="balance-col">Amount</th>
             </tr>
             <tr class="hdr-row-3">
               <th colspan="5" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
@@ -824,7 +886,7 @@ function renderALL(){
     sCTS+=soldC;sAmt+=soldA;
     bCTS+=balC;bAmt+=balA;
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSell)}</td><td class="num-cell sold-col">${fmt(sAmt)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSell)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
   document.getElementById("all_total_cts").textContent=fmt(tCTS);
@@ -900,6 +962,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     renderAJMZ();renderCALIB();renderALL();
   });
 
+  // AJMZ filters and buttons
   document.getElementById("ajmz_filter_party").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_lot").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_from").addEventListener("change",renderAJMZ);
@@ -912,8 +975,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("globalSearch").value="";
     renderAJMZ();
   });
+  document.getElementById("ajmz_print").addEventListener("click",()=>window.print());
   document.getElementById("ajmz_export").addEventListener("click",()=>exportToCSV("AJMZ"));
 
+  // CALIB filters and buttons
   document.getElementById("calib_filter_party").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_lot").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_from").addEventListener("change",renderCALIB);
@@ -926,8 +991,10 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("globalSearch").value="";
     renderCALIB();
   });
+  document.getElementById("calib_print").addEventListener("click",()=>window.print());
   document.getElementById("calib_export").addEventListener("click",()=>exportToCSV("CALIB"));
 
+  // ALL filters and buttons
   document.getElementById("all_filter_party").addEventListener("change",renderALL);
   document.getElementById("all_filter_lot").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_from").addEventListener("change",renderALL);
@@ -940,6 +1007,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("globalSearch").value="";
     renderALL();
   });
+  document.getElementById("all_print").addEventListener("click",()=>window.print());
   document.getElementById("all_export").addEventListener("click",()=>exportToCSV("ALL"));
 });
 </script>
