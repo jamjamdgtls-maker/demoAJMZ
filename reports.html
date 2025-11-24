@@ -242,6 +242,9 @@ body{
   background:var(--accent);
   color:#fff;
 }
+.searchable-select-option.hidden{
+  display:none;
+}
 
 .slicer-clear-btn, .action-btn{
   height:26px;
@@ -319,15 +322,87 @@ body{
 
 /* Print styles */
 @media print {
-  body * { visibility: hidden; }
-  .nav-vertical, .panel, .tab-row, .kpi-row, .slicer-row { display: none !important; }
-  .print-area, .print-area * { visibility: visible; }
-  .print-area { position: absolute; left: 0; top: 0; width: 100%; }
-  .card { box-shadow: none; border: 1px solid #000; }
-  .table { font-size: 10px; }
-  .table thead th { background: #e0e0e0 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .add-row { background: #e9f7ec !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .sell-row { background: #fce9e9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body {
+    background: white;
+    overflow: visible;
+  }
+  
+  .nav-vertical,
+  .panel,
+  .tab-row,
+  .kpi-row,
+  .slicer-row,
+  .no-print {
+    display: none !important;
+  }
+  
+  .workspace {
+    margin-left: 0;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+  }
+  
+  .tab-section {
+    display: block !important;
+  }
+  
+  .tab-section:not(.active) {
+    display: none !important;
+  }
+  
+  .card {
+    border: none;
+    box-shadow: none;
+    overflow: visible;
+    border-radius: 0;
+  }
+  
+  .table-shell {
+    overflow: visible;
+  }
+  
+  .table {
+    page-break-inside: auto;
+    font-size: 10px;
+  }
+  
+  .table thead {
+    display: table-header-group;
+  }
+  
+  .table thead th {
+    background: #e0e0e0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .table tbody tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  .add-row {
+    background: #e9f7ec !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .sell-row {
+    background: #fce9e9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Add page title at top of print */
+  .tab-section.active::before {
+    content: "REPORTS - " attr(data-print-title);
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center;
+  }
 }
 </style>
 </head>
@@ -360,7 +435,7 @@ body{
   </div>
 
   <!-- ========================= AJMZ TAB ========================= -->
-  <div class="tab-section active" id="tabAJMZ">
+  <div class="tab-section active" id="tabAJMZ" data-print-title="AJMZ">
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="aj_kpi_added_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="aj_kpi_added_sub">Amount: 0.00</div></div>
       <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="aj_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="aj_kpi_sold_sub">Amount: 0.00</div></div>
@@ -371,17 +446,20 @@ body{
     <div class="slicer-row">
       <div class="slicer-group"><label class="slicer-label">Lot</label><div id="aj_filter_lot" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Format</label><div id="aj_filter_format" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Shape</label><div id="aj_filter_shape" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Size</label><div id="aj_filter_size" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Party</label><div id="aj_filter_party" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Date from</label><input id="aj_filter_date_from" type="date" class="slicer-input"></div>
       <div class="slicer-group"><label class="slicer-label">Date to</label><input id="aj_filter_date_to" type="date" class="slicer-input"></div>
       <button class="slicer-clear-btn" id="aj_clear_filters">Clear</button>
+      <button class="action-btn" id="aj_print">🖨️ Print</button>
       <button class="action-btn" id="aj_export_csv">📊 CSV</button>
     </div>
 
     <div class="card print-area" id="aj_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead><tr><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Format</th><th>Description</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
+          <thead><tr><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Format</th><th>Shape</th><th>Size</th><th>Description</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyAJMZ"></tbody>
         </table>
       </div>
@@ -389,7 +467,7 @@ body{
   </div>
 
   <!-- ====================== CALIB TAB ========================== -->
-  <div class="tab-section" id="tabCALIB">
+  <div class="tab-section" id="tabCALIB" data-print-title="CALIBRATION">
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="cb_kpi_added_main">0.00 CTS</div><div class="kpi-sub" id="cb_kpi_added_sub">Amount: 0.00</div></div>
       <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="cb_kpi_sold_main">0.00 CTS</div><div class="kpi-sub" id="cb_kpi_sold_sub">Amount: 0.00</div></div>
@@ -400,17 +478,20 @@ body{
     <div class="slicer-row">
       <div class="slicer-group"><label class="slicer-label">Lot</label><div id="cb_filter_lot" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Grade</label><div id="cb_filter_grade" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Shape</label><div id="cb_filter_shape" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Size</label><div id="cb_filter_size" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Party</label><div id="cb_filter_party" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Date from</label><input id="cb_filter_date_from" type="date" class="slicer-input"></div>
       <div class="slicer-group"><label class="slicer-label">Date to</label><input id="cb_filter_date_to" type="date" class="slicer-input"></div>
       <button class="slicer-clear-btn" id="cb_clear_filters">Clear</button>
+      <button class="action-btn" id="cb_print">🖨️ Print</button>
       <button class="action-btn" id="cb_export_csv">📊 CSV</button>
     </div>
 
     <div class="card print-area" id="cb_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead><tr><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Grade</th><th>Description</th><th>CTS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
+          <thead><tr><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Grade</th><th>Shape</th><th>Size</th><th>Description</th><th>CTS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyCALIB"></tbody>
         </table>
       </div>
@@ -418,7 +499,7 @@ body{
   </div>
 
   <!-- ===================== ALL STONES TAB ====================== -->
-  <div class="tab-section" id="tabALL">
+  <div class="tab-section" id="tabALL" data-print-title="ALL STONES">
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="all_kpi_added_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_added_sub">Amount: 0.00</div></div>
       <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="all_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_sold_sub">Amount: 0.00</div></div>
@@ -429,17 +510,20 @@ body{
     <div class="slicer-row">
       <div class="slicer-group"><label class="slicer-label">Source</label><select id="all_filter_source" class="slicer-select"><option value="">All</option><option value="AJMZ">AJMZ</option><option value="CALIB">CALIB</option></select></div>
       <div class="slicer-group"><label class="slicer-label">Lot</label><div id="all_filter_lot" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Shape</label><div id="all_filter_shape" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Size</label><div id="all_filter_size" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Party</label><div id="all_filter_party" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Date from</label><input id="all_filter_date_from" type="date" class="slicer-input"></div>
       <div class="slicer-group"><label class="slicer-label">Date to</label><input id="all_filter_date_to" type="date" class="slicer-input"></div>
       <button class="slicer-clear-btn" id="all_clear_filters">Clear</button>
+      <button class="action-btn" id="all_print">🖨️ Print</button>
       <button class="action-btn" id="all_export_csv">📊 CSV</button>
     </div>
 
     <div class="card print-area" id="all_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead><tr><th style="width:70px;">Source</th><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Description</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
+          <thead><tr><th style="width:70px;">Source</th><th style="width:60px;">Type</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>Shape</th><th>Size</th><th>Description</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Party</th><th>Remarks</th></tr></thead>
           <tbody id="tbodyALL"></tbody>
         </table>
       </div>
@@ -447,7 +531,7 @@ body{
   </div>
 
   <!-- ======================= PARTY TAB ========================= -->
-  <div class="tab-section" id="tabPARTY">
+  <div class="tab-section" id="tabPARTY" data-print-title="PARTY">
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="py_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="py_kpi_sold_sub">Amount: 0.00</div></div>
       <div class="kpi-card"><div class="kpi-label">Distinct Parties</div><div class="kpi-main" id="py_kpi_party_main">0</div><div class="kpi-sub" id="py_kpi_party_sub">Parties with sells</div></div>
@@ -461,6 +545,7 @@ body{
       <div class="slicer-group"><label class="slicer-label">Date from</label><input id="py_filter_date_from" type="date" class="slicer-input"></div>
       <div class="slicer-group"><label class="slicer-label">Date to</label><input id="py_filter_date_to" type="date" class="slicer-input"></div>
       <button class="slicer-clear-btn" id="py_clear_filters">Clear</button>
+      <button class="action-btn" id="py_print">🖨️ Print</button>
       <button class="action-btn" id="py_export_csv">📊 CSV</button>
     </div>
 
@@ -506,6 +591,16 @@ function parseDateToComparable(d){
   const t=Date.parse(d);
   return isNaN(t)?null:t;
 }
+function parseMulti(str){
+  if(!str)return [];
+  if(Array.isArray(str))return str;
+  return String(str).split(",").map(s=>s.trim()).filter(Boolean);
+}
+function multiDisplay(arr){
+  if(!arr)return "";
+  if(Array.isArray(arr))return arr.join(", ");
+  return arr;
+}
 
 let AJMZ_PARENTS=[],CALIB_PARENTS=[],ALL_ROWS=[],PARTY_ROWS=[];
 
@@ -539,6 +634,8 @@ async function loadAllData(){
   if(ajSnap.exists()){
     ajSnap.forEach(s=>{
       const o=s.val();o.key=s.key;
+      o.shape=parseMulti(o.shape);
+      o.size=parseMulti(o.size);
       o.cts=num(o.cts);o.pcs=num(o.pcs);
       o.price=num(o.price);
       o.amount=num(o.amount||(o.cts*o.price));
@@ -550,6 +647,8 @@ async function loadAllData(){
   if(cbSnap.exists()){
     cbSnap.forEach(s=>{
       const o=s.val();o.key=s.key;
+      o.shape=parseMulti(o.shape);
+      o.size=parseMulti(o.size);
       o.cts=num(o.cts);
       o.price=num(o.price);
       o.amount=num(o.amount||(o.cts*o.price));
@@ -567,19 +666,19 @@ function buildUnifiedRows(){
   PARTY_ROWS=[];
 
   AJMZ_PARENTS.forEach(p=>{
-    ALL_ROWS.push({source:"AJMZ",type:"ADD",date:p.date||"",txId:p.txId||"",lot:p.lotName||"",desc:p.description||"",cts:p.cts,pcs:p.pcs,price:p.price,amount:p.amount,party:p.party||"",remarks:p.remarks||""});
+    ALL_ROWS.push({source:"AJMZ",type:"ADD",date:p.date||"",txId:p.txId||"",lot:p.lotName||"",desc:p.description||"",cts:p.cts,pcs:p.pcs,price:p.price,amount:p.amount,party:p.party||"",remarks:p.remarks||"",shape:p.shape,size:p.size});
     
     (p.__sells||[]).forEach(s=>{
-      ALL_ROWS.push({source:"AJMZ",type:"SELL",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",desc:p.description||"",cts:s.cts,pcs:s.pcs,price:s.price,amount:s.amount,party:s.party||"",remarks:s.remarks||""});
+      ALL_ROWS.push({source:"AJMZ",type:"SELL",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",desc:p.description||"",cts:s.cts,pcs:s.pcs,price:s.price,amount:s.amount,party:s.party||"",remarks:s.remarks||"",shape:p.shape,size:p.size});
       PARTY_ROWS.push({source:"AJMZ",party:s.party||"",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",cts:s.cts,pcs:s.pcs,price:s.price,amount:s.amount,remarks:s.remarks||""});
     });
   });
 
   CALIB_PARENTS.forEach(p=>{
-    ALL_ROWS.push({source:"CALIB",type:"ADD",date:p.date||"",txId:p.txId||"",lot:p.lotName||"",desc:p.description||"",cts:p.cts,pcs:0,price:p.price,amount:p.amount,party:p.party||"",remarks:p.remarks||""});
+    ALL_ROWS.push({source:"CALIB",type:"ADD",date:p.date||"",txId:p.txId||"",lot:p.lotName||"",desc:p.description||"",cts:p.cts,pcs:0,price:p.price,amount:p.amount,party:p.party||"",remarks:p.remarks||"",shape:p.shape,size:p.size});
     
     (p.__sells||[]).forEach(s=>{
-      ALL_ROWS.push({source:"CALIB",type:"SELL",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",desc:p.description||"",cts:s.cts,pcs:0,price:s.price,amount:s.amount,party:s.party||"",remarks:s.remarks||""});
+      ALL_ROWS.push({source:"CALIB",type:"SELL",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",desc:p.description||"",cts:s.cts,pcs:0,price:s.price,amount:s.amount,party:s.party||"",remarks:s.remarks||"",shape:p.shape,size:p.size});
       PARTY_ROWS.push({source:"CALIB",party:s.party||"",date:s.date||"",txId:s.sellId||"",lot:p.lotName||"",cts:s.cts,pcs:0,price:s.price,amount:s.amount,remarks:s.remarks||""});
     });
   });
@@ -628,19 +727,40 @@ function createSearchableSelect(wrapperId,values){
   return{getValue:()=>selectedValue,setValue:(val)=>{selectedValue=val||"";const opt=dropdown.querySelector(`[data-value="${val||""}"]`);if(opt){input.value=opt.textContent;input.setAttribute('data-value',selectedValue);dropdown.querySelectorAll('.searchable-select-option').forEach(o=>o.classList.remove('selected'));opt.classList.add('selected');}},reset:()=>{selectedValue="";input.value="All";input.setAttribute('data-value',"");dropdown.querySelectorAll('.searchable-select-option').forEach(o=>{o.classList.remove('selected');if(o.dataset.value==="")o.classList.add('selected');});}};
 }
 
-function uniqueValues(arr,key){const set=new Set();arr.forEach(o=>{const v=(o[key]??"").toString().trim();if(v)set.add(v);});return Array.from(set).sort();}
+function uniqueValues(arr,key){
+  const set=new Set();
+  arr.forEach(o=>{
+    const v=o[key];
+    if(Array.isArray(v)){
+      v.forEach(item=>{
+        const trimmed=String(item||"").trim();
+        if(trimmed)set.add(trimmed);
+      });
+    }else{
+      const trimmed=String(v||"").trim();
+      if(trimmed)set.add(trimmed);
+    }
+  });
+  return Array.from(set).sort();
+}
 
 const selects={};
 function populateSlicers(){
   selects.aj_lot=createSearchableSelect("aj_filter_lot",uniqueValues(AJMZ_PARENTS,"lotName"));
   selects.aj_format=createSearchableSelect("aj_filter_format",uniqueValues(AJMZ_PARENTS,"lotFormat"));
+  selects.aj_shape=createSearchableSelect("aj_filter_shape",uniqueValues(AJMZ_PARENTS,"shape"));
+  selects.aj_size=createSearchableSelect("aj_filter_size",uniqueValues(AJMZ_PARENTS,"size"));
   selects.aj_party=createSearchableSelect("aj_filter_party",uniqueValues(AJMZ_PARENTS,"party"));
   
   selects.cb_lot=createSearchableSelect("cb_filter_lot",uniqueValues(CALIB_PARENTS,"lotName"));
   selects.cb_grade=createSearchableSelect("cb_filter_grade",uniqueValues(CALIB_PARENTS,"grade"));
+  selects.cb_shape=createSearchableSelect("cb_filter_shape",uniqueValues(CALIB_PARENTS,"shape"));
+  selects.cb_size=createSearchableSelect("cb_filter_size",uniqueValues(CALIB_PARENTS,"size"));
   selects.cb_party=createSearchableSelect("cb_filter_party",uniqueValues(CALIB_PARENTS,"party"));
   
   selects.all_lot=createSearchableSelect("all_filter_lot",uniqueValues(ALL_ROWS,"lot"));
+  selects.all_shape=createSearchableSelect("all_filter_shape",uniqueValues(ALL_ROWS,"shape"));
+  selects.all_size=createSearchableSelect("all_filter_size",uniqueValues(ALL_ROWS,"size"));
   selects.all_party=createSearchableSelect("all_filter_party",uniqueValues(ALL_ROWS,"party"));
   
   selects.py_party=createSearchableSelect("py_filter_party",uniqueValues(PARTY_ROWS,"party"));
@@ -650,9 +770,19 @@ function dateInRange(d,from,to){const dt=parseDateToComparable(d);if(dt===null)r
 
 function exportCSV(tableId,filename){const table=document.querySelector(`#${tableId} table`);if(!table)return;const rows=Array.from(table.querySelectorAll('tr'));const csv=rows.map(row=>{const cells=Array.from(row.querySelectorAll('th, td'));return cells.map(cell=>{let text=cell.textContent.trim();text=text.replace(/\s+/g,' ');if(text.includes(',')||text.includes('"')||text.includes('\n'))text='"'+text.replace(/"/g,'""')+'"';return text;}).join(',');}).join('\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});const link=document.createElement('a');link.setAttribute('href',URL.createObjectURL(blob));link.setAttribute('download',filename);document.body.appendChild(link);link.click();document.body.removeChild(link);}
 
+function matchesFilter(value,filterValue){
+  if(!filterValue)return true;
+  if(Array.isArray(value)){
+    return value.some(v=>String(v||"").trim()===filterValue);
+  }
+  return String(value||"").trim()===filterValue;
+}
+
 function applyAJMZFilters(q=""){
   const lotVal=selects.aj_lot?.getValue()||"";
   const fmtVal=selects.aj_format?.getValue()||"";
+  const shapeVal=selects.aj_shape?.getValue()||"";
+  const sizeVal=selects.aj_size?.getValue()||"";
   const partyVal=selects.aj_party?.getValue()||"";
   const dateFrom=document.getElementById("aj_filter_date_from").value;
   const dateTo=document.getElementById("aj_filter_date_to").value;
@@ -666,13 +796,15 @@ function applyAJMZFilters(q=""){
     const fmt=p.lotFormat||"";
     if(lotVal&&lotVal!==lot)return;
     if(fmtVal&&fmtVal!==fmt)return;
+    if(!matchesFilter(p.shape,shapeVal))return;
+    if(!matchesFilter(p.size,sizeVal))return;
     if(partyVal&&partyVal!==p.party)return;
     if((dateFrom||dateTo)&&!dateInRange(p.date,dateFrom,dateTo))return;
     
     const txt=JSON.stringify(p).toLowerCase();
     if(q&&!txt.includes(q)){const hasChild=(p.__sells||[]).some(s=>JSON.stringify(s).toLowerCase().includes(q));if(!hasChild)return;}
     
-    tbody.innerHTML+=`<tr class="add-row"><td><span class="badge badge-add">ADD</span></td><td>${esc(p.date)}</td><td>${esc(p.txId)}</td><td>${esc(lot)}</td><td>${esc(fmt)}</td><td>${esc(p.description)}</td><td>${fmt(p.cts)}</td><td>${fmt(p.pcs)}</td><td>${fmt(p.price)}</td><td>${fmt(p.amount)}</td><td>${esc(p.party)}</td><td>${esc(p.remarks)}</td></tr>`;
+    tbody.innerHTML+=`<tr class="add-row"><td><span class="badge badge-add">ADD</span></td><td>${esc(p.date)}</td><td>${esc(p.txId)}</td><td>${esc(lot)}</td><td>${esc(fmt)}</td><td>${esc(multiDisplay(p.shape))}</td><td>${esc(multiDisplay(p.size))}</td><td>${esc(p.description)}</td><td>${fmt(p.cts)}</td><td>${fmt(p.pcs)}</td><td>${fmt(p.price)}</td><td>${fmt(p.amount)}</td><td>${esc(p.party)}</td><td>${esc(p.remarks)}</td></tr>`;
     addCTS+=p.cts;addPCS+=p.pcs;addAmt+=p.amount;invCTS+=p.cts;invPCS+=p.pcs;
     
     (p.__sells||[]).forEach(s=>{
@@ -680,7 +812,7 @@ function applyAJMZFilters(q=""){
       if((dateFrom||dateTo)&&!dateInRange(sDate,dateFrom,dateTo))return;
       const stxt=JSON.stringify(s).toLowerCase();
       if(q&&!stxt.includes(q)&&!txt.includes(q))return;
-      tbody.innerHTML+=`<tr class="sell-row"><td><span class="badge badge-sell">SELL</span></td><td>${esc(sDate)}</td><td>${esc(s.sellId)}</td><td>${esc(lot)}</td><td>${esc(fmt)}</td><td>${esc(p.description)}</td><td>${fmt(s.cts)}</td><td>${fmt(s.pcs)}</td><td>${fmt(s.price)}</td><td>${fmt(s.amount)}</td><td>${esc(s.party)}</td><td>${esc(s.remarks)}</td></tr>`;
+      tbody.innerHTML+=`<tr class="sell-row"><td><span class="badge badge-sell">SELL</span></td><td>${esc(sDate)}</td><td>${esc(s.sellId)}</td><td>${esc(lot)}</td><td>${esc(fmt)}</td><td>${esc(multiDisplay(p.shape))}</td><td>${esc(multiDisplay(p.size))}</td><td>${esc(p.description)}</td><td>${fmt(s.cts)}</td><td>${fmt(s.pcs)}</td><td>${fmt(s.price)}</td><td>${fmt(s.amount)}</td><td>${esc(s.party)}</td><td>${esc(s.remarks)}</td></tr>`;
       soldCTS+=s.cts;soldPCS+=s.pcs;soldAmt+=s.amount;
     });
   });
@@ -698,6 +830,8 @@ function applyAJMZFilters(q=""){
 function applyCALIBFilters(q=""){
   const lotVal=selects.cb_lot?.getValue()||"";
   const gradeVal=selects.cb_grade?.getValue()||"";
+  const shapeVal=selects.cb_shape?.getValue()||"";
+  const sizeVal=selects.cb_size?.getValue()||"";
   const partyVal=selects.cb_party?.getValue()||"";
   const dateFrom=document.getElementById("cb_filter_date_from").value;
   const dateTo=document.getElementById("cb_filter_date_to").value;
@@ -711,13 +845,15 @@ function applyCALIBFilters(q=""){
     const grade=p.grade||"";
     if(lotVal&&lotVal!==lot)return;
     if(gradeVal&&gradeVal!==grade)return;
+    if(!matchesFilter(p.shape,shapeVal))return;
+    if(!matchesFilter(p.size,sizeVal))return;
     if(partyVal&&partyVal!==p.party)return;
     if((dateFrom||dateTo)&&!dateInRange(p.date,dateFrom,dateTo))return;
     
     const txt=JSON.stringify(p).toLowerCase();
     if(q&&!txt.includes(q)){const hasChild=(p.__sells||[]).some(s=>JSON.stringify(s).toLowerCase().includes(q));if(!hasChild)return;}
     
-    tbody.innerHTML+=`<tr class="add-row"><td><span class="badge badge-add">ADD</span></td><td>${esc(p.date)}</td><td>${esc(p.txId)}</td><td>${esc(lot)}</td><td>${esc(grade)}</td><td>${esc(p.description)}</td><td>${fmt(p.cts)}</td><td>${fmt(p.price)}</td><td>${fmt(p.amount)}</td><td>${esc(p.party)}</td><td>${esc(p.remarks)}</td></tr>`;
+    tbody.innerHTML+=`<tr class="add-row"><td><span class="badge badge-add">ADD</span></td><td>${esc(p.date)}</td><td>${esc(p.txId)}</td><td>${esc(lot)}</td><td>${esc(grade)}</td><td>${esc(multiDisplay(p.shape))}</td><td>${esc(multiDisplay(p.size))}</td><td>${esc(p.description)}</td><td>${fmt(p.cts)}</td><td>${fmt(p.price)}</td><td>${fmt(p.amount)}</td><td>${esc(p.party)}</td><td>${esc(p.remarks)}</td></tr>`;
     addCTS+=p.cts;addAmt+=p.amount;invCTS+=p.cts;
     
     (p.__sells||[]).forEach(s=>{
@@ -725,7 +861,7 @@ function applyCALIBFilters(q=""){
       if((dateFrom||dateTo)&&!dateInRange(sDate,dateFrom,dateTo))return;
       const stxt=JSON.stringify(s).toLowerCase();
       if(q&&!stxt.includes(q)&&!txt.includes(q))return;
-      tbody.innerHTML+=`<tr class="sell-row"><td><span class="badge badge-sell">SELL</span></td><td>${esc(sDate)}</td><td>${esc(s.sellId)}</td><td>${esc(lot)}</td><td>${esc(grade)}</td><td>${esc(p.description)}</td><td>${fmt(s.cts)}</td><td>${fmt(s.price)}</td><td>${fmt(s.amount)}</td><td>${esc(s.party)}</td><td>${esc(s.remarks)}</td></tr>`;
+      tbody.innerHTML+=`<tr class="sell-row"><td><span class="badge badge-sell">SELL</span></td><td>${esc(sDate)}</td><td>${esc(s.sellId)}</td><td>${esc(lot)}</td><td>${esc(grade)}</td><td>${esc(multiDisplay(p.shape))}</td><td>${esc(multiDisplay(p.size))}</td><td>${esc(p.description)}</td><td>${fmt(s.cts)}</td><td>${fmt(s.price)}</td><td>${fmt(s.amount)}</td><td>${esc(s.party)}</td><td>${esc(s.remarks)}</td></tr>`;
       soldCTS+=s.cts;soldAmt+=s.amount;
     });
   });
@@ -743,6 +879,8 @@ function applyCALIBFilters(q=""){
 function applyALLFilters(q=""){
   const srcVal=document.getElementById("all_filter_source").value;
   const lotVal=selects.all_lot?.getValue()||"";
+  const shapeVal=selects.all_shape?.getValue()||"";
+  const sizeVal=selects.all_size?.getValue()||"";
   const partyVal=selects.all_party?.getValue()||"";
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
@@ -754,13 +892,15 @@ function applyALLFilters(q=""){
   ALL_ROWS.forEach(r=>{
     if(srcVal&&r.source!==srcVal)return;
     if(lotVal&&r.lot!==lotVal)return;
+    if(!matchesFilter(r.shape,shapeVal))return;
+    if(!matchesFilter(r.size,sizeVal))return;
     if(partyVal&&r.party!==partyVal)return;
     if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
     const txt=JSON.stringify(r).toLowerCase();
     if(q&&!txt.includes(q))return;
     
     const srcBadge=r.source==="AJMZ"?`<span class="badge badge-source-ajmz">AJMZ</span>`:`<span class="badge badge-source-calib">CALIB</span>`;
-    tbody.innerHTML+=`<tr class="${r.type==="ADD"?"add-row":"sell-row"}"><td>${srcBadge}</td><td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td><td>${esc(r.date)}</td><td>${esc(r.txId)}</td><td>${esc(r.lot)}</td><td>${esc(r.desc)}</td><td>${fmt(r.cts)}</td><td>${fmt(r.pcs)}</td><td>${fmt(r.price)}</td><td>${fmt(r.amount)}</td><td>${esc(r.party)}</td><td>${esc(r.remarks)}</td></tr>`;
+    tbody.innerHTML+=`<tr class="${r.type==="ADD"?"add-row":"sell-row"}"><td>${srcBadge}</td><td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td><td>${esc(r.date)}</td><td>${esc(r.txId)}</td><td>${esc(r.lot)}</td><td>${esc(multiDisplay(r.shape))}</td><td>${esc(multiDisplay(r.size))}</td><td>${esc(r.desc)}</td><td>${fmt(r.cts)}</td><td>${fmt(r.pcs)}</td><td>${fmt(r.price)}</td><td>${fmt(r.amount)}</td><td>${esc(r.party)}</td><td>${esc(r.remarks)}</td></tr>`;
     
     if(r.type==="ADD"){addCTS+=r.cts;addPCS+=r.pcs;addAmt+=r.amount;}
     else{soldCTS+=r.cts;soldPCS+=r.pcs;soldAmt+=r.amount;}
@@ -834,23 +974,27 @@ document.addEventListener("DOMContentLoaded",async()=>{
   globalInput.addEventListener("input",()=>{const q=globalInput.value;applyAJMZFilters(q);applyCALIBFilters(q);applyALLFilters(q);applyPARTYFilters(q);});
   
   ["aj_filter_date_from","aj_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyAJMZFilters(globalInput.value));});
-  ["aj_filter_lot","aj_filter_format","aj_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyAJMZFilters(globalInput.value));});
-  document.getElementById("aj_clear_filters").addEventListener("click",()=>{selects.aj_lot?.reset();selects.aj_format?.reset();selects.aj_party?.reset();document.getElementById("aj_filter_date_from").value="";document.getElementById("aj_filter_date_to").value="";applyAJMZFilters(globalInput.value);});
+  ["aj_filter_lot","aj_filter_format","aj_filter_shape","aj_filter_size","aj_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyAJMZFilters(globalInput.value));});
+  document.getElementById("aj_clear_filters").addEventListener("click",()=>{selects.aj_lot?.reset();selects.aj_format?.reset();selects.aj_shape?.reset();selects.aj_size?.reset();selects.aj_party?.reset();document.getElementById("aj_filter_date_from").value="";document.getElementById("aj_filter_date_to").value="";applyAJMZFilters(globalInput.value);});
+  document.getElementById("aj_print").addEventListener("click",()=>window.print());
   document.getElementById("aj_export_csv").addEventListener("click",()=>exportCSV("aj_print_area","AJMZ_Export.csv"));
   
   ["cb_filter_date_from","cb_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyCALIBFilters(globalInput.value));});
-  ["cb_filter_lot","cb_filter_grade","cb_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyCALIBFilters(globalInput.value));});
-  document.getElementById("cb_clear_filters").addEventListener("click",()=>{selects.cb_lot?.reset();selects.cb_grade?.reset();selects.cb_party?.reset();document.getElementById("cb_filter_date_from").value="";document.getElementById("cb_filter_date_to").value="";applyCALIBFilters(globalInput.value);});
+  ["cb_filter_lot","cb_filter_grade","cb_filter_shape","cb_filter_size","cb_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyCALIBFilters(globalInput.value));});
+  document.getElementById("cb_clear_filters").addEventListener("click",()=>{selects.cb_lot?.reset();selects.cb_grade?.reset();selects.cb_shape?.reset();selects.cb_size?.reset();selects.cb_party?.reset();document.getElementById("cb_filter_date_from").value="";document.getElementById("cb_filter_date_to").value="";applyCALIBFilters(globalInput.value);});
+  document.getElementById("cb_print").addEventListener("click",()=>window.print());
   document.getElementById("cb_export_csv").addEventListener("click",()=>exportCSV("cb_print_area","Calibration_Export.csv"));
   
   ["all_filter_source","all_filter_date_from","all_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));});
-  ["all_filter_lot","all_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));});
-  document.getElementById("all_clear_filters").addEventListener("click",()=>{document.getElementById("all_filter_source").value="";selects.all_lot?.reset();selects.all_party?.reset();document.getElementById("all_filter_date_from").value="";document.getElementById("all_filter_date_to").value="";applyALLFilters(globalInput.value);});
+  ["all_filter_lot","all_filter_shape","all_filter_size","all_filter_party"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));});
+  document.getElementById("all_clear_filters").addEventListener("click",()=>{document.getElementById("all_filter_source").value="";selects.all_lot?.reset();selects.all_shape?.reset();selects.all_size?.reset();selects.all_party?.reset();document.getElementById("all_filter_date_from").value="";document.getElementById("all_filter_date_to").value="";applyALLFilters(globalInput.value);});
+  document.getElementById("all_print").addEventListener("click",()=>window.print());
   document.getElementById("all_export_csv").addEventListener("click",()=>exportCSV("all_print_area","All_Stones_Export.csv"));
   
   ["py_filter_source","py_filter_date_from","py_filter_date_to"].forEach(id=>{document.getElementById(id).addEventListener("change",()=>applyPARTYFilters(globalInput.value));});
   document.getElementById("py_filter_party").addEventListener("change",()=>applyPARTYFilters(globalInput.value));
   document.getElementById("py_clear_filters").addEventListener("click",()=>{selects.py_party?.reset();document.getElementById("py_filter_source").value="";document.getElementById("py_filter_date_from").value="";document.getElementById("py_filter_date_to").value="";applyPARTYFilters(globalInput.value);});
+  document.getElementById("py_print").addEventListener("click",()=>window.print());
   document.getElementById("py_export_csv").addEventListener("click",()=>exportCSV("py_print_area","Party_Export.csv"));
   
   applyAJMZFilters("");applyCALIBFilters("");applyALLFilters("");applyPARTYFilters("");
