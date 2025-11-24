@@ -454,6 +454,8 @@ body{
               <th rowspan="2">Party</th>
               <th rowspan="2">Lot</th>
               <th rowspan="2">Format</th>
+              <th rowspan="2">Shape</th>
+              <th rowspan="2">Size</th>
               <th rowspan="2">Description</th>
               <th colspan="4" class="section-header total-section">TOTAL</th>
               <th colspan="4" class="section-header sold-section">SOLD</th>
@@ -474,7 +476,7 @@ body{
               <th class="balance-col">Amount</th>
             </tr>
             <tr class="hdr-row-3">
-              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
+              <th colspan="8" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
               <th class="num-cell section-col total-col" id="ajmz_total_cts">0.00</th>
               <th class="num-cell total-col" id="ajmz_total_pcs">0.00</th>
               <th class="num-cell total-col"></th>
@@ -551,6 +553,8 @@ body{
               <th rowspan="2">Party</th>
               <th rowspan="2">Lot</th>
               <th rowspan="2">Grade</th>
+              <th rowspan="2">Shape</th>
+              <th rowspan="2">Size</th>
               <th rowspan="2">Description</th>
               <th colspan="3" class="section-header total-section">TOTAL</th>
               <th colspan="3" class="section-header sold-section">SOLD</th>
@@ -568,7 +572,7 @@ body{
               <th class="balance-col">Amount</th>
             </tr>
             <tr class="hdr-row-3">
-              <th colspan="6" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
+              <th colspan="8" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
               <th class="num-cell section-col total-col" id="calib_total_cts">0.00</th>
               <th class="num-cell total-col"></th>
               <th class="num-cell total-col" id="calib_total_amt">0.00</th>
@@ -641,6 +645,8 @@ body{
               <th rowspan="2">Date</th>
               <th rowspan="2">Party</th>
               <th rowspan="2">Lot</th>
+              <th rowspan="2">Shape</th>
+              <th rowspan="2">Size</th>
               <th rowspan="2">Description</th>
               <th colspan="3" class="section-header total-section">TOTAL</th>
               <th colspan="3" class="section-header sold-section">SOLD</th>
@@ -658,7 +664,7 @@ body{
               <th class="balance-col">Amount</th>
             </tr>
             <tr class="hdr-row-3">
-              <th colspan="5" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
+              <th colspan="7" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
               <th class="num-cell section-col total-col" id="all_total_cts">0.00</th>
               <th class="num-cell total-col"></th>
               <th class="num-cell total-col" id="all_total_amt">0.00</th>
@@ -873,7 +879,7 @@ function renderAJMZ(){
     soldCTS+=soldC;soldPCS+=soldP;soldAmt+=soldA;
     balCTS+=balC;balPCS+=balP;balAmt+=balA;
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.lotFormat||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(totalP)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(soldP)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(balP)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.lotFormat||"")}</td><td>${esc(multiDisplay(parent.shape))}</td><td>${esc(multiDisplay(parent.size))}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(totalP)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(soldP)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(balP)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
   document.getElementById("ajmz_total_cts").textContent=fmt(totalCTS);
@@ -935,7 +941,7 @@ function renderCALIB(){
     soldCTS+=soldC;soldAmt+=soldA;
     balCTS+=balC;balAmt+=balA;
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.grade||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.grade||"")}</td><td>${esc(multiDisplay(parent.shape))}</td><td>${esc(multiDisplay(parent.size))}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
   document.getElementById("calib_total_cts").textContent=fmt(totalCTS);
@@ -996,7 +1002,7 @@ function renderALL(){
     sCTS+=soldC;sAmt+=soldA;
     bCTS+=balC;bAmt+=balA;
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSell)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(multiDisplay(parent.shape))}</td><td>${esc(multiDisplay(parent.size))}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSell)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
   });
 
   document.getElementById("all_total_cts").textContent=fmt(tCTS);
