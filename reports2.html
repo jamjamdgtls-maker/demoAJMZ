@@ -411,6 +411,14 @@ body{
         <select id="ajmz_filter_lot" class="filter-select"><option value="">All</option></select>
       </div>
       <div class="filter-group">
+        <label class="filter-label">Shape</label>
+        <select id="ajmz_filter_shape" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Size</label>
+        <select id="ajmz_filter_size" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Date From</label>
         <input type="date" id="ajmz_filter_date_from" class="filter-select">
       </div>
@@ -500,6 +508,14 @@ body{
         <select id="calib_filter_lot" class="filter-select"><option value="">All</option></select>
       </div>
       <div class="filter-group">
+        <label class="filter-label">Shape</label>
+        <select id="calib_filter_shape" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Size</label>
+        <select id="calib_filter_size" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Date From</label>
         <input type="date" id="calib_filter_date_from" class="filter-select">
       </div>
@@ -581,6 +597,14 @@ body{
       <div class="filter-group">
         <label class="filter-label">Lot</label>
         <select id="all_filter_lot" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Shape</label>
+        <select id="all_filter_shape" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Size</label>
+        <select id="all_filter_size" class="filter-select"><option value="">All</option></select>
       </div>
       <div class="filter-group">
         <label class="filter-label">Date From</label>
@@ -665,6 +689,18 @@ function esc(s){return s==null?"":String(s).replace(/&/g,"&amp;").replace(/</g,"
 function fmt(n){return Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});}
 function parseNum(v){return Number(String(v||"0").replace(/,/g,""))||0;}
 
+function parseMulti(str){
+  if(!str)return [];
+  if(Array.isArray(str))return str;
+  return String(str).split(",").map(s=>s.trim()).filter(Boolean);
+}
+
+function multiDisplay(arr){
+  if(!arr)return "";
+  if(Array.isArray(arr))return arr.join(", ");
+  return arr;
+}
+
 async function loadData(){
   const [ajParents,calibParents,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
@@ -695,6 +731,8 @@ async function loadData(){
       const v=snap.val();
       v.key=snap.key;
       v.type="AJMZ";
+      v.shape=parseMulti(v.shape);
+      v.size=parseMulti(v.size);
       v.cts=parseNum(v.cts);
       v.pcs=parseNum(v.pcs);
       v.price=parseNum(v.price);
@@ -710,6 +748,8 @@ async function loadData(){
       const v=snap.val();
       v.key=snap.key;
       v.type="CALIB";
+      v.shape=parseMulti(v.shape);
+      v.size=parseMulti(v.size);
       v.cts=parseNum(v.cts);
       v.price=parseNum(v.price);
       v.amount=parseNum(v.amount||(v.cts*v.price));
@@ -727,31 +767,81 @@ async function loadData(){
 function populateFilters(){
   const ajParties=[...new Set(AJMZ_PARENTS.map(p=>p.party).filter(Boolean))].sort();
   const ajLots=[...new Set(AJMZ_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  
+  // Extract shapes from arrays
+  const ajShapes=new Set();
+  AJMZ_PARENTS.forEach(p=>{
+    const shapes=parseMulti(p.shape);
+    shapes.forEach(s=>ajShapes.add(s));
+  });
+  const ajShapesSorted=[...ajShapes].filter(Boolean).sort();
+  
+  // Extract sizes from arrays
+  const ajSizes=new Set();
+  AJMZ_PARENTS.forEach(p=>{
+    const sizes=parseMulti(p.size);
+    sizes.forEach(s=>ajSizes.add(s));
+  });
+  const ajSizesSorted=[...ajSizes].filter(Boolean).sort();
+  
   const calibParties=[...new Set(CALIB_PARENTS.map(p=>p.party).filter(Boolean))].sort();
   const calibLots=[...new Set(CALIB_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  
+  const calibShapes=new Set();
+  CALIB_PARENTS.forEach(p=>{
+    const shapes=parseMulti(p.shape);
+    shapes.forEach(s=>calibShapes.add(s));
+  });
+  const calibShapesSorted=[...calibShapes].filter(Boolean).sort();
+  
+  const calibSizes=new Set();
+  CALIB_PARENTS.forEach(p=>{
+    const sizes=parseMulti(p.size);
+    sizes.forEach(s=>calibSizes.add(s));
+  });
+  const calibSizesSorted=[...calibSizes].filter(Boolean).sort();
+  
   const allParties=[...new Set([...ajParties,...calibParties])].sort();
   const allLots=[...new Set([...ajLots,...calibLots])].sort();
+  const allShapes=[...new Set([...ajShapesSorted,...calibShapesSorted])].sort();
+  const allSizes=[...new Set([...ajSizesSorted,...calibSizesSorted])].sort();
 
   document.getElementById("ajmz_filter_party").innerHTML='<option value="">All</option>'+ajParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   document.getElementById("ajmz_filter_lot").innerHTML='<option value="">All</option>'+ajLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  document.getElementById("ajmz_filter_shape").innerHTML='<option value="">All</option>'+ajShapesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  document.getElementById("ajmz_filter_size").innerHTML='<option value="">All</option>'+ajSizesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   
   document.getElementById("calib_filter_party").innerHTML='<option value="">All</option>'+calibParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   document.getElementById("calib_filter_lot").innerHTML='<option value="">All</option>'+calibLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  document.getElementById("calib_filter_shape").innerHTML='<option value="">All</option>'+calibShapesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  document.getElementById("calib_filter_size").innerHTML='<option value="">All</option>'+calibSizesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   
   document.getElementById("all_filter_party").innerHTML='<option value="">All</option>'+allParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   document.getElementById("all_filter_lot").innerHTML='<option value="">All</option>'+allLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
+  document.getElementById("all_filter_shape").innerHTML='<option value="">All</option>'+allShapes.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  document.getElementById("all_filter_size").innerHTML='<option value="">All</option>'+allSizes.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
 }
 
 function renderAJMZ(){
   const search=document.getElementById("globalSearch").value.toLowerCase();
   const party=document.getElementById("ajmz_filter_party").value;
   const lot=document.getElementById("ajmz_filter_lot").value;
+  const shape=document.getElementById("ajmz_filter_shape").value;
+  const size=document.getElementById("ajmz_filter_size").value;
   const dateFrom=document.getElementById("ajmz_filter_date_from").value;
   const dateTo=document.getElementById("ajmz_filter_date_to").value;
 
   let filtered=AJMZ_PARENTS.filter(p=>{
     if(party&&p.party!==party)return false;
     if(lot&&p.lotName!==lot)return false;
+    if(shape){
+      const shapes=parseMulti(p.shape);
+      if(!shapes.includes(shape))return false;
+    }
+    if(size){
+      const sizes=parseMulti(p.size);
+      if(!sizes.includes(size))return false;
+    }
     if(dateFrom&&p.date<dateFrom)return false;
     if(dateTo&&p.date>dateTo)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
@@ -801,12 +891,22 @@ function renderCALIB(){
   const search=document.getElementById("globalSearch").value.toLowerCase();
   const party=document.getElementById("calib_filter_party").value;
   const lot=document.getElementById("calib_filter_lot").value;
+  const shape=document.getElementById("calib_filter_shape").value;
+  const size=document.getElementById("calib_filter_size").value;
   const dateFrom=document.getElementById("calib_filter_date_from").value;
   const dateTo=document.getElementById("calib_filter_date_to").value;
 
   let filtered=CALIB_PARENTS.filter(p=>{
     if(party&&p.party!==party)return false;
     if(lot&&p.lotName!==lot)return false;
+    if(shape){
+      const shapes=parseMulti(p.shape);
+      if(!shapes.includes(shape))return false;
+    }
+    if(size){
+      const sizes=parseMulti(p.size);
+      if(!sizes.includes(size))return false;
+    }
     if(dateFrom&&p.date<dateFrom)return false;
     if(dateTo&&p.date>dateTo)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
@@ -850,6 +950,8 @@ function renderALL(){
   const search=document.getElementById("globalSearch").value.toLowerCase();
   const party=document.getElementById("all_filter_party").value;
   const lot=document.getElementById("all_filter_lot").value;
+  const shape=document.getElementById("all_filter_shape").value;
+  const size=document.getElementById("all_filter_size").value;
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
 
@@ -858,6 +960,14 @@ function renderALL(){
   let filtered=combined.filter(p=>{
     if(party&&p.party!==party)return false;
     if(lot&&p.lotName!==lot)return false;
+    if(shape){
+      const shapes=parseMulti(p.shape);
+      if(!shapes.includes(shape))return false;
+    }
+    if(size){
+      const sizes=parseMulti(p.size);
+      if(!sizes.includes(size))return false;
+    }
     if(dateFrom&&p.date<dateFrom)return false;
     if(dateTo&&p.date>dateTo)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
@@ -965,11 +1075,15 @@ document.addEventListener("DOMContentLoaded",async()=>{
   // AJMZ filters and buttons
   document.getElementById("ajmz_filter_party").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_lot").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_filter_shape").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_filter_size").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_from").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_to").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_clear").addEventListener("click",()=>{
     document.getElementById("ajmz_filter_party").value="";
     document.getElementById("ajmz_filter_lot").value="";
+    document.getElementById("ajmz_filter_shape").value="";
+    document.getElementById("ajmz_filter_size").value="";
     document.getElementById("ajmz_filter_date_from").value="";
     document.getElementById("ajmz_filter_date_to").value="";
     document.getElementById("globalSearch").value="";
@@ -981,11 +1095,15 @@ document.addEventListener("DOMContentLoaded",async()=>{
   // CALIB filters and buttons
   document.getElementById("calib_filter_party").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_lot").addEventListener("change",renderCALIB);
+  document.getElementById("calib_filter_shape").addEventListener("change",renderCALIB);
+  document.getElementById("calib_filter_size").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_from").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_to").addEventListener("change",renderCALIB);
   document.getElementById("calib_clear").addEventListener("click",()=>{
     document.getElementById("calib_filter_party").value="";
     document.getElementById("calib_filter_lot").value="";
+    document.getElementById("calib_filter_shape").value="";
+    document.getElementById("calib_filter_size").value="";
     document.getElementById("calib_filter_date_from").value="";
     document.getElementById("calib_filter_date_to").value="";
     document.getElementById("globalSearch").value="";
@@ -997,11 +1115,15 @@ document.addEventListener("DOMContentLoaded",async()=>{
   // ALL filters and buttons
   document.getElementById("all_filter_party").addEventListener("change",renderALL);
   document.getElementById("all_filter_lot").addEventListener("change",renderALL);
+  document.getElementById("all_filter_shape").addEventListener("change",renderALL);
+  document.getElementById("all_filter_size").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_from").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_to").addEventListener("change",renderALL);
   document.getElementById("all_clear").addEventListener("click",()=>{
     document.getElementById("all_filter_party").value="";
     document.getElementById("all_filter_lot").value="";
+    document.getElementById("all_filter_shape").value="";
+    document.getElementById("all_filter_size").value="";
     document.getElementById("all_filter_date_from").value="";
     document.getElementById("all_filter_date_to").value="";
     document.getElementById("globalSearch").value="";
