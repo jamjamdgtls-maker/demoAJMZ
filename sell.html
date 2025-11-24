@@ -528,6 +528,20 @@ body{
   box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
 
+/* Locked quantity inputs styling */
+.sell-table input[data-sell="cts"]:disabled,
+.sell-table input[data-sell="pcs"]:disabled{
+  background:#fffbf0;
+  color:var(--ink-soft);
+  cursor:pointer;
+  border-color:#e8ddc0;
+}
+.sell-table input[data-sell="cts"]:disabled:hover,
+.sell-table input[data-sell="pcs"]:disabled:hover{
+  background:#fff4d9;
+  border-color:var(--accent-2);
+}
+
 /* -------------------------------------------------
    RESPONSIVE
    ------------------------------------------------- */
@@ -811,6 +825,7 @@ body{
 
       <span style="font-size:11px;color:var(--ink-soft);">
         • Same <b>SELL ID</b> will be applied to all rows in this selling.
+        <br>• <b>Double-click</b> CTS/PCS fields to edit quantities.
       </span>
     </div>
 
@@ -1384,8 +1399,8 @@ function buildSellModalTable(type,keys){
         <td>${esc(r.description||"")}</td>
         <td>${fmtNumber(rem.remainingCts)}</td>
         ${type==="AJMZ" ? `<td>${fmtNumber(rem.remainingPcs)}</td>` : ""}
-        <td><input type="number" step="0.0001" data-sell="cts" value="${rem.remainingCts}"></td>
-        ${type==="AJMZ" ? `<td><input type="number" step="1" data-sell="pcs" value="${rem.remainingPcs}"></td>` : ""}
+        <td><input type="number" step="0.0001" data-sell="cts" value="${rem.remainingCts}" disabled title="Double-click to edit"></td>
+        ${type==="AJMZ" ? `<td><input type="number" step="1" data-sell="pcs" value="${rem.remainingPcs}" disabled title="Double-click to edit"></td>` : ""}
         <td><input type="number" step="0.0001" data-sell="price" value="${price}"></td>
         <td><input type="text" data-sell="amount" value="${initAmt?fmtNumber(initAmt):""}" readonly></td>
         <td><input type="text" data-sell="remarks" placeholder="Optional…"></td>
@@ -1659,12 +1674,25 @@ function bindTabs(){
 }
 
 function bindSellModalEvents(){
+  // Handle regular input changes for price and calculate amount
   sellModalTableWrapper.addEventListener("input",e=>{
     const input=e.target;
     const tr=input.closest("tr[data-key]");
     if(!tr)return;
     if(input.dataset.sell==="cts" || input.dataset.sell==="price"){
       recalcSellRowAmount(tr);
+    }
+  });
+
+  // Handle double-click to enable CTS and PCS inputs
+  sellModalTableWrapper.addEventListener("dblclick",e=>{
+    const input=e.target;
+    if(input.tagName === "INPUT" && (input.dataset.sell === "cts" || input.dataset.sell === "pcs")){
+      if(input.disabled){
+        input.disabled = false;
+        input.focus();
+        input.select();
+      }
     }
   });
 }
