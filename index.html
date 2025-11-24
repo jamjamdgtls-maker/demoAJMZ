@@ -432,7 +432,7 @@ body{
               <th>Price</th>
               <th>Amount</th>
               <th>Remarks</th>
-              <th class="td-actions">Actions</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody id="tbodyCAL"></tbody>
@@ -512,6 +512,22 @@ body{
 
 <script>
 /* ============================================================
+   FIREBASE CONFIG (moved to top for early initialization)
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
+  authDomain: "ajmzinventory.firebaseapp.com",
+  projectId: "ajmzinventory",
+  storageBucket: "ajmzinventory.firebasestorage.app",
+  messagingSenderId: "1069845316242",
+  appId: "1:1069845316242:web:c55be9de3724734f88dc4b",
+  databaseURL: "https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app/"
+};
+
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.database(app);
+
+/* ============================================================
    LOCALSTORAGE KEYS
    ============================================================ */
 const LS = {
@@ -540,15 +556,47 @@ const uid = () => ("id_" + Math.random().toString(36).slice(2) + Date.now().toSt
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
 
 /* ============================================================
-   GLOBAL STATE
+   GLOBAL STATE - NOW WITH EMPTY DEFAULTS
    ============================================================ */
 let ROWS = read(LS.rows, []);
 let SAVED = read(LS.saved, {
-  lotNames: ["Main Lot", "Secondary", "Mixed", "General"],
-  shapes: ["Round", "Oval", "Pear", "Emerald"],
-  sizes: ["1mm", "2mm", "3mm", "4mm"]
+  lotNames: [],
+  shapes: [],
+  sizes: []
 });
 let MODE = read(LS.mode, "AJMZ");
+
+/* ============================================================
+   FIREBASE SYNC FOR SAVED LISTS
+   ============================================================ */
+async function loadSavedListsFromFirebase() {
+  try {
+    const snapshot = await db.ref("savedLists").once("value");
+    if (snapshot.exists()) {
+      const firebaseData = snapshot.val();
+      SAVED = {
+        lotNames: firebaseData.lotNames || [],
+        shapes: firebaseData.shapes || [],
+        sizes: firebaseData.sizes || []
+      };
+      write(LS.saved, SAVED);
+      console.log("✅ Loaded saved lists from Firebase");
+    } else {
+      console.log("ℹ️ No saved lists in Firebase, using empty defaults");
+    }
+  } catch (error) {
+    console.error("❌ Error loading saved lists from Firebase:", error);
+  }
+}
+
+async function saveSavedListsToFirebase() {
+  try {
+    await db.ref("savedLists").set(SAVED);
+    console.log("✅ Saved lists synced to Firebase");
+  } catch (error) {
+    console.error("❌ Error saving lists to Firebase:", error);
+  }
+}
 
 /* ============================================================
    CHOOSER MODAL (centered)
@@ -1054,7 +1102,7 @@ function rerenderRow(rowId){
 }
 
 /* ============================================================
-   SAVED LIST MODAL LOGIC
+   SAVED LIST MODAL LOGIC (WITH FIREBASE SYNC)
    ============================================================ */
 const savedModal = document.getElementById("savedModal");
 document.getElementById("openSavedListsBtn").onclick = () => {
@@ -1068,7 +1116,14 @@ function closeSaved(){
   document.body.style.overflow = "";
   populateDropdowns();
 }
-document.getElementById("saveSavedLists").onclick = () => { persist(); closeSaved(); };
+
+// Save button now syncs to Firebase
+document.getElementById("saveSavedLists").onclick = async () => {
+  await saveSavedListsToFirebase();
+  persist();
+  closeSaved();
+};
+
 document.getElementById("lotNameAdd").onclick = () => addSaved("lotNames", "lotNameInput");
 document.getElementById("shapeAdd").onclick = () => addSaved("shapes", "shapeInput");
 document.getElementById("sizeAdd").onclick = () => addSaved("sizes", "sizeInput");
@@ -1115,11 +1170,12 @@ document.getElementById("clearRowsBtn").onclick = () => {
   renderTables();
 };
 
-document.getElementById("clearAllBtn").onclick = () => {
-  if (!confirm("Delete ALL rows and saved lists?")) return;
+document.getElementById("clearAllBtn").onclick = async () => {
+  if (!confirm("Delete ALL rows and saved lists (both local and Firebase)?")) return;
   ROWS = [];
   SAVED = { lotNames: [], shapes: [], sizes: [] };
   persist();
+  await saveSavedListsToFirebase();
   populateDropdowns();
   renderTables();
 };
@@ -1131,51 +1187,6 @@ function persist() {
   write(LS.rows, ROWS);
   write(LS.saved, SAVED);
 }
-
-/* ============================================================
-   BOOT
-   ============================================================ */
-function migrateRowsIfNeeded(){
-  let changed = false;
-  ROWS.forEach(r=>{
-    if (r.shape !== undefined && !Array.isArray(r.shape)) {
-      r.shape = normalizeMulti(r.shape);
-      changed = true;
-    }
-    if (r.size !== undefined && !Array.isArray(r.size)) {
-      r.size = normalizeMulti(r.size);
-      changed = true;
-    }
-    if (typeof r.txId === "undefined") {
-      r.txId = "";
-      changed = true;
-    }
-  });
-  if (changed) persist();
-}
-function boot() {
-  migrateRowsIfNeeded();
-  populateDropdowns();
-  renderTables();
-  setMode(MODE);
-}
-boot();
-
-/* ============================================================
-   FIREBASE CONFIG
-   ============================================================ */
-const firebaseConfig = {
-  apiKey: "AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
-  authDomain: "ajmzinventory.firebaseapp.com",
-  projectId: "ajmzinventory",
-  storageBucket: "ajmzinventory.firebasestorage.app",
-  messagingSenderId: "1069845316242",
-  appId: "1:1069845316242:web:c55be9de3724734f88dc4b",
-  databaseURL: "https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app/"
-};
-
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.database(app);
 
 /* ============================================================
    TX COUNTER GENERATOR  (ADD-000001, ADD-000002, ...)
@@ -1245,7 +1256,41 @@ document.getElementById("submitToFirebase").onclick = async () => {
     alert("❌ Failed to submit data. Check console for details.");
   }
 };
+
+/* ============================================================
+   BOOT - WITH FIREBASE LOAD
+   ============================================================ */
+function migrateRowsIfNeeded(){
+  let changed = false;
+  ROWS.forEach(r=>{
+    if (r.shape !== undefined && !Array.isArray(r.shape)) {
+      r.shape = normalizeMulti(r.shape);
+      changed = true;
+    }
+    if (r.size !== undefined && !Array.isArray(r.size)) {
+      r.size = normalizeMulti(r.size);
+      changed = true;
+    }
+    if (typeof r.txId === "undefined") {
+      r.txId = "";
+      changed = true;
+    }
+  });
+  if (changed) persist();
+}
+
+async function boot() {
+  migrateRowsIfNeeded();
+  
+  // Load saved lists from Firebase on startup
+  await loadSavedListsFromFirebase();
+  
+  populateDropdowns();
+  renderTables();
+  setMode(MODE);
+}
+
+boot();
 </script>
 </body>
 </html>
-
