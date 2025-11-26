@@ -4,772 +4,770 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>ADDED – AJMZ & CALIBRATE</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-
 <!-- Firebase compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
 :root{
-  --bg:#F5F5F0;
-  --card:#ffffff;
-  --accent-2:#C2A68C;
-  --accent:#5D866C;
-  --accent-soft:#eef5f0;
-  --ink:#2f3b33;
-  --ink-soft:#5b6a5f;
-  --line:#d9cbb1;
-  --line-strong:#c5b28f;
-  --shadow:rgba(93,134,108,.18);
-  --muted:#f9f7f1;
-  --danger:#c75252;
-  --info:#4A70A9;
+--bg:#F5F5F0;
+--card:#ffffff;
+--accent-2:#C2A68C;
+--accent:#5D866C;
+--accent-soft:#eef5f0;
+--ink:#2f3b33;
+--ink-soft:#5b6a5f;
+--line:#d9cbb1;
+--line-strong:#c5b28f;
+--shadow:rgba(93,134,108,.18);
+--muted:#f9f7f1;
+--danger:#c75252;
+--info:#4A70A9;
 }
-
 /* Reset + base */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
-  font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-  display:flex;
-  height:100vh;
-  overflow:hidden;
+font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+background:var(--bg);
+color:var(--ink);
+display:flex;
+height:100vh;
+overflow:hidden;
 }
-
 /* Left fixed nav */
 .nav-vertical{
-  width:60px;
-  background:#fff;
-  border-right:3px solid var(--accent-2);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:20px;
-  padding:14px 0;
-  box-shadow:6px 0 20px var(--shadow);
-  position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
-  z-index:2000;
+width:60px;
+background:#fff;
+border-right:3px solid var(--accent-2);
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:20px;
+padding:14px 0;
+box-shadow:6px 0 20px var(--shadow);
+position:fixed;
+left:0;
+top:0;
+bottom:0;
+z-index:2000;
 }
 .nav-item{
-  width:44px;
-  height:44px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:22px;
-  text-decoration:none;
-  color:var(--ink);
-  background:#fff;
-  border:1px solid var(--line);
-  cursor:pointer;
-  font-weight:600;
-  transition:.15s;
-  user-select:none;
+width:44px;
+height:44px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:22px;
+text-decoration:none;
+color:var(--ink);
+background:#fff;
+border:1px solid var(--line);
+cursor:pointer;
+font-weight:600;
+transition:.15s;
+user-select:none;
 }
 .nav-item:hover{background:#faf8f0}
 .nav-item.active{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent;
+background:var(--accent);
+color:#fff;
+border-color:transparent;
 }
-
 /* Workspace */
 .workspace{
-  flex:1;
-  margin-left:60px;
-  height:100vh;
-  padding:18px 18px 90px;
-  overflow:auto;
+flex:1;
+margin-left:60px;
+height:100vh;
+padding:18px 18px 90px;
+overflow:auto;
 }
-
 /* Top panel */
 .panel{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:16px;
-  box-shadow:0 8px 22px var(--shadow);
-  padding:12px 14px;
-  display:flex;
-  align-items:center;
-  gap:10px;
+background:#fff;
+border:1px solid var(--line);
+border-radius:16px;
+box-shadow:0 8px 22px var(--shadow);
+padding:12px 14px;
+display:flex;
+align-items:center;
+gap:10px;
 }
 .panel-title{
-  font-weight:800;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-  font-size:12px;
-  color:var(--ink-soft);
+font-weight:800;
+letter-spacing:.04em;
+text-transform:uppercase;
+font-size:12px;
+color:var(--ink-soft);
 }
 .panel-main{
-  font-weight:600;
-  font-size:15px;
+font-weight:600;
+font-size:15px;
 }
 .badge{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  border:1px solid var(--line);
-  border-radius:999px;
-  padding:4px 8px;
-  background:#fff;
-  font-size:11px;
-  color:var(--ink-soft);
+display:inline-flex;
+align-items:center;
+gap:6px;
+border:1px solid var(--line);
+border-radius:999px;
+padding:4px 8px;
+background:#fff;
+font-size:11px;
+color:var(--ink-soft);
 }
 .badge-dot{
-  width:8px;
-  height:8px;
-  border-radius:999px;
-  background:var(--accent);
+width:8px;
+height:8px;
+border-radius:999px;
+background:var(--accent);
 }
 .spacer{flex:1}
 .button{
-  height:32px;
-  border-radius:9px;
-  border:1px solid var(--line);
-  background:#fff;
-  padding:0 12px;
-  font-size:12px;
-  color:var(--ink);
-  outline:none;
-  font-weight:600;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  transition:.15s border-color,.15s background;
+height:32px;
+border-radius:9px;
+border:1px solid var(--line);
+background:#fff;
+padding:0 12px;
+font-size:12px;
+color:var(--ink);
+outline:none;
+font-weight:600;
+cursor:pointer;
+display:inline-flex;
+align-items:center;
+gap:6px;
+transition:.15s border-color,.15s background;
 }
 .button:hover{background:#faf8f0}
 .button.soft{background:var(--muted);}
 .button.danger{
-  border-color:var(--danger);
-  color:var(--danger);
+border-color:var(--danger);
+color:var(--danger);
 }
 .button.icon-only{
-  width:32px;
-  justify-content:center;
-  padding:0;
+width:32px;
+justify-content:center;
+padding:0;
 }
-
 /* Record tabs */
 .record-tabs{
-  margin-top:14px;
-  display:flex;
-  align-items:center;
-  gap:8px;
+margin-top:14px;
+display:flex;
+align-items:center;
+gap:8px;
 }
 .rtab{
-  padding:8px 14px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:13px;
-  font-weight:600;
-  color:var(--ink-soft);
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
+padding:8px 14px;
+border-radius:999px;
+border:1px solid var(--line);
+background:#fff;
+font-size:13px;
+font-weight:600;
+color:var(--ink-soft);
+cursor:pointer;
+display:inline-flex;
+align-items:center;
+gap:6px;
 }
 .rtab span.icon{font-size:16px}
 .rtab.active{
-  background:var(--accent);
-  color:#fff;
-  border-color:transparent;
+background:var(--accent);
+color:#fff;
+border-color:transparent;
 }
-
 /* Card wrapper */
 .card{
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:0 10px 26px var(--shadow);
-  margin-top:14px;
-  padding:12px 14px 16px;
+background:var(--card);
+border:1px solid var(--line);
+border-radius:18px;
+box-shadow:0 10px 26px var(--shadow);
+margin-top:14px;
+padding:12px 14px 16px;
 }
-
 /* Record section */
 .record-section{margin-top:10px;}
-
 /* Toolbar row */
 .toolbar-row{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  align-items:center;
-  margin-bottom:10px;
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+align-items:center;
+margin-bottom:10px;
 }
 .search-box{
-  min-width:220px;
-  flex:1;
-  max-width:380px;
-  display:flex;
-  align-items:center;
-  gap:6px;
-  background:#faf8f4;
-  border-radius:999px;
-  border:1px solid var(--line);
-  padding:4px 10px;
+min-width:220px;
+flex:1;
+max-width:380px;
+display:flex;
+align-items:center;
+gap:6px;
+background:#faf8f4;
+border-radius:999px;
+border:1px solid var(--line);
+padding:4px 10px;
 }
 .search-box input{
-  border:none;
-  outline:none;
-  background:transparent;
-  font-size:13px;
-  width:100%;
-  color:var(--ink);
+border:none;
+outline:none;
+background:transparent;
+font-size:13px;
+width:100%;
+color:var(--ink);
 }
 .search-icon{font-size:14px;opacity:.7;}
 .metric-chip{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  padding:3px 9px;
-  background:#fff;
-  font-size:11px;
-  color:var(--ink-soft);
+display:inline-flex;
+align-items:center;
+gap:6px;
+border-radius:999px;
+border:1px solid var(--line);
+padding:3px 9px;
+background:#fff;
+font-size:11px;
+color:var(--ink-soft);
 }
 .metric-value{
-  font-weight:700;
-  color:var(--ink);
+font-weight:700;
+color:var(--ink);
 }
-
 /* Table shell + filters + pagination */
 .table-shell{
-  margin-top:8px;
-  border:1px solid var(--line);
-  border-radius:14px;
-  overflow:hidden;
-  background:#fff;
+margin-top:8px;
+border:1px solid var(--line);
+border-radius:14px;
+overflow:hidden;
+background:#fff;
 }
 .table-scroll{
-  max-height:60vh;
-  overflow:auto;
+max-height:60vh;
+overflow:auto;
 }
 .table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:0;
-  table-layout:fixed;
-  font-size:12px;
+width:100%;
+border-collapse:separate;
+border-spacing:0;
+table-layout:fixed;
+font-size:12px;
 }
 .table thead th{
-  position:sticky;
-  top:0;
-  background:#f3efe6;
-  border-bottom:1px solid var(--line);
-  padding:6px 6px;
-  text-align:left;
-  color:var(--ink-soft);
-  font-weight:700;
-  white-space:normal;
-  word-break:break-word;
-  z-index:1;
+position:sticky;
+top:0;
+background:#f3efe6;
+border-bottom:1px solid var(--line);
+padding:6px 6px;
+text-align:left;
+color:var(--ink-soft);
+font-weight:700;
+white-space:normal;
+word-break:break-word;
+z-index:1;
 }
 .table thead tr.filter-row th{
-  top:32px;
-  background:#f7f3ea;
-  border-bottom:1px solid var(--line);
-  z-index:1;
+top:32px;
+background:#f7f3ea;
+border-bottom:1px solid var(--line);
+z-index:1;
 }
 .filter-input{
-  width:100%;
-  border-radius:7px;
-  border:1px solid var(--line);
-  padding:2px 6px;
-  font-size:11px;
-  outline:none;
-  background:#fff;
+width:100%;
+border-radius:7px;
+border:1px solid var(--line);
+padding:2px 6px;
+font-size:11px;
+outline:none;
+background:#fff;
 }
 .filter-input:focus{
-  border-color:var(--accent);
-  box-shadow:0 0 0 1px rgba(93,134,108,.2);
+border-color:var(--accent);
+box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
 .table tbody tr:nth-child(even){
-  background:#faf8f4;
+background:#faf8f4;
 }
 .table tbody td{
-  border-bottom:1px solid var(--line);
-  padding:4px 6px;
-  vertical-align:top;
-  white-space:normal;
-  word-break:break-word;
+border-bottom:1px solid var(--line);
+padding:4px 6px;
+vertical-align:top;
+white-space:normal;
+word-break:break-word;
 }
 .cell{
-  min-height:24px;
-  border-radius:7px;
-  border:1px solid transparent;
-  padding:3px 4px;
+min-height:24px;
+border-radius:7px;
+border:1px solid transparent;
+padding:3px 4px;
 }
 .cell[contenteditable="true"]:focus{
-  outline:none;
-  border-color:var(--accent);
-  background:#f2f7f3;
-  box-shadow:inset 0 0 0 1px rgba(93,134,108,.15);
+outline:none;
+border-color:var(--accent);
+background:#f2f7f3;
+box-shadow:inset 0 0 0 1px rgba(93,134,108,.15);
 }
 .cell.readonly{
-  background:#f4f2ec;
-  color:#888f86;
+background:#f4f2ec;
+color:#888f86;
 }
-.td-actions{white-space:nowrap;}
+.td-actions{whitespace:nowrap;}
 .row-actions{
-  display:flex;
-  align-items:center;
-  gap:4px;
+display:flex;
+align-items:center;
+gap:4px;
 }
-
 /* Batch toggle */
 .batch-toggle{
-  display:inline-flex;
-  align-items:center;
-  gap:4px;
-  font-size:11px;
-  padding:2px 6px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#faf8f4;
-  cursor:pointer;
+display:inline-flex;
+align-items:center;
+gap:4px;
+font-size:11px;
+padding:2px 6px;
+border-radius:999px;
+border:1px solid var(--line);
+background:#faf8f4;
+cursor:pointer;
 }
 .batch-toggle span.count{font-weight:600;}
-
 /* Batch rows */
 .batch-row .cell{
-  background:#fdf9ec;
-  border-color:var(--line);
+background:#fdf9ec;
+border-color:var(--line);
+cursor:pointer;
+transition:background .15s;
 }
-
-/* Pager */
-.pager{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:6px 10px;
-  border-top:1px solid var(--line);
-  background:#faf8f4;
-  font-size:11px;
-  color:var(--ink-soft);
+.batch-row .cell:hover{
+background:#fcf3d8;
 }
-.pager-controls{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.page-btn{
-  min-width:26px;
-  height:24px;
-  border-radius:7px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:11px;
-  cursor:pointer;
-  padding:0 6px;
-}
-.page-btn:hover{background:#f3f0e7}
-.page-btn.disabled{
-  opacity:.4;
-  cursor:default;
-}
-.page-indicator b{
-  font-weight:700;
-  color:var(--ink);
-}
-
 /* Modals */
 .modal-overlay{
-  position:fixed;
-  left:0;top:0;right:0;bottom:0;
-  background:rgba(0,0,0,.25);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:5000;
+position:fixed;
+left:0;top:0;right:0;bottom:0;
+background:rgba(0,0,0,.25);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:5000;
 }
 .modal-panel{
-  background:#fff;
-  border-radius:14px;
-  padding:16px 18px;
-  box-shadow:0 10px 30px rgba(0,0,0,.25);
+background:#fff;
+border-radius:14px;
+padding:16px 18px;
+box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
-
 /* Multi-batch selected table */
 .mb-selected-table{
-  width:100%;
-  border-collapse:collapse;
-  font-size:11px;
+width:100%;
+border-collapse:collapse;
+font-size:11px;
 }
-.mb-selected-table th,
-.mb-selected-table td{
-  border:1px solid var(--line);
-  padding:4px 5px;
-  text-align:left;
+.mb-selected-table th, .mb-selected-table td{
+border:1px solid var(--line);
+padding:4px 5px;
+text-align:left;
 }
 .mb-selected-table thead{
-  background:#f3efe6;
+background:#f3efe6;
 }
-
+/* Edit batch form */
+.edit-batch-form{
+display:grid;
+gap:12px;
+margin-top:12px;
+}
+.form-row{
+display:grid;
+grid-template-columns:120px 1fr;
+gap:8px;
+align-items:center;
+}
+.form-label{
+font-size:12px;
+font-weight:600;
+color:var(--ink-soft);
+}
+.form-input{
+border-radius:7px;
+border:1px solid var(--line);
+padding:6px 10px;
+font-size:13px;
+outline:none;
+background:#fff;
+}
+.form-input:focus{
+border-color:var(--accent);
+box-shadow:0 0 0 2px rgba(93,134,108,.15);
+}
+.form-input:disabled{
+background:#f4f2ec;
+color:#888f86;
+cursor:not-allowed;
+}
+/* Highlight animation */
+@keyframes highlight-row {
+0% { background:#fff8dc; }
+100% { background:inherit; }
+}
+.row-highlight {
+animation:highlight-row 1.5s ease-out;
+}
 /* Responsive */
 @media (max-width:1100px){
-  .workspace{padding:16px}
+.workspace{padding:16px}
 }
 @media (max-width:920px){
-  .workspace{padding:12px}
-  .panel{flex-wrap:wrap;row-gap:8px}
+.workspace{padding:12px}
+.panel{flex-wrap:wrap;row-gap:8px}
 }
 </style>
 </head>
 <body>
-
 <!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
-  <a href="index.html" class="nav-item" title="Add">➕</a>
-  <a href="added.html" class="nav-item active" title="Added">📋</a>
-  <a href="sell.html" class="nav-item" title="Sell">💎</a>
-  <a href="reports.html" class="nav-item" title="Reports">📊</a>
-  <a href="reports2.html" class="nav-item" title="Reports">📊</a>
+<a href="index.html" class="nav-item" title="Add">➕</a>
+<a href="added.html" class="nav-item active" title="Added">📋</a>
+<a href="sell.html" class="nav-item" title="Sell">💎</a>
+<a href="reports.html" class="nav-item" title="Reports">📊</a>
+<a href="reports2.html" class="nav-item" title="Reports">📊</a>
 </div>
 
 <!-- MAIN WORKSPACE -->
 <div class="workspace">
+<div class="panel">
+<div>
+<div class="panel-title">ADDED RECORDS</div>
+<div class="panel-main">AJMZ & Calibrates</div>
+</div>
+<span class="badge">
+<span class="badge-dot"></span>
+<span>Live Data</span>
+</span>
+<div class="spacer"></div>
+<button class="button soft" type="button" id="btnRefresh">🔄 Refresh</button>
+</div>
 
-  <div class="panel">
-    <div>
-      <div class="panel-title">ADDED RECORDS</div>
-      <div class="panel-main">AJMZ & Calibrates</div>
-    </div>
-    <span class="badge">
-      <span class="badge-dot"></span>
-      <span>Live Data</span>
-    </span>
-    <div class="spacer"></div>
-    <button class="button soft" type="button" id="btnRefresh">🔄 Refresh</button>
-  </div>
+<!-- TABS -->
+<div class="record-tabs">
+<button class="rtab active" data-target="sectionAJMZ">
+<span class="icon">💎</span>
+<span>AJMZ Records</span>
+</button>
+<button class="rtab" data-target="sectionCALIB">
+<span class="icon">📏</span>
+<span>Calibrate Records</span>
+</button>
+</div>
 
-  <!-- TABS -->
-  <div class="record-tabs">
-    <button class="rtab active" data-target="sectionAJMZ">
-      <span class="icon">💎</span>
-      <span>AJMZ Records</span>
-    </button>
-    <button class="rtab" data-target="sectionCALIB">
-      <span class="icon">📏</span>
-      <span>Calibrate Records</span>
-    </button>
-  </div>
+<div class="card">
+<!-- AJMZ SECTION -->
+<section class="record-section" id="sectionAJMZ">
+<div class="toolbar-row">
+<div class="search-box">
+<span class="search-icon">🔍</span>
+<input type="text" id="ajmzSearch" placeholder="Search AJMZ records (any field)…"/>
+</div>
+<div class="metric-chip">
+Total rows: <span class="metric-value" id="ajmzTotalRows">0</span>
+</div>
+<div class="metric-chip">
+Total CTS: <span class="metric-value" id="ajmzTotalCTS">0</span>
+</div>
+<div class="metric-chip">
+Total Amount: <span class="metric-value" id="ajmzTotalAmount">0</span>
+</div>
+<div class="spacer"></div>
+<button class="button" id="btnAjmzBatchMulti">📦 Batch Add (Multi)</button>
+</div>
+<div class="table-shell">
+<div class="table-scroll">
+<table class="table" id="tableAJMZ">
+<thead>
+<tr>
+<th style="width:32px;text-align:center;">✔</th>
+<th style="width:120px;">Tx ID</th>
+<th style="width:70px;">Stone</th>
+<th style="width:90px;">Date</th>
+<th style="width:120px;">Party</th>
+<th style="width:120px;">Deet</th>
+<th style="width:80px;">Lot Name</th>
+<th style="width:80px;">Lot Format</th>
+<th style="width:150px;">Description</th>
+<th style="width:150px;">Shape</th>
+<th style="width:80px;">CTS</th>
+<th style="width:80px;">PCS</th>
+<th style="width:120px;">Price</th>
+<th style="width:110px;">Amount</th>
+<th style="width:140px;">Remarks</th>
+<th style="width:250px;">Batches / Actions</th>
+</tr>
+<tr class="filter-row">
+<th></th>
+<th><input class="filter-input" id="ajmzFilter_txId" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_stone" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_date" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_party" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_deet" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_lotName" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_lotFormat" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_desc" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_shape" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_cts" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_pcs" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_price" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_amount" placeholder="Filter…"></th>
+<th><input class="filter-input" id="ajmzFilter_remarks" placeholder="Filter…"></th>
+<th></th>
+</tr>
+</thead>
+<tbody id="tbodyAJMZ"></tbody>
+</table>
+</div>
+</div>
+</section>
 
-  <div class="card">
-
-    <!-- AJMZ SECTION -->
-    <section class="record-section" id="sectionAJMZ">
-      <div class="toolbar-row">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="ajmzSearch" placeholder="Search AJMZ records (any field)…"/>
-        </div>
-        <div class="metric-chip">
-          Total rows: <span class="metric-value" id="ajmzTotalRows">0</span>
-        </div>
-        <div class="metric-chip">
-          Total CTS: <span class="metric-value" id="ajmzTotalCTS">0</span>
-        </div>
-        <div class="metric-chip">
-          Total Amount: <span class="metric-value" id="ajmzTotalAmount">0</span>
-        </div>
-        <div class="spacer"></div>
-        <button class="button" id="btnAjmzBatchMulti">📦 Batch Add (Multi)</button>
-      </div>
-
-      <div class="table-shell">
-        <div class="table-scroll">
-          <table class="table" id="tableAJMZ">
-            <thead>
-              <tr>
-                <th style="width:32px;text-align:center;">✔</th>
-                <th style="width:120px;">Tx ID</th>
-                <th style="width:70px;">Stone</th>
-                <th style="width:90px;">Date</th>
-                <th style="width:120px;">Party</th>
-                <th style="width:120px;">Deet</th>
-                <th style="width:80px;">Lot Name</th>
-                <th style="width:80px;">Lot Format</th>
-                <th style="width:150px;">Description</th>
-                <th style="width:150px;">Shape</th>
-                <th style="width:80px;">CTS</th>
-                <th style="width:80px;">PCS</th>
-                <th style="width:120px;">Price</th>
-                <th style="width:110px;">Amount</th>
-                <th style="width:140px;">Remarks</th>
-                <th style="width:250px;">Batches / Actions</th>
-              </tr>
-              <tr class="filter-row">
-                <th></th>
-                <th><input class="filter-input" id="ajmzFilter_txId" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_stone" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_date" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_party" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_deet" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_lotName" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_lotFormat" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_desc" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_shape" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_cts" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_pcs" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_price" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_amount" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="ajmzFilter_remarks" placeholder="Filter…"></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tbodyAJMZ"></tbody>
-          </table>
-        </div>
-
-        <div class="pager" id="pagerAJMZ">
-          <div class="page-indicator">
-            Showing <b id="ajmzPageFrom">0</b>–<b id="ajmzPageTo">0</b> of <b id="ajmzPageTotal">0</b> rows
-          </div>
-          <div class="pager-controls">
-            <button class="page-btn" id="ajmzPrevPage">&lt;</button>
-            <span class="page-indicator">Page <b id="ajmzPageNumber">1</b></span>
-            <button class="page-btn" id="ajmzNextPage">&gt;</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CALIB SECTION -->
-    <section class="record-section" id="sectionCALIB" style="display:none">
-      <div class="toolbar-row">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" id="calibSearch" placeholder="Search Calibrate records (any field)…"/>
-        </div>
-        <div class="metric-chip">
-          Total rows: <span class="metric-value" id="calibTotalRows">0</span>
-        </div>
-        <div class="metric-chip">
-          Total CTS: <span class="metric-value" id="calibTotalCTS">0</span>
-        </div>
-        <div class="metric-chip">
-          Total Amount: <span class="metric-value" id="calibTotalAmount">0</span>
-        </div>
-        <div class="spacer"></div>
-        <button class="button" id="btnCalibBatchMulti">📦 Batch Add (Multi)</button>
-      </div>
-
-      <div class="table-shell">
-        <div class="table-scroll">
-          <table class="table" id="tableCALIB">
-            <thead>
-              <tr>
-                <th style="width:32px;text-align:center;">✔</th>
-                <th style="width:120px;">Tx ID</th>
-                <th style="width:70px;">Stone</th>
-                <th style="width:90px;">Date</th>
-                <th style="width:120px;">Party</th>
-                <th style="width:120px;">Deet</th>
-                <th style="width:80px;">Lot Name</th>
-                <th style="width:90px;">Grade</th>
-                <th style="width:150px;">Description</th>
-                <th style="width:150px;">Shape</th>
-                <th style="width:150px;">Size</th>
-                <th style="width:80px;">CTS</th>
-                <th style="width:90px;">Price</th>
-                <th style="width:110px;">Amount</th>
-                <th style="width:140px;">Remarks</th>
-                <th style="width:250px;">Batches / Actions</th>
-              </tr>
-              <tr class="filter-row">
-                <th></th>
-                <th><input class="filter-input" id="calibFilter_txId" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_stone" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_date" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_party" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_deet" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_lotName" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_grade" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_desc" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_shape" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_size" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_cts" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_price" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_amount" placeholder="Filter…"></th>
-                <th><input class="filter-input" id="calibFilter_remarks" placeholder="Filter…"></th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="tbodyCALIB"></tbody>
-          </table>
-        </div>
-
-        <div class="pager" id="pagerCALIB">
-          <div class="page-indicator">
-            Showing <b id="calibPageFrom">0</b>–<b id="calibPageTo">0</b> of <b id="calibPageTotal">0</b> rows
-          </div>
-          <div class="pager-controls">
-            <button class="page-btn" id="calibPrevPage">&lt;</button>
-            <span class="page-indicator">Page <b id="calibPageNumber">1</b></span>
-            <button class="page-btn" id="calibNextPage">&gt;</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div> <!-- end .card -->
+<!-- CALIB SECTION -->
+<section class="record-section" id="sectionCALIB" style="display:none">
+<div class="toolbar-row">
+<div class="search-box">
+<span class="search-icon">🔍</span>
+<input type="text" id="calibSearch" placeholder="Search Calibrate records (any field)…"/>
+</div>
+<div class="metric-chip">
+Total rows: <span class="metric-value" id="calibTotalRows">0</span>
+</div>
+<div class="metric-chip">
+Total CTS: <span class="metric-value" id="calibTotalCTS">0</span>
+</div>
+<div class="metric-chip">
+Total Amount: <span class="metric-value" id="calibTotalAmount">0</span>
+</div>
+<div class="spacer"></div>
+<button class="button" id="btnCalibBatchMulti">📦 Batch Add (Multi)</button>
+</div>
+<div class="table-shell">
+<div class="table-scroll">
+<table class="table" id="tableCALIB">
+<thead>
+<tr>
+<th style="width:32px;text-align:center;">✔</th>
+<th style="width:120px;">Tx ID</th>
+<th style="width:70px;">Stone</th>
+<th style="width:90px;">Date</th>
+<th style="width:120px;">Party</th>
+<th style="width:120px;">Deet</th>
+<th style="width:80px;">Lot Name</th>
+<th style="width:90px;">Grade</th>
+<th style="width:150px;">Description</th>
+<th style="width:150px;">Shape</th>
+<th style="width:150px;">Size</th>
+<th style="width:80px;">CTS</th>
+<th style="width:90px;">Price</th>
+<th style="width:110px;">Amount</th>
+<th style="width:140px;">Remarks</th>
+<th style="width:250px;">Batches / Actions</th>
+</tr>
+<tr class="filter-row">
+<th></th>
+<th><input class="filter-input" id="calibFilter_txId" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_stone" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_date" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_party" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_deet" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_lotName" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_grade" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_desc" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_shape" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_size" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_cts" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_price" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_amount" placeholder="Filter…"></th>
+<th><input class="filter-input" id="calibFilter_remarks" placeholder="Filter…"></th>
+<th></th>
+</tr>
+</thead>
+<tbody id="tbodyCALIB"></tbody>
+</table>
+</div>
+</div>
+</section>
+</div> <!-- end .card -->
 </div> <!-- end .workspace -->
+
 <!-- SHAPE / SIZE CHOOSER MODAL -->
 <div id="chooserModal" class="modal-overlay">
-  <div class="modal-panel" style="width:420px;max-width:95%;">
-    <h3 id="chooserTitle" style="margin-bottom:12px;font-size:16px;font-weight:700">Select</h3>
-    <div id="chooserList" style="
-      max-height:260px;overflow:auto;
-      border:1px solid var(--line);border-radius:10px;
-      padding:8px;background:#faf8f4;
-      font-size:13px;
-    "></div>
-    <div style="text-align:right;margin-top:14px;">
-      <button class="button" id="chooserCancel">Cancel</button>
-      <button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="chooserApply">Apply</button>
-    </div>
-  </div>
+<div class="modal-panel" style="width:420px;max-width:95%;">
+<h3 id="chooserTitle" style="margin-bottom:12px;font-size:16px;font-weight:700">Select</h3>
+<div id="chooserList" style="
+max-height:260px;overflow:auto;
+border:1px solid var(--line);border-radius:10px;
+padding:8px;background:#faf8f4;
+font-size:13px;
+"></div>
+<div style="text-align:right;margin-top:14px;">
+<button class="button" id="chooserCancel">Cancel</button>
+<button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="chooserApply">Apply</button>
+</div>
+</div>
 </div>
 
 <!-- SINGLE-ROW BATCH MODAL -->
 <div id="batchModal" class="modal-overlay" style="z-index:5100;">
-  <div class="modal-panel" style="width:820px;max-width:98%;max-height:90%;overflow:auto;">
-    <h3 style="margin-bottom:12px;font-size:17px;font-weight:700">
-      Batch Add – <span id="batchModalTitle"></span>
-    </h3>
-
-    <div id="batchExisting" style="
-      margin-bottom:14px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px;
-      background:#faf8f4;
-      display:none;
-    "></div>
-
-    <div id="batchNew" style="
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:10px;
-      background:#fff;
-    ">
-      <table style="width:100%;border-collapse:separate;border-spacing:0 6px;font-size:12px;">
-        <thead>
-          <tr>
-            <th>CTS</th>
-            <th>PCS</th>
-            <th>Price</th>
-            <th>Amount</th>
-            <th>Remarks</th>
-            <th style="width:40px;"></th>
-          </tr>
-        </thead>
-        <tbody id="batchNewBody"></tbody>
-      </table>
-
-      <button class="button soft" id="addNewBatchRow">Add Batch Line</button>
-    </div>
-
-    <div style="text-align:right;margin-top:16px;">
-      <button class="button" id="batchCancel">Cancel</button>
-      <button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="batchSave">Save Batches</button>
-    </div>
-  </div>
+<div class="modal-panel" style="width:820px;max-width:98%;max-height:90%;overflow:auto;">
+<h3 style="margin-bottom:12px;font-size:17px;font-weight:700">
+Batch Add – <span id="batchModalTitle"></span>
+</h3>
+<div id="batchExisting" style="
+margin-bottom:14px;
+border:1px solid var(--line);
+border-radius:12px;
+padding:10px;
+background:#faf8f4;
+display:none;
+"></div>
+<div id="batchNew" style="
+border:1px solid var(--line);
+border-radius:12px;
+padding:10px;
+background:#fff;
+">
+<table style="width:100%;border-collapse:separate;border-spacing:0 6px;font-size:12px;">
+<thead>
+<tr>
+<th>CTS</th>
+<th>PCS</th>
+<th>Price</th>
+<th>Amount</th>
+<th>Remarks</th>
+<th style="width:40px;"></th>
+</tr>
+</thead>
+<tbody id="batchNewBody"></tbody>
+</table>
+<button class="button soft" id="addNewBatchRow">Add Batch Line</button>
+</div>
+<div style="text-align:right;margin-top:16px;">
+<button class="button" id="batchCancel">Cancel</button>
+<button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="batchSave">Save Batches</button>
+</div>
+</div>
 </div>
 
 <!-- MULTI-ROW BATCH MODAL -->
 <div id="multiBatchModal" class="modal-overlay" style="z-index:5200;">
-  <div class="modal-panel" style="width:900px;max-width:98%;max-height:90%;overflow:auto;">
-    <h3 style="margin-bottom:10px;font-size:17px;font-weight:700">
-      Batch Add – <span id="multiBatchCount">0</span> Selected Rows
-    </h3>
+<div class="modal-panel" style="width:900px;max-width:98%;max-height:90%;overflow:auto;">
+<h3 style="margin-bottom:10px;font-size:17px;font-weight:700">
+Batch Add – <span id="multiBatchCount">0</span> Selected Rows
+</h3>
+<div id="multiBatchSelectedWrapper" style="
+margin-bottom:14px;
+border:1px solid var(--line);
+border-radius:12px;
+padding:8px;
+background:#faf8f4;
+"></div>
+<div style="text-align:right;margin-top:16px;">
+<button class="button" id="multiBatchCancel">Cancel</button>
+<button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="multiBatchSave">
+Save Batches to Selected
+</button>
+</div>
+</div>
+</div>
 
-    <div id="multiBatchSelectedWrapper" style="
-      margin-bottom:14px;
-      border:1px solid var(--line);
-      border-radius:12px;
-      padding:8px;
-      background:#faf8f4;
-    "></div>
-
-    <div style="text-align:right;margin-top:16px;">
-      <button class="button" id="multiBatchCancel">Cancel</button>
-      <button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="multiBatchSave">
-        Save Batches to Selected
-      </button>
-    </div>
-  </div>
+<!-- EDIT BATCH MODAL -->
+<div id="editBatchModal" class="modal-overlay" style="z-index:5300;">
+<div class="modal-panel" style="width:520px;max-width:95%;">
+<h3 style="margin-bottom:14px;font-size:17px;font-weight:700">Edit Batch</h3>
+<div class="edit-batch-form">
+<div class="form-row">
+<label class="form-label">Batch Date:</label>
+<input type="text" class="form-input" id="editBatchDate" />
+</div>
+<div class="form-row">
+<label class="form-label">CTS:</label>
+<input type="number" step="0.0001" class="form-input" id="editBatchCTS" />
+</div>
+<div class="form-row" id="editBatchPCSRow">
+<label class="form-label">PCS:</label>
+<input type="number" step="1" class="form-input" id="editBatchPCS" />
+</div>
+<div class="form-row">
+<label class="form-label">Price:</label>
+<input type="number" step="0.0001" class="form-input" id="editBatchPrice" />
+</div>
+<div class="form-row">
+<label class="form-label">Amount:</label>
+<input type="text" class="form-input" id="editBatchAmount" disabled />
+</div>
+<div class="form-row">
+<label class="form-label">Remarks:</label>
+<input type="text" class="form-input" id="editBatchRemarks" />
+</div>
+</div>
+<div style="text-align:right;margin-top:18px;">
+<button class="button" id="editBatchCancel">Cancel</button>
+<button class="button" style="background:var(--accent);color:#fff;border-color:transparent" id="editBatchSave">Save Changes</button>
+</div>
+</div>
 </div>
 
 <script>
 /* ============================================================
-   UTILITIES
-   ============================================================ */
+UTILITIES
+============================================================ */
 function esc(s){
-  if(s===null||s===undefined)return "";
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+if(s===null||s===undefined)return "";
+return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
+
 function fmtNumber(n){
-  const num = Number(n || 0);
-  return num.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+const num = Number(n || 0);
+return num.toLocaleString("en-US", {
+minimumFractionDigits: 2,
+maximumFractionDigits: 2
+});
 }
 
 function parseMulti(str){
-  if(!str)return [];
-  if(Array.isArray(str))return str;
-  return String(str).split(",").map(s=>s.trim()).filter(Boolean);
+if(!str)return [];
+if(Array.isArray(str))return str;
+return String(str).split(",").map(s=>s.trim()).filter(Boolean);
 }
+
 function multiDisplay(arr){
-  if(!arr)return "";
-  if(Array.isArray(arr))return arr.join(", ");
-  return arr;
+if(!arr)return "";
+if(Array.isArray(arr))return arr.join(", ");
+return arr;
 }
+
 function nowStamp(){
-  const dt=new Date();
-  const y=dt.getFullYear();
-  const m=String(dt.getMonth()+1).padStart(2,"0");
-  const d=String(dt.getDate()).padStart(2,"0");
-  const hh=String(dt.getHours()).padStart(2,"0");
-  const mm=String(dt.getMinutes()).padStart(2,"0");
-  return `${y}-${m}-${d} ${hh}:${mm}`;
+const dt=new Date();
+const y=dt.getFullYear();
+const m=String(dt.getMonth()+1).padStart(2,"0");
+const d=String(dt.getDate()).padStart(2,"0");
+const hh=String(dt.getHours()).padStart(2,"0");
+const mm=String(dt.getMinutes()).padStart(2,"0");
+return `${y}-${m}-${d} ${hh}:${mm}`;
 }
 
 /* ============================================================
-   FIREBASE INIT
-   ============================================================ */
+FIREBASE INIT
+============================================================ */
 const firebaseConfig={
-  apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
-  authDomain:"ajmzinventory.firebaseapp.com",
-  databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId:"ajmzinventory",
-  storageBucket:"ajmzinventory.appspot.com",
-  messagingSenderId:"729766579875",
-  appId:"1:729766579875:web:0dfbbaf0f5f87c3b38d4c4"
+apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
+authDomain:"ajmzinventory.firebaseapp.com",
+databaseURL:"https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
+projectId:"ajmzinventory",
+storageBucket:"ajmzinventory.appspot.com",
+messagingSenderId:"729766579875",
+appId:"1:729766579875:web:0dfbbaf0f5f87c3b38d4c4"
 };
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
 /* ============================================================
-   GLOBAL DATA
-   ============================================================ */
+GLOBAL DATA
+============================================================ */
 let AJMZ_ALL=[], CALIB_ALL=[], BATCHES={};
 let AJMZ_FILTERED=[], CALIB_FILTERED=[];
-let ajmzPage=1, calibPage=1;
-const ROWS_PER_PAGE=200;
 
 let chooserModalEl, chooserTitleEl, chooserListEl, chooserCancelBtn, chooserApplyBtn;
 let batchModalEl, batchModalTitleEl, batchExistingEl, batchNewBodyEl, addNewBatchRowBtn, batchCancelBtn, batchSaveBtn;
@@ -779,1156 +777,1224 @@ let multiBatchModalEl, multiBatchSelectedWrapper, multiBatchCancelBtn, multiBatc
 let multiBatchParentType=null;
 let multiBatchParentKeys=[];
 
-/* ============================================================
-   RENDERERS – MAIN ROWS
-   ============================================================ */
-function renderAJMZRow(row){
-  const key=row.key||"";
-  const txId=esc(row.txId||"");
-  const date=esc(row.date||"");
-  const party=esc(row.party||"");
-  const deet=esc(row.deet||"");
-  const lotName=esc(row.lotName||"");
-  const lotFormat=esc(row.lotFormat||"");
-  const desc=esc(row.description||"");
-  const shape=esc(multiDisplay(row.shape));
-  const cts=fmtNumber(row.cts);
-  const pcs=fmtNumber(row.pcs);
-  const price=fmtNumber(row.price);
-  const amount=fmtNumber(row.amount);
-  const remarks=esc(row.remarks||"");
-  const batchCount=row.__batches?row.__batches.length:0;
+let editBatchModalEl, editBatchDateInput, editBatchCTSInput, editBatchPCSInput, editBatchPriceInput;
+let editBatchAmountInput, editBatchRemarksInput, editBatchCancelBtn, editBatchSaveBtn, editBatchPCSRow;
+let editBatchCurrentParentKey=null, editBatchCurrentBatchKey=null, editBatchCurrentType=null;
 
-  return `
-  <tr data-key="${key}" class="ajmz-main">
-    <td style="text-align:center;">
-      <input type="checkbox" class="row-select" data-key="${key}" data-type="AJMZ">
-    </td>
-    <td><div class="cell readonly">${txId}</div></td>
-    <td><div class="cell readonly">AJMZ</div></td>
-    <td><div class="cell" contenteditable="true" data-field="date">${date}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="party">${party}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="deet">${deet}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="lotName">${lotName}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="lotFormat">${lotFormat}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="description">${desc}</div></td>
-    <td><div class="cell ajmz-shape-cell" contenteditable="true" data-field="shape">${shape}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="cts">${cts}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="pcs">${pcs}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="price">${price}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="amount">${amount}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="remarks">${remarks}</div></td>
-    <td class="td-actions">
-      <div class="row-actions">
-        <div class="batch-toggle" data-key="${key}" data-type="AJMZ" data-open="0">
-          ▶ Batches (<span class="count">${batchCount}</span>)
-        </div>
-        <button class="button icon-only" data-action="addRow" data-key="${key}" title="Add Row under same TX">➕</button>
-        <button class="button icon-only" data-action="batch" data-key="${key}" title="Batch Add">📦</button>
-        <button class="button icon-only danger" data-action="delete" data-key="${key}" title="Delete Record">🗑</button>
-      </div>
-    </td>
-  </tr>`;
+/* ============================================================
+RENDERERS – MAIN ROWS
+============================================================ */
+function renderAJMZRow(row){
+const key=row.key||"";
+const txId=esc(row.txId||"");
+const date=esc(row.date||"");
+const party=esc(row.party||"");
+const deet=esc(row.deet||"");
+const lotName=esc(row.lotName||"");
+const lotFormat=esc(row.lotFormat||"");
+const desc=esc(row.description||"");
+const shape=esc(multiDisplay(row.shape));
+const cts=fmtNumber(row.cts);
+const pcs=fmtNumber(row.pcs);
+const price=fmtNumber(row.price);
+const amount=fmtNumber(row.amount);
+const remarks=esc(row.remarks||"");
+const batchCount=row.__batches?row.__batches.length:0;
+
+return `<tr data-key="${key}" class="ajmz-main">
+<td style="text-align:center;">
+<input type="checkbox" class="row-select" data-key="${key}" data-type="AJMZ">
+</td>
+<td><div class="cell readonly">${txId}</div></td>
+<td><div class="cell readonly">AJMZ</div></td>
+<td><div class="cell" contenteditable="true" data-field="date">${date}</div></td>
+<td><div class="cell" contenteditable="true" data-field="party">${party}</div></td>
+<td><div class="cell" contenteditable="true" data-field="deet">${deet}</div></td>
+<td><div class="cell" contenteditable="true" data-field="lotName">${lotName}</div></td>
+<td><div class="cell" contenteditable="true" data-field="lotFormat">${lotFormat}</div></td>
+<td><div class="cell" contenteditable="true" data-field="description">${desc}</div></td>
+<td><div class="cell ajmz-shape-cell" contenteditable="true" data-field="shape">${shape}</div></td>
+<td><div class="cell" contenteditable="true" data-field="cts">${cts}</div></td>
+<td><div class="cell" contenteditable="true" data-field="pcs">${pcs}</div></td>
+<td><div class="cell" contenteditable="true" data-field="price">${price}</div></td>
+<td><div class="cell" contenteditable="true" data-field="amount">${amount}</div></td>
+<td><div class="cell" contenteditable="true" data-field="remarks">${remarks}</div></td>
+<td class="td-actions">
+<div class="row-actions">
+<div class="batch-toggle" data-key="${key}" data-type="AJMZ" data-open="0">
+▶ Batches (<span class="count">${batchCount}</span>)
+</div>
+<button class="button icon-only" data-action="addRow" data-key="${key}" title="Add Row under same TX">➕</button>
+<button class="button icon-only" data-action="batch" data-key="${key}" title="Batch Add">📦</button>
+<button class="button icon-only danger" data-action="delete" data-key="${key}" title="Delete Record">🗑</button>
+</div>
+</td>
+</tr>`;
 }
 
 function renderCALIBRow(row){
-  const key=row.key||"";
-  const txId=esc(row.txId||"");
-  const date=esc(row.date||"");
-  const party=esc(row.party||"");
-  const deet=esc(row.deet||"");
-  const lotName=esc(row.lotName||"");
-  const grade=esc(row.grade||"");
-  const desc=esc(row.description||"");
-  const shape=esc(multiDisplay(row.shape));
-  const size=esc(multiDisplay(row.size));
-  const cts=fmtNumber(row.cts);
-  const price=fmtNumber(row.price);
-  const amount=fmtNumber(row.amount);
-  const remarks=esc(row.remarks||"");
-  const batchCount=row.__batches?row.__batches.length:0;
+const key=row.key||"";
+const txId=esc(row.txId||"");
+const date=esc(row.date||"");
+const party=esc(row.party||"");
+const deet=esc(row.deet||"");
+const lotName=esc(row.lotName||"");
+const grade=esc(row.grade||"");
+const desc=esc(row.description||"");
+const shape=esc(multiDisplay(row.shape));
+const size=esc(multiDisplay(row.size));
+const cts=fmtNumber(row.cts);
+const price=fmtNumber(row.price);
+const amount=fmtNumber(row.amount);
+const remarks=esc(row.remarks||"");
+const batchCount=row.__batches?row.__batches.length:0;
 
-  return `
-  <tr data-key="${key}" class="calib-main">
-    <td style="text-align:center;">
-      <input type="checkbox" class="row-select" data-key="${key}" data-type="CALIB">
-    </td>
-    <td><div class="cell readonly">${txId}</div></td>
-    <td><div class="cell readonly">CALIB</div></td>
-    <td><div class="cell" contenteditable="true" data-field="date">${date}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="party">${party}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="deet">${deet}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="lotName">${lotName}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="grade">${grade}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="description">${desc}</div></td>
-    <td><div class="cell calib-shape-cell" contenteditable="true" data-field="shape">${shape}</div></td>
-    <td><div class="cell calib-size-cell" contenteditable="true" data-field="size">${size}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="cts">${cts}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="price">${price}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="amount">${amount}</div></td>
-    <td><div class="cell" contenteditable="true" data-field="remarks">${remarks}</div></td>
-    <td class="td-actions">
-      <div class="row-actions">
-        <div class="batch-toggle" data-key="${key}" data-type="CALIB" data-open="0">
-          ▶ Batches (<span class="count">${batchCount}</span>)
-        </div>
-        <button class="button icon-only" data-action="addRow" data-key="${key}" title="Add Row under same TX">➕</button>
-        <button class="button icon-only" data-action="batch" data-key="${key}" title="Batch Add">📦</button>
-        <button class="button icon-only danger" data-action="delete" data-key="${key}" title="Delete Record">🗑</button>
-      </div>
-    </td>
-  </tr>`;
+return `<tr data-key="${key}" class="calib-main">
+<td style="text-align:center;">
+<input type="checkbox" class="row-select" data-key="${key}" data-type="CALIB">
+</td>
+<td><div class="cell readonly">${txId}</div></td>
+<td><div class="cell readonly">CALIB</div></td>
+<td><div class="cell" contenteditable="true" data-field="date">${date}</div></td>
+<td><div class="cell" contenteditable="true" data-field="party">${party}</div></td>
+<td><div class="cell" contenteditable="true" data-field="deet">${deet}</div></td>
+<td><div class="cell" contenteditable="true" data-field="lotName">${lotName}</div></td>
+<td><div class="cell" contenteditable="true" data-field="grade">${grade}</div></td>
+<td><div class="cell" contenteditable="true" data-field="description">${desc}</div></td>
+<td><div class="cell calib-shape-cell" contenteditable="true" data-field="shape">${shape}</div></td>
+<td><div class="cell calib-size-cell" contenteditable="true" data-field="size">${size}</div></td>
+<td><div class="cell" contenteditable="true" data-field="cts">${cts}</div></td>
+<td><div class="cell" contenteditable="true" data-field="price">${price}</div></td>
+<td><div class="cell" contenteditable="true" data-field="amount">${amount}</div></td>
+<td><div class="cell" contenteditable="true" data-field="remarks">${remarks}</div></td>
+<td class="td-actions">
+<div class="row-actions">
+<div class="batch-toggle" data-key="${key}" data-type="CALIB" data-open="0">
+▶ Batches (<span class="count">${batchCount}</span>)
+</div>
+<button class="button icon-only" data-action="addRow" data-key="${key}" title="Add Row under same TX">➕</button>
+<button class="button icon-only" data-action="batch" data-key="${key}" title="Batch Add">📦</button>
+<button class="button icon-only danger" data-action="delete" data-key="${key}" title="Delete Record">🗑</button>
+</div>
+</td>
+</tr>`;
 }
 
 function renderBatchRow(parentKey,batch){
-  const createdAt=esc(batch.createdAt||"");
-  const cts=fmtNumber(batch.cts);
-  const pcs=fmtNumber(batch.pcs);
-  const price=fmtNumber(batch.price);
-  const amount=fmtNumber(batch.amount);
-  const remarks=esc(batch.remarks||"");
+const createdAt=esc(batch.createdAt||"");
+const cts=fmtNumber(batch.cts);
+const pcs=fmtNumber(batch.pcs);
+const price=fmtNumber(batch.price);
+const amount=fmtNumber(batch.amount);
+const remarks=esc(batch.remarks||"");
 
-  return `
-  <tr class="batch-row" data-parent-key="${parentKey}" data-batch-key="${batch.key}">
-    <td colspan="15">
-      <div class="cell readonly">
-        <b>Batch</b> – Date: ${createdAt||"–"}
-        • CTS: ${cts||0}
-        ${pcs?("• PCS: "+pcs):""}
-        • Price: ${price||0}
-        • Amount: ${amount||0}
-        ${remarks?("• "+remarks):""}
-      </div>
-    </td>
-    <td class="td-actions">
-      <button class="button icon-only danger" data-action="deleteBatch" data-batch-key="${batch.key}" data-parent-key="${parentKey}" title="Delete Batch">🗑</button>
-    </td>
-  </tr>`;
+return `<tr class="batch-row" data-parent-key="${parentKey}" data-batch-key="${batch.key}">
+<td colspan="15">
+<div class="cell">
+<b>Batch</b> – Date: ${createdAt||"–"} • CTS: ${cts||0} ${pcs?("• PCS: "+pcs):""} • Price: ${price||0} • Amount: ${amount||0} ${remarks?("• "+remarks):""}
+</div>
+</td>
+<td class="td-actions">
+<button class="button icon-only danger" data-action="deleteBatch" data-batch-key="${batch.key}" data-parent-key="${parentKey}" title="Delete Batch">🗑</button>
+</td>
+</tr>`;
 }
+
 /* ============================================================
-   DATA LOADING
-   ============================================================ */
+DATA LOADING
+============================================================ */
 async function loadAllData(){
-  const [ajSnap, calSnap, batchSnap]=await Promise.all([
-    db.ref("ajmzRecords").once("value"),
-    db.ref("calibRecords").once("value"),
-    db.ref("batches/add").once("value")
-  ]);
+const [ajSnap, calSnap, batchSnap]=await Promise.all([
+db.ref("ajmzRecords").once("value"),
+db.ref("calibRecords").once("value"),
+db.ref("batches/add").once("value")
+]);
 
-  AJMZ_ALL=[]; CALIB_ALL=[]; BATCHES={};
+AJMZ_ALL=[];
+CALIB_ALL=[];
+BATCHES={};
 
-  if(batchSnap.exists()){
-    batchSnap.forEach(p=>{
-      const parentKey=p.key;
-      BATCHES[parentKey]=[];
-      p.forEach(b=>{
-        const obj=b.val();
-        obj.key=b.key;
-        BATCHES[parentKey].push(obj);
-      });
-    });
-  }
+if(batchSnap.exists()){
+batchSnap.forEach(p=>{
+const parentKey=p.key;
+BATCHES[parentKey]=[];
+p.forEach(b=>{
+const obj=b.val();
+obj.key=b.key;
+BATCHES[parentKey].push(obj);
+});
+});
+}
 
-  if(ajSnap.exists()){
-    ajSnap.forEach(r=>{
-      const obj=r.val();
-      obj.key=r.key;
-      obj.__batches=BATCHES[obj.key]||[];
-      obj.shape=parseMulti(obj.shape);
-      obj.cts=Number(obj.cts||0);
-      obj.pcs=Number(obj.pcs||0);
-      obj.price=Number(obj.price||0);
-      obj.amount=Number(obj.amount||(obj.cts*obj.price));
-      AJMZ_ALL.push(obj);
-    });
-  }
-  if(calSnap.exists()){
-    calSnap.forEach(r=>{
-      const obj=r.val();
-      obj.key=r.key;
-      obj.__batches=BATCHES[obj.key]||[];
-      obj.shape=parseMulti(obj.shape);
-      obj.size=parseMulti(obj.size);
-      obj.cts=Number(obj.cts||0);
-      obj.price=Number(obj.price||0);
-      obj.amount=Number(obj.amount||(obj.cts*obj.price));
-      CALIB_ALL.push(obj);
-    });
-  }
+if(ajSnap.exists()){
+ajSnap.forEach(r=>{
+const obj=r.val();
+obj.key=r.key;
+obj.__batches=BATCHES[obj.key]||[];
+obj.shape=parseMulti(obj.shape);
+obj.cts=Number(obj.cts||0);
+obj.pcs=Number(obj.pcs||0);
+obj.price=Number(obj.price||0);
+obj.amount=Number(obj.amount||(obj.cts*obj.price));
+AJMZ_ALL.push(obj);
+});
+}
 
-  AJMZ_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
-  CALIB_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
+if(calSnap.exists()){
+calSnap.forEach(r=>{
+const obj=r.val();
+obj.key=r.key;
+obj.__batches=BATCHES[obj.key]||[];
+obj.shape=parseMulti(obj.shape);
+obj.size=parseMulti(obj.size);
+obj.cts=Number(obj.cts||0);
+obj.price=Number(obj.price||0);
+obj.amount=Number(obj.amount||(obj.cts*obj.price));
+CALIB_ALL.push(obj);
+});
+}
 
-  applyFiltersAndRender();
+AJMZ_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
+CALIB_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
+
+applyFiltersAndRender();
 }
 
 /* ============================================================
-   FILTERS + RENDER
-   ============================================================ */
+FILTERS + RENDER
+============================================================ */
 function applyFiltersAndRender(){
-  filterAJMZ();
-  filterCALIB();
-  renderAJMZ();
-  renderCALIB();
-  updateMetrics();
+filterAJMZ();
+filterCALIB();
+renderAJMZ();
+renderCALIB();
+updateMetrics();
 }
 
 function filterAJMZ(){
-  const search=document.getElementById("ajmzSearch").value.toLowerCase();
-  const f_txId=document.getElementById("ajmzFilter_txId").value.toLowerCase();
-  const f_stone=document.getElementById("ajmzFilter_stone").value.toLowerCase();
-  const f_date=document.getElementById("ajmzFilter_date").value.toLowerCase();
-  const f_party=document.getElementById("ajmzFilter_party").value.toLowerCase();
-  const f_deet=document.getElementById("ajmzFilter_deet").value.toLowerCase();
-  const f_lotName=document.getElementById("ajmzFilter_lotName").value.toLowerCase();
-  const f_lotFmt=document.getElementById("ajmzFilter_lotFormat").value.toLowerCase();
-  const f_desc=document.getElementById("ajmzFilter_desc").value.toLowerCase();
-  const f_shape=document.getElementById("ajmzFilter_shape").value.toLowerCase();
-  const f_cts=document.getElementById("ajmzFilter_cts").value.toLowerCase();
-  const f_pcs=document.getElementById("ajmzFilter_pcs").value.toLowerCase();
-  const f_price=document.getElementById("ajmzFilter_price").value.toLowerCase();
-  const f_amount=document.getElementById("ajmzFilter_amount").value.toLowerCase();
-  const f_remarks=document.getElementById("ajmzFilter_remarks").value.toLowerCase();
+const search=document.getElementById("ajmzSearch").value.toLowerCase();
+const f_txId=document.getElementById("ajmzFilter_txId").value.toLowerCase();
+const f_stone=document.getElementById("ajmzFilter_stone").value.toLowerCase();
+const f_date=document.getElementById("ajmzFilter_date").value.toLowerCase();
+const f_party=document.getElementById("ajmzFilter_party").value.toLowerCase();
+const f_deet=document.getElementById("ajmzFilter_deet").value.toLowerCase();
+const f_lotName=document.getElementById("ajmzFilter_lotName").value.toLowerCase();
+const f_lotFmt=document.getElementById("ajmzFilter_lotFormat").value.toLowerCase();
+const f_desc=document.getElementById("ajmzFilter_desc").value.toLowerCase();
+const f_shape=document.getElementById("ajmzFilter_shape").value.toLowerCase();
+const f_cts=document.getElementById("ajmzFilter_cts").value.toLowerCase();
+const f_pcs=document.getElementById("ajmzFilter_pcs").value.toLowerCase();
+const f_price=document.getElementById("ajmzFilter_price").value.toLowerCase();
+const f_amount=document.getElementById("ajmzFilter_amount").value.toLowerCase();
+const f_remarks=document.getElementById("ajmzFilter_remarks").value.toLowerCase();
 
-  function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
+function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
 
-  AJMZ_FILTERED=AJMZ_ALL.filter(r=>{
-    const text=JSON.stringify(r).toLowerCase();
-    if(search && !text.includes(search))return false;
-    if(!pass(r.txId,f_txId))return false;
-    if(!pass("ajmz",f_stone))return false;
-    if(!pass(r.date,f_date))return false;
-    if(!pass(r.party,f_party))return false;
-    if(!pass(r.deet,f_deet))return false;
-    if(!pass(r.lotName,f_lotName))return false;
-    if(!pass(r.lotFormat,f_lotFmt))return false;
-    if(!pass(r.description,f_desc))return false;
-    if(!pass(multiDisplay(r.shape),f_shape))return false;
-    if(!pass(r.cts,f_cts))return false;
-    if(!pass(r.pcs,f_pcs))return false;
-    if(!pass(r.price,f_price))return false;
-    if(!pass(r.amount,f_amount))return false;
-    if(!pass(r.remarks,f_remarks))return false;
-    return true;
-  });
-  ajmzPage=1;
+AJMZ_FILTERED=AJMZ_ALL.filter(r=>{
+const text=JSON.stringify(r).toLowerCase();
+if(search && !text.includes(search))return false;
+if(!pass(r.txId,f_txId))return false;
+if(!pass("ajmz",f_stone))return false;
+if(!pass(r.date,f_date))return false;
+if(!pass(r.party,f_party))return false;
+if(!pass(r.deet,f_deet))return false;
+if(!pass(r.lotName,f_lotName))return false;
+if(!pass(r.lotFormat,f_lotFmt))return false;
+if(!pass(r.description,f_desc))return false;
+if(!pass(multiDisplay(r.shape),f_shape))return false;
+if(!pass(r.cts,f_cts))return false;
+if(!pass(r.pcs,f_pcs))return false;
+if(!pass(r.price,f_price))return false;
+if(!pass(r.amount,f_amount))return false;
+if(!pass(r.remarks,f_remarks))return false;
+return true;
+});
 }
 
 function filterCALIB(){
-  const search=document.getElementById("calibSearch").value.toLowerCase();
-  const f_txId=document.getElementById("calibFilter_txId").value.toLowerCase();
-  const f_stone=document.getElementById("calibFilter_stone").value.toLowerCase();
-  const f_date=document.getElementById("calibFilter_date").value.toLowerCase();
-  const f_party=document.getElementById("calibFilter_party").value.toLowerCase();
-  const f_deet=document.getElementById("calibFilter_deet").value.toLowerCase();
-  const f_lotName=document.getElementById("calibFilter_lotName").value.toLowerCase();
-  const f_grade=document.getElementById("calibFilter_grade").value.toLowerCase();
-  const f_desc=document.getElementById("calibFilter_desc").value.toLowerCase();
-  const f_shape=document.getElementById("calibFilter_shape").value.toLowerCase();
-  const f_size=document.getElementById("calibFilter_size").value.toLowerCase();
-  const f_cts=document.getElementById("calibFilter_cts").value.toLowerCase();
-  const f_price=document.getElementById("calibFilter_price").value.toLowerCase();
-  const f_amount=document.getElementById("calibFilter_amount").value.toLowerCase();
-  const f_remarks=document.getElementById("calibFilter_remarks").value.toLowerCase();
+const search=document.getElementById("calibSearch").value.toLowerCase();
+const f_txId=document.getElementById("calibFilter_txId").value.toLowerCase();
+const f_stone=document.getElementById("calibFilter_stone").value.toLowerCase();
+const f_date=document.getElementById("calibFilter_date").value.toLowerCase();
+const f_party=document.getElementById("calibFilter_party").value.toLowerCase();
+const f_deet=document.getElementById("calibFilter_deet").value.toLowerCase();
+const f_lotName=document.getElementById("calibFilter_lotName").value.toLowerCase();
+const f_grade=document.getElementById("calibFilter_grade").value.toLowerCase();
+const f_desc=document.getElementById("calibFilter_desc").value.toLowerCase();
+const f_shape=document.getElementById("calibFilter_shape").value.toLowerCase();
+const f_size=document.getElementById("calibFilter_size").value.toLowerCase();
+const f_cts=document.getElementById("calibFilter_cts").value.toLowerCase();
+const f_price=document.getElementById("calibFilter_price").value.toLowerCase();
+const f_amount=document.getElementById("calibFilter_amount").value.toLowerCase();
+const f_remarks=document.getElementById("calibFilter_remarks").value.toLowerCase();
 
-  function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
+function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
 
-  CALIB_FILTERED=CALIB_ALL.filter(r=>{
-    const text=JSON.stringify(r).toLowerCase();
-    if(search && !text.includes(search))return false;
-    if(!pass(r.txId,f_txId))return false;
-    if(!pass("calib",f_stone))return false;
-    if(!pass(r.date,f_date))return false;
-    if(!pass(r.party,f_party))return false;
-    if(!pass(r.deet,f_deet))return false;
-    if(!pass(r.lotName,f_lotName))return false;
-    if(!pass(r.grade,f_grade))return false;
-    if(!pass(r.description,f_desc))return false;
-    if(!pass(multiDisplay(r.shape),f_shape))return false;
-    if(!pass(multiDisplay(r.size),f_size))return false;
-    if(!pass(r.cts,f_cts))return false;
-    if(!pass(r.price,f_price))return false;
-    if(!pass(r.amount,f_amount))return false;
-    if(!pass(r.remarks,f_remarks))return false;
-    return true;
-  });
-  calibPage=1;
+CALIB_FILTERED=CALIB_ALL.filter(r=>{
+const text=JSON.stringify(r).toLowerCase();
+if(search && !text.includes(search))return false;
+if(!pass(r.txId,f_txId))return false;
+if(!pass("calib",f_stone))return false;
+if(!pass(r.date,f_date))return false;
+if(!pass(r.party,f_party))return false;
+if(!pass(r.deet,f_deet))return false;
+if(!pass(r.lotName,f_lotName))return false;
+if(!pass(r.grade,f_grade))return false;
+if(!pass(r.description,f_desc))return false;
+if(!pass(multiDisplay(r.shape),f_shape))return false;
+if(!pass(multiDisplay(r.size),f_size))return false;
+if(!pass(r.cts,f_cts))return false;
+if(!pass(r.price,f_price))return false;
+if(!pass(r.amount,f_amount))return false;
+if(!pass(r.remarks,f_remarks))return false;
+return true;
+});
 }
 
 function renderAJMZ(){
-  const tbody=document.getElementById("tbodyAJMZ");
-  tbody.innerHTML="";
-  const start=(ajmzPage-1)*ROWS_PER_PAGE;
-  const rows=AJMZ_FILTERED.slice(start,start+ROWS_PER_PAGE);
-  let html="";
-  rows.forEach(r=>html+=renderAJMZRow(r));
-  tbody.innerHTML=html;
-
-  document.getElementById("ajmzPageFrom").textContent=AJMZ_FILTERED.length===0?0:start+1;
-  document.getElementById("ajmzPageTo").textContent=start+rows.length;
-  document.getElementById("ajmzPageTotal").textContent=AJMZ_FILTERED.length;
-  document.getElementById("ajmzPageNumber").textContent=ajmzPage;
-
-  document.getElementById("ajmzPrevPage").classList.toggle("disabled",ajmzPage===1);
-  document.getElementById("ajmzNextPage").classList.toggle("disabled",start+ROWS_PER_PAGE>=AJMZ_FILTERED.length);
+const tbody=document.getElementById("tbodyAJMZ");
+tbody.innerHTML="";
+let html="";
+AJMZ_FILTERED.forEach(r=>html+=renderAJMZRow(r));
+tbody.innerHTML=html;
 }
 
 function renderCALIB(){
-  const tbody=document.getElementById("tbodyCALIB");
-  tbody.innerHTML="";
-  const start=(calibPage-1)*ROWS_PER_PAGE;
-  const rows=CALIB_FILTERED.slice(start,start+ROWS_PER_PAGE);
-  let html="";
-  rows.forEach(r=>html+=renderCALIBRow(r));
-  tbody.innerHTML=html;
-
-  document.getElementById("calibPageFrom").textContent=CALIB_FILTERED.length===0?0:start+1;
-  document.getElementById("calibPageTo").textContent=start+rows.length;
-  document.getElementById("calibPageTotal").textContent=CALIB_FILTERED.length;
-  document.getElementById("calibPageNumber").textContent=calibPage;
-
-  document.getElementById("calibPrevPage").classList.toggle("disabled",calibPage===1);
-  document.getElementById("calibNextPage").classList.toggle("disabled",start+ROWS_PER_PAGE>=CALIB_FILTERED.length);
+const tbody=document.getElementById("tbodyCALIB");
+tbody.innerHTML="";
+let html="";
+CALIB_FILTERED.forEach(r=>html+=renderCALIBRow(r));
+tbody.innerHTML=html;
 }
 
 function updateMetrics(){
-  let tCtsA=0,tAmtA=0;
-  AJMZ_FILTERED.forEach(r=>{
-    tCtsA+=(Number(r.cts)||0);
-    tAmtA+=(Number(r.amount)||0);
-  });
-  document.getElementById("ajmzTotalRows").textContent=AJMZ_FILTERED.length;
-  document.getElementById("ajmzTotalCTS").textContent=fmtNumber(tCtsA);
-  document.getElementById("ajmzTotalAmount").textContent=fmtNumber(tAmtA);
+let tCtsA=0,tAmtA=0;
+AJMZ_FILTERED.forEach(r=>{
+tCtsA+=(Number(r.cts)||0);
+tAmtA+=(Number(r.amount)||0);
+});
+document.getElementById("ajmzTotalRows").textContent=AJMZ_FILTERED.length;
+document.getElementById("ajmzTotalCTS").textContent=fmtNumber(tCtsA);
+document.getElementById("ajmzTotalAmount").textContent=fmtNumber(tAmtA);
 
-  let tCtsC=0,tAmtC=0;
-  CALIB_FILTERED.forEach(r=>{
-    tCtsC+=(Number(r.cts)||0);
-    tAmtC+=(Number(r.amount)||0);
-  });
-  document.getElementById("calibTotalRows").textContent=CALIB_FILTERED.length;
-  document.getElementById("calibTotalCTS").textContent=fmtNumber(tCtsC);
-  document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
+let tCtsC=0,tAmtC=0;
+CALIB_FILTERED.forEach(r=>{
+tCtsC+=(Number(r.cts)||0);
+tAmtC+=(Number(r.amount)||0);
+});
+document.getElementById("calibTotalRows").textContent=CALIB_FILTERED.length;
+document.getElementById("calibTotalCTS").textContent=fmtNumber(tCtsC);
+document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
 
 /* ============================================================
-   UPDATE MAIN RECORD (INLINE SAVE)
-   ============================================================ */
+UPDATE MAIN RECORD (INLINE SAVE)
+============================================================ */
 async function updateMainRecord(key,type,field,value){
-  const path=type==="AJMZ"?"ajmzRecords":"calibRecords";
-  const ref=db.ref(path+"/"+key);
-  const payload={};
+const path=type==="AJMZ"?"ajmzRecords":"calibRecords";
+const ref=db.ref(`${path}/${key}`);
+const payload={};
 
-  if(["cts","pcs","price","amount"].includes(field)){
-    payload[field]=Number(String(value).replace(/,/g,"")||0);
-  }else if(["shape","size"].includes(field)){
-    payload[field]=parseMulti(value);
-  }else{
-    payload[field]=value;
-  }
+if(["cts","pcs","price","amount"].includes(field)){
+payload[field]=Number(String(value).replace(/,/g,"")||0);
+}else if(["shape","size"].includes(field)){
+payload[field]=parseMulti(value);
+}else{
+payload[field]=value;
+}
 
-  await ref.update(payload);
-  await loadAllData();
+await ref.update(payload);
+await loadAllData();
 }
 
 /* ============================================================
-   INLINE EDITING
-   ============================================================ */
+INLINE EDITING
+============================================================ */
 let lastCellValue=null;
 
 document.addEventListener("focusin",e=>{
-  const cell=e.target.closest('.cell[contenteditable="true"]');
-  if(!cell)return;
-  lastCellValue=cell.textContent.trim();
+const cell=e.target.closest('.cell[contenteditable="true"]');
+if(!cell)return;
+lastCellValue=cell.textContent.trim();
 });
 
 document.addEventListener("focusout",e=>{
-  const cell=e.target.closest('.cell[contenteditable="true"]');
-  if(!cell)return;
+const cell=e.target.closest('.cell[contenteditable="true"]');
+if(!cell)return;
+const tr=cell.closest("tr");
+if(!tr)return;
+const key=tr.dataset.key;
+const field=cell.dataset.field;
+if(!key||!field)return;
 
-  const tr=cell.closest("tr");
-  if(!tr)return;
-  const key=tr.dataset.key;
-  const field=cell.dataset.field;
-  if(!key||!field)return;
+let type=tr.classList.contains("calib-main")?"CALIB":"AJMZ";
+if(type==="CALIB" && field==="pcs")return;
 
-  let type=tr.classList.contains("calib-main")?"CALIB":"AJMZ";
+let raw=cell.textContent.trim();
+if(raw===lastCellValue)return;
 
-  if(type==="CALIB" && field==="pcs")return;
+let valueToSave=raw;
 
-  let raw=cell.textContent.trim();
-  if(raw===lastCellValue)return;
+if(["cts","pcs","price","amount"].includes(field)){
+let n=Number(raw.replace(/,/g,"")||0);
+if(isNaN(n))n=0;
+cell.textContent=fmtNumber(n);
+valueToSave=n;
 
-  let valueToSave=raw;
+if(field==="cts"||field==="price"){
+const ctsCell=tr.querySelector('[data-field="cts"]');
+const priceCell=tr.querySelector('[data-field="price"]');
+const amtCell=tr.querySelector('[data-field="amount"]');
+if(ctsCell&&priceCell&&amtCell){
+const ctsN=Number(ctsCell.textContent.replace(/,/g,"")||0);
+const priceN=Number(priceCell.textContent.replace(/,/g,"")||0);
+const amt=ctsN*priceN;
+amtCell.textContent=fmtNumber(amt);
+updateMainRecord(key,type,"amount",amt);
+}
+}
+}else if(field==="shape"||field==="size"){
+const arr=parseMulti(raw);
+const normalized=arr.join(", ");
+cell.textContent=normalized;
+valueToSave=normalized;
+}
 
-  if(["cts","pcs","price","amount"].includes(field)){
-    let n=Number(raw.replace(/,/g,"")||0);
-    if(isNaN(n))n=0;
-    cell.textContent=fmtNumber(n);
-    valueToSave=n;
-
-    if(field==="cts"||field==="price"){
-      const ctsCell=tr.querySelector('[data-field="cts"]');
-      const priceCell=tr.querySelector('[data-field="price"]');
-      const amtCell=tr.querySelector('[data-field="amount"]');
-      if(ctsCell&&priceCell&&amtCell){
-        const ctsN=Number(ctsCell.textContent.replace(/,/g,"")||0);
-        const priceN=Number(priceCell.textContent.replace(/,/g,"")||0);
-        const amt=ctsN*priceN;
-        amtCell.textContent=fmtNumber(amt);
-        updateMainRecord(key,type,"amount",amt);
-      }
-    }
-  }else if(field==="shape"||field==="size"){
-    const arr=parseMulti(raw);
-    const normalized=arr.join(", ");
-    cell.textContent=normalized;
-    valueToSave=normalized;
-  }
-
-  updateMainRecord(key,type,field,valueToSave);
+updateMainRecord(key,type,field,valueToSave);
 });
 
 /* ============================================================
-   ACTION BUTTONS
-   ============================================================ */
+ACTION BUTTONS
+============================================================ */
 document.addEventListener("click",async e=>{
-  const actionBtn=e.target.closest("[data-action]");
-  if(actionBtn){
-    const action=actionBtn.dataset.action;
-    if(action==="addRow"){
-      await handleAddRow(actionBtn.dataset.key);
-      return;
-    }
-    if(action==="delete"){
-      await handleDeleteMain(actionBtn.dataset.key);
-      return;
-    }
-    if(action==="batch"){
-      await openBatchModal(actionBtn.dataset.key);
-      return;
-    }
-    if(action==="deleteBatch"){
-      await handleDeleteBatch(actionBtn.dataset.parentKey,actionBtn.dataset.batchKey);
-      return;
-    }
-  }
+const actionBtn=e.target.closest("[data-action]");
+if(actionBtn){
+const action=actionBtn.dataset.action;
+if(action==="addRow"){
+await handleAddRow(actionBtn.dataset.key);
+return;
+}
+if(action==="delete"){
+await handleDeleteMain(actionBtn.dataset.key);
+return;
+}
+if(action==="batch"){
+await openBatchModal(actionBtn.dataset.key);
+return;
+}
+if(action==="deleteBatch"){
+await handleDeleteBatch(actionBtn.dataset.parentKey,actionBtn.dataset.batchKey);
+return;
+}
+}
 
-  const toggle=e.target.closest(".batch-toggle");
-  if(toggle){
-    handleBatchToggle(toggle);
-  }
+const toggle=e.target.closest(".batch-toggle");
+if(toggle){
+handleBatchToggle(toggle);
+}
 });
 
 async function handleAddRow(parentKey){
-  let parent=AJMZ_ALL.find(r=>r.key===parentKey)||CALIB_ALL.find(r=>r.key===parentKey);
-  if(!parent){alert("Parent row not found.");return;}
+let parent=AJMZ_ALL.find(r=>r.key===parentKey)||CALIB_ALL.find(r=>r.key===parentKey);
+if(!parent){alert("Parent row not found.");return;}
 
-  const type=parent.grade!==undefined?"CALIB":"AJMZ";
-  const txId=parent.txId;
+const type=parent.grade!==undefined?"CALIB":"AJMZ";
+const txId=parent.txId;
+let newRec=JSON.parse(JSON.stringify(parent));
+delete newRec.key;
+delete newRec.__batches;
 
-  let newRec=JSON.parse(JSON.stringify(parent));
-  delete newRec.key;
-  delete newRec.__batches;
+if(type==="AJMZ"){
+const basePart=(parent.lotFormat||"1/000").split("/")[0]||"1";
+let maxNo=0;
+[...AJMZ_ALL,...CALIB_ALL].forEach(r=>{
+if(r.txId===txId && r.lotFormat){
+const parts=String(r.lotFormat).split("/");
+if(parts.length===2){
+const n=Number(parts[1]);
+if(!isNaN(n))maxNo=Math.max(maxNo,n);
+}
+}
+});
+const nextNo=maxNo+1;
+newRec.lotFormat=`${basePart}/${String(nextNo).padStart(3,"0")}`;
+}else{
+delete newRec.lotFormat;
+newRec.grade=parent.grade||"";
+}
 
-  if(type==="AJMZ"){
-    // AJMZ: handle lotFormat increment
-    const basePart=(parent.lotFormat||"1/000").split("/")[0]||"1";
-    let maxNo=0;
+newRec.cts=0;
+newRec.pcs=0;
+newRec.price=0;
+newRec.amount=0;
+newRec.remarks="";
 
-    [...AJMZ_ALL,...CALIB_ALL].forEach(r=>{
-      if(r.txId===txId && r.lotFormat){
-        const parts=String(r.lotFormat).split("/");
-        if(parts.length===2){
-          const n=Number(parts[1]);
-          if(!isNaN(n))maxNo=Math.max(maxNo,n);
-        }
-      }
-    });
+const path=type==="AJMZ"?"ajmzRecords":"calibRecords";
+const newKey=db.ref(path).push().key;
+await db.ref(`${path}/${newKey}`).set(newRec);
+await loadAllData();
 
-    const nextNo=maxNo+1;
-    newRec.lotFormat=`${basePart}/${String(nextNo).padStart(3,"0")}`;
-  }else{
-    // CALIB: remove lotFormat, ensure grade is set
-    delete newRec.lotFormat;
-    newRec.grade=parent.grade||"";
-  }
-
-  newRec.cts=0;
-  newRec.pcs=0;
-  newRec.price=0;
-  newRec.amount=0;
-  newRec.remarks="";
-
-  const path=type==="AJMZ"?"ajmzRecords":"calibRecords";
-  const newKey=db.ref(path).push().key;
-  await db.ref(path+"/"+newKey).set(newRec);
-  await loadAllData();
-
-  const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
-  const newRow=tbody.querySelector(`tr[data-key="${newKey}"]`);
-  if(newRow){
-    newRow.scrollIntoView({behavior:"smooth",block:"center"});
-    newRow.style.background="#faf3d2";
-    setTimeout(()=>newRow.style.background="",1500);
-  }
+const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
+const newRow=tbody.querySelector(`tr[data-key="${newKey}"]`);
+if(newRow){
+newRow.scrollIntoView({behavior:"smooth",block:"center"});
+newRow.classList.add("row-highlight");
+setTimeout(()=>newRow.classList.remove("row-highlight"),1500);
+}
 }
 
 async function handleDeleteMain(key){
-  if(!confirm("Delete this record and all its batches?"))return;
-
-  const isAJMZ=AJMZ_ALL.some(r=>r.key===key);
-  const path=isAJMZ?"ajmzRecords":"calibRecords";
-
-  await db.ref("batches/add/"+key).remove();
-  await db.ref(path+"/"+key).remove();
-  await loadAllData();
+if(!confirm("Delete this record and all its batches?"))return;
+const isAJMZ=AJMZ_ALL.some(r=>r.key===key);
+const path=isAJMZ?"ajmzRecords":"calibRecords";
+await db.ref(`batches/add/${key}`).remove();
+await db.ref(`${path}/${key}`).remove();
+await loadAllData();
 }
 
 async function handleDeleteBatch(parentKey,batchKey){
-  if(!parentKey||!batchKey)return;
-  if(!confirm("Delete this batch entry?"))return;
+if(!parentKey||!batchKey)return;
+if(!confirm("Delete this batch entry?"))return;
+await db.ref(`batches/add/${parentKey}/${batchKey}`).remove();
 
-  await db.ref("batches/add/"+parentKey+"/"+batchKey).remove();
+let type="AJMZ";
+if(!AJMZ_ALL.some(r=>r.key===parentKey) && CALIB_ALL.some(r=>r.key===parentKey)){
+type="CALIB";
+}
 
-  let type="AJMZ";
-  if(!AJMZ_ALL.some(r=>r.key===parentKey) && CALIB_ALL.some(r=>r.key===parentKey)){
-    type="CALIB";
-  }
-  await recomputeParentFromBatches(parentKey,type);
-  await loadAllData();
+await recomputeParentFromBatches(parentKey,type);
+await loadAllData();
 }
 
 function handleBatchToggle(toggle){
-  const key=toggle.dataset.key;
-  const type=toggle.dataset.type;
-  const isOpen=toggle.dataset.open==="1";
+const key=toggle.dataset.key;
+const type=toggle.dataset.type;
+const isOpen=toggle.dataset.open==="1";
 
-  document.querySelectorAll(".batch-toggle").forEach(btn=>{
-    if(btn!==toggle && btn.dataset.open==="1"){
-      collapseBatchRows(btn.dataset.key,btn.dataset.type,btn);
-    }
-  });
+document.querySelectorAll(".batch-toggle").forEach(btn=>{
+if(btn!==toggle && btn.dataset.open==="1"){
+collapseBatchRows(btn.dataset.key,btn.dataset.type,btn);
+}
+});
 
-  if(isOpen){
-    collapseBatchRows(key,type,toggle);
-  }else{
-    expandBatchRows(key,type,toggle);
-  }
+if(isOpen){
+collapseBatchRows(key,type,toggle);
+}else{
+expandBatchRows(key,type,toggle);
+}
 }
 
 function expandBatchRows(key,type,btn){
-  const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
-  const mainRow=tbody.querySelector(`tr[data-key="${key}"]`);
-  if(!mainRow)return;
+const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
+const mainRow=tbody.querySelector(`tr[data-key="${key}"]`);
+if(!mainRow)return;
 
-  [...tbody.querySelectorAll(`.batch-row[data-parent-key="${key}"]`)].forEach(r=>r.remove());
-  const batches=BATCHES[key]||[];
-  let html="";
-  batches.forEach(b=>html+=renderBatchRow(key,b));
-  mainRow.insertAdjacentHTML("afterend",html);
+[...tbody.querySelectorAll(`.batch-row[data-parent-key="${key}"]`)].forEach(r=>r.remove());
 
-  btn.innerHTML=`▼ Batches (<span class="count">${batches.length}</span>)`;
-  btn.dataset.open="1";
+const batches=BATCHES[key]||[];
+let html="";
+batches.forEach(b=>html+=renderBatchRow(key,b));
+mainRow.insertAdjacentHTML("afterend",html);
+
+btn.innerHTML=`▼ Batches (<span class="count">${batches.length}</span>)`;
+btn.dataset.open="1";
 }
 
 function collapseBatchRows(key,type,btn){
-  const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
-  [...tbody.querySelectorAll(`.batch-row[data-parent-key="${key}"]`)].forEach(r=>r.remove());
-  const cnt=(BATCHES[key]||[]).length;
-  btn.innerHTML=`▶ Batches (<span class="count">${cnt}</span>)`;
-  btn.dataset.open="0";
-}/* ============================================================
-   SHAPE / SIZE CHOOSER
-   ============================================================ */
+const tbody=type==="AJMZ"?document.getElementById("tbodyAJMZ"):document.getElementById("tbodyCALIB");
+[...tbody.querySelectorAll(`.batch-row[data-parent-key="${key}"]`)].forEach(r=>r.remove());
+
+const cnt=(BATCHES[key]||[]).length;
+btn.innerHTML=`▶ Batches (<span class="count">${cnt}</span>)`;
+btn.dataset.open="0";
+}
+
+/* ============================================================
+EDIT BATCH MODAL
+============================================================ */
+function openEditBatchModal(parentKey, batchKey){
+const isAJMZ = AJMZ_ALL.some(r => r.key === parentKey);
+const type = isAJMZ ? "AJMZ" : "CALIB";
+const batches = BATCHES[parentKey] || [];
+const batch = batches.find(b => b.key === batchKey);
+
+if(!batch){
+alert("Batch not found.");
+return;
+}
+
+editBatchCurrentParentKey = parentKey;
+editBatchCurrentBatchKey = batchKey;
+editBatchCurrentType = type;
+
+editBatchDateInput.value = batch.createdAt || "";
+editBatchCTSInput.value = Number(batch.cts || 0);
+editBatchPriceInput.value = Number(batch.price || 0);
+editBatchAmountInput.value = fmtNumber(batch.amount || 0);
+editBatchRemarksInput.value = batch.remarks || "";
+
+if(type === "AJMZ"){
+editBatchPCSRow.style.display = "grid";
+editBatchPCSInput.value = Number(batch.pcs || 0);
+}else{
+editBatchPCSRow.style.display = "none";
+editBatchPCSInput.value = 0;
+}
+
+editBatchModalEl.style.display = "flex";
+}
+
+function closeEditBatchModal(){
+editBatchModalEl.style.display = "none";
+editBatchCurrentParentKey = null;
+editBatchCurrentBatchKey = null;
+editBatchCurrentType = null;
+}
+
+async function saveEditBatch(){
+if(!editBatchCurrentParentKey || !editBatchCurrentBatchKey || !editBatchCurrentType){
+closeEditBatchModal();
+return;
+}
+
+const cts = Number(editBatchCTSInput.value || 0);
+const pcs = (editBatchCurrentType === "AJMZ") ? Number(editBatchPCSInput.value || 0) : 0;
+const price = Number(editBatchPriceInput.value || 0);
+const amount = cts * price;
+const remarks = editBatchRemarksInput.value.trim();
+const createdAt = editBatchDateInput.value.trim();
+
+const batchData = {
+cts,
+pcs,
+price,
+amount,
+remarks,
+createdAt
+};
+
+await db.ref(`batches/add/${editBatchCurrentParentKey}/${editBatchCurrentBatchKey}`).update(batchData);
+await recomputeParentFromBatches(editBatchCurrentParentKey, editBatchCurrentType);
+await loadAllData();
+
+const tbody = editBatchCurrentType === "AJMZ" ? document.getElementById("tbodyAJMZ") : document.getElementById("tbodyCALIB");
+const parentRow = tbody.querySelector(`tr[data-key="${editBatchCurrentParentKey}"]`);
+if(parentRow){
+parentRow.scrollIntoView({behavior:"smooth", block:"center"});
+parentRow.classList.add("row-highlight");
+setTimeout(() => parentRow.classList.remove("row-highlight"), 1500);
+}
+
+closeEditBatchModal();
+}
+
+/* Double-click batch row to edit */
+document.addEventListener("dblclick", e => {
+const batchRow = e.target.closest(".batch-row");
+if(!batchRow) return;
+
+const parentKey = batchRow.dataset.parentKey;
+const batchKey = batchRow.dataset.batchKey;
+
+if(parentKey && batchKey){
+openEditBatchModal(parentKey, batchKey);
+}
+});
+
+/* ============================================================
+SHAPE / SIZE CHOOSER
+============================================================ */
 function getSavedLists(){
-  try{
-    const raw=localStorage.getItem("sell_saved_lists_v4");
-    return raw?JSON.parse(raw):{lotNames:[],shapes:[],sizes:[]};
-  }catch{
-    return {lotNames:[],shapes:[],sizes:[]};
-  }
+try{
+const raw=localStorage.getItem("sell_saved_lists_v4");
+return raw?JSON.parse(raw):{lotNames:[],shapes:[],sizes:[]};
+}catch{
+return {lotNames:[],shapes:[],sizes:[]};
+}
 }
 
 function getShapeOptions(type){
-  const set=new Set();
-  
-  const saved=getSavedLists();
-  saved.shapes.forEach(v=>set.add(v));
-  
-  const src=type==="AJMZ"?AJMZ_ALL:CALIB_ALL;
-  src.forEach(r=>parseMulti(r.shape).forEach(v=>set.add(v)));
-  
-  return Array.from(set).filter(Boolean).sort();
+const set=new Set();
+const saved=getSavedLists();
+saved.shapes.forEach(v=>set.add(v));
+const src=type==="AJMZ"?AJMZ_ALL:CALIB_ALL;
+src.forEach(r=>parseMulti(r.shape).forEach(v=>set.add(v)));
+return Array.from(set).filter(Boolean).sort();
 }
 
 function getSizeOptions(){
-  const set=new Set();
-  
-  const saved=getSavedLists();
-  saved.sizes.forEach(v=>set.add(v));
-  
-  CALIB_ALL.forEach(r=>parseMulti(r.size).forEach(v=>set.add(v)));
-  
-  return Array.from(set).filter(Boolean).sort();
+const set=new Set();
+const saved=getSavedLists();
+saved.sizes.forEach(v=>set.add(v));
+CALIB_ALL.forEach(r=>parseMulti(r.size).forEach(v=>set.add(v)));
+return Array.from(set).filter(Boolean).sort();
 }
 
 let chooserCurrentField=null, chooserCurrentKey=null, chooserCurrentType=null;
 
 function openChooserModal(field,key,type){
-  chooserCurrentField=field;
-  chooserCurrentKey=key;
-  chooserCurrentType=type;
+chooserCurrentField=field;
+chooserCurrentKey=key;
+chooserCurrentType=type;
 
-  const src=type==="AJMZ"?AJMZ_ALL:CALIB_ALL;
-  const row=src.find(r=>r.key===key);
-  if(!row)return;
+const src=type==="AJMZ"?AJMZ_ALL:CALIB_ALL;
+const row=src.find(r=>r.key===key);
+if(!row)return;
 
-  const currentArr=parseMulti(row[field]);
-  const options=field==="shape"?getShapeOptions(type):getSizeOptions();
+const currentArr=parseMulti(row[field]);
+const options=field==="shape"?getShapeOptions(type):getSizeOptions();
 
-  chooserTitleEl.textContent=(field==="shape"?"Select Shapes":"Select Sizes")+(type==="AJMZ"?" – AJMZ":" – Calibrate");
-  chooserListEl.innerHTML="";
-  if(options.length===0){
-    chooserListEl.innerHTML=`<div style="font-size:12px;color:#777;">No saved options yet. You can still type directly into the cell.</div>`;
-  }else{
-    options.forEach(opt=>{
-      const checked=currentArr.includes(opt)?"checked":"";
-      chooserListEl.insertAdjacentHTML("beforeend",`
-        <label style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:13px;">
-          <input type="checkbox" value="${esc(opt)}" ${checked}>
-          <span>${esc(opt)}</span>
-        </label>
-      `);
-    });
-  }
-  chooserModalEl.style.display="flex";
+chooserTitleEl.textContent=(field==="shape"?"Select Shapes":"Select Sizes")+(type==="AJMZ"?" – AJMZ":" – Calibrate");
+
+chooserListEl.innerHTML="";
+if(options.length===0){
+chooserListEl.innerHTML=`<div style="font-size:12px;color:#777;">No saved options yet. You can still type directly into the cell.</div>`;
+}else{
+options.forEach(opt=>{
+const checked=currentArr.includes(opt)?"checked":"";
+chooserListEl.insertAdjacentHTML("beforeend",
+`<label style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:13px;">
+<input type="checkbox" value="${esc(opt)}" ${checked}>
+<span>${esc(opt)}</span>
+</label>`
+);
+});
+}
+
+chooserModalEl.style.display="flex";
 }
 
 function closeChooserModal(){
-  chooserModalEl.style.display="none";
-  chooserCurrentField=null;
-  chooserCurrentKey=null;
-  chooserCurrentType=null;
+chooserModalEl.style.display="none";
+chooserCurrentField=null;
+chooserCurrentKey=null;
+chooserCurrentType=null;
 }
 
 document.addEventListener("dblclick",e=>{
-  const cell=e.target.closest(".ajmz-shape-cell,.calib-shape-cell,.calib-size-cell");
-  if(!cell)return;
-  const tr=cell.closest("tr");
-  const key=tr.dataset.key;
-  if(!key)return;
-  let type=tr.classList.contains("calib-main")?"CALIB":"AJMZ";
-  let field="shape";
-  if(cell.classList.contains("calib-size-cell"))field="size";
-  openChooserModal(field,key,type);
+const cell=e.target.closest(".ajmz-shape-cell,.calib-shape-cell,.calib-size-cell");
+if(!cell)return;
+
+const tr=cell.closest("tr");
+const key=tr.dataset.key;
+if(!key)return;
+
+let type=tr.classList.contains("calib-main")?"CALIB":"AJMZ";
+let field="shape";
+if(cell.classList.contains("calib-size-cell"))field="size";
+
+openChooserModal(field,key,type);
 });
 
 async function handleChooserApply(){
-  if(!chooserCurrentKey||!chooserCurrentField||!chooserCurrentType){
-    closeChooserModal();return;
-  }
-  const selected=Array.from(chooserListEl.querySelectorAll('input[type="checkbox"]:checked')).map(i=>i.value);
-  const normalized=selected.join(", ");
-  await updateMainRecord(chooserCurrentKey,chooserCurrentType,chooserCurrentField,normalized);
-  closeChooserModal();
+if(!chooserCurrentKey||!chooserCurrentField||!chooserCurrentType){
+closeChooserModal();return;
+}
+
+const selected=Array.from(chooserListEl.querySelectorAll('input[type="checkbox"]:checked')).map(i=>i.value);
+const normalized=selected.join(", ");
+
+await updateMainRecord(chooserCurrentKey,chooserCurrentType,chooserCurrentField,normalized);
+closeChooserModal();
 }
 
 /* ============================================================
-   BATCH MODAL (SINGLE ROW)
-   ============================================================ */
+BATCH MODAL (SINGLE ROW)
+============================================================ */
 async function openBatchModal(parentKey){
-  batchParentKey=parentKey;
-  let parent=AJMZ_ALL.find(r=>r.key===parentKey);
-  let type="AJMZ";
-  if(!parent){
-    parent=CALIB_ALL.find(r=>r.key===parentKey);
-    type="CALIB";
-  }
-  if(!parent){alert("Parent not found.");return;}
-  batchParentType=type;
+batchParentKey=parentKey;
+let parent=AJMZ_ALL.find(r=>r.key===parentKey);
+let type="AJMZ";
+if(!parent){
+parent=CALIB_ALL.find(r=>r.key===parentKey);
+type="CALIB";
+}
+if(!parent){alert("Parent not found.");return;}
+batchParentType=type;
 
-  const label=parent.txId||"";
-  const refPiece=(type==="AJMZ"?parent.lotFormat:parent.grade)||parent.description||"";
-  batchModalTitleEl.textContent=`${label}${refPiece?(" – "+refPiece):""}`;
+const label=parent.txId||"";
+const refPiece=(type==="AJMZ"?parent.lotFormat:parent.grade)||parent.description||"";
+batchModalTitleEl.textContent=`${label}${refPiece?(" – "+refPiece):""}`;
 
-  const existing=BATCHES[parentKey]||[];
-  if(existing.length===0){
-    batchExistingEl.style.display="none";
-    batchExistingEl.innerHTML="";
-  }else{
-    batchExistingEl.style.display="block";
-    let html=`<div style="font-size:12px;margin-bottom:6px;"><b>Existing Batches</b></div>`;
-    html+=`<table style="width:100%;border-collapse:collapse;font-size:11px;">
-      <thead>
-        <tr style="background:#f3efe6;">
-          <th style="padding:4px;border:1px solid var(--line);">Date</th>
-          <th style="padding:4px;border:1px solid var(--line);">CTS</th>
-          <th style="padding:4px;border:1px solid var(--line);">PCS</th>
-          <th style="padding:4px;border:1px solid var(--line);">Price</th>
-          <th style="padding:4px;border:1px solid var(--line);">Amount</th>
-          <th style="padding:4px;border:1px solid var(--line);">Remarks</th>
-        </tr>
-      </thead><tbody>`;
-    existing.forEach(b=>{
-      html+=`
-        <tr>
-          <td style="padding:3px;border:1px solid var(--line);">${esc(b.createdAt||"")}</td>
-          <td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.cts)}</td>
-          <td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.pcs)}</td>
-          <td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.price)}</td>
-          <td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.amount)}</td>
-          <td style="padding:3px;border:1px solid var(--line);">${esc(b.remarks||"")}</td>
-        </tr>`;
-    });
-    html+="</tbody></table>";
-    batchExistingEl.innerHTML=html;
-  }
+const existing=BATCHES[parentKey]||[];
+if(existing.length===0){
+batchExistingEl.style.display="none";
+batchExistingEl.innerHTML="";
+}else{
+batchExistingEl.style.display="block";
+let html=`<div style="font-size:12px;margin-bottom:6px;"><b>Existing Batches</b></div>`;
+html+=`<table style="width:100%;border-collapse:collapse;font-size:11px;">
+<thead>
+<tr style="background:#f3efe6;">
+<th style="padding:4px;border:1px solid var(--line);">Date</th>
+<th style="padding:4px;border:1px solid var(--line);">CTS</th>
+<th style="padding:4px;border:1px solid var(--line);">PCS</th>
+<th style="padding:4px;border:1px solid var(--line);">Price</th>
+<th style="padding:4px;border:1px solid var(--line);">Amount</th>
+<th style="padding:4px;border:1px solid var(--line);">Remarks</th>
+</tr>
+</thead><tbody>`;
+existing.forEach(b=>{
+html+=`
+<tr>
+<td style="padding:3px;border:1px solid var(--line);">${esc(b.createdAt||"")}</td>
+<td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.cts)}</td>
+<td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.pcs)}</td>
+<td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.price)}</td>
+<td style="padding:3px;border:1px solid var(--line);">${fmtNumber(b.amount)}</td>
+<td style="padding:3px;border:1px solid var(--line);">${esc(b.remarks||"")}</td>
+</tr>`;
+});
+html+="</tbody></table>";
+batchExistingEl.innerHTML=html;
+}
 
-  batchNewBodyEl.innerHTML="";
-  addNewBatchLine();
-  batchModalEl.style.display="flex";
+batchNewBodyEl.innerHTML="";
+addNewBatchLine();
+batchModalEl.style.display="flex";
 }
 
 function closeBatchModal(){
-  batchModalEl.style.display="none";
-  batchParentKey=null;
-  batchParentType=null;
+batchModalEl.style.display="none";
+batchParentKey=null;
+batchParentType=null;
 }
 
 function addNewBatchLine(){
-  const tr=document.createElement("tr");
-  tr.innerHTML=`
-    <td><input type="number" step="0.0001" style="width:100%;" data-field="cts"></td>
-    <td><input type="number" step="1"       style="width:100%;" data-field="pcs"></td>
-    <td><input type="number" step="0.0001" style="width:100%;" data-field="price"></td>
-    <td><input type="number" step="0.0001" style="width:100%;" data-field="amount"></td>
-    <td><input type="text"                 style="width:100%;" data-field="remarks"></td>
-    <td style="text-align:center;">
-      <button class="button icon-only danger" type="button">🗑</button>
-    </td>`;
-  batchNewBodyEl.appendChild(tr);
+const tr=document.createElement("tr");
+tr.innerHTML=`
+<td><input type="number" step="0.0001" style="width:100%;" data-field="cts"></td>
+<td><input type="number" step="1" style="width:100%;" data-field="pcs"></td>
+<td><input type="number" step="0.0001" style="width:100%;" data-field="price"></td>
+<td><input type="number" step="0.0001" style="width:100%;" data-field="amount"></td>
+<td><input type="text" style="width:100%;" data-field="remarks"></td>
+<td style="text-align:center;">
+<button class="button icon-only danger" type="button">🗑</button>
+</td>`;
+batchNewBodyEl.appendChild(tr);
 }
 
 async function recomputeParentFromBatches(parentKey,type){
-  const parentPath=type==="AJMZ"?"ajmzRecords":"calibRecords";
-  const parentSnap=await db.ref(parentPath+"/"+parentKey).once("value");
-  if(!parentSnap.exists())return;
+const parentPath=type==="AJMZ"?"ajmzRecords":"calibRecords";
+const parentSnap=await db.ref(`${parentPath}/${parentKey}`).once("value");
+if(!parentSnap.exists())return;
 
-  const batchesSnap=await db.ref("batches/add/"+parentKey).once("value");
-  
-  let totalCTS=0;
-  let totalPCS=0;
-  let totalAmount=0;
-  const allPrices=[];
+const batchesSnap=await db.ref(`batches/add/${parentKey}`).once("value");
+let totalCTS=0;
+let totalPCS=0;
+let totalAmount=0;
+const allPrices=[];
 
-  if(batchesSnap.exists()){
-    batchesSnap.forEach(b=>{
-      const v=b.val();
-      const c=Number(v.cts||0);
-      const p=Number(v.price||0);
-      const pc=Number(v.pcs||0);
-      const amt=Number(v.amount||0);
-      totalCTS+=c;
-      totalPCS+=pc;
-      totalAmount+=amt;
-      allPrices.push(p);
-    });
-  }
+if(batchesSnap.exists()){
+batchesSnap.forEach(b=>{
+const v=b.val();
+const c=Number(v.cts||0);
+const p=Number(v.price||0);
+const pc=Number(v.pcs||0);
+const amt=Number(v.amount||0);
+totalCTS+=c;
+totalPCS+=pc;
+totalAmount+=amt;
+allPrices.push(p);
+});
+}
 
-  let newPrice=0;
-  if(allPrices.length>0){
-    const sumPrices=allPrices.reduce((sum,p)=>sum+p,0);
-    newPrice=sumPrices/allPrices.length;
-  }
-  
-  const payload={cts:totalCTS,price:newPrice,amount:totalAmount};
-  if(type==="AJMZ")payload.pcs=totalPCS;
+let newPrice=0;
+if(allPrices.length>0){
+const sumPrices=allPrices.reduce((sum,p)=>sum+p,0);
+newPrice=sumPrices/allPrices.length;
+}
 
-  await db.ref(parentPath+"/"+parentKey).update(payload);
+const payload={cts:totalCTS,price:newPrice,amount:totalAmount};
+if(type==="AJMZ")payload.pcs=totalPCS;
+
+await db.ref(`${parentPath}/${parentKey}`).update(payload);
 }
 
 /* ============================================================
-   MULTI-ROW BATCH MODAL
-   ============================================================ */
+MULTI-ROW BATCH MODAL
+============================================================ */
 function openMultiBatchModal(type, keys){
-  if(!keys.length){
-    alert("Please select at least one row.");
-    return;
-  }
-  multiBatchParentType = type;
-  multiBatchParentKeys = keys.slice();
+if(!keys.length){
+alert("Please select at least one row.");
+return;
+}
 
-  document.getElementById("multiBatchCount").textContent = keys.length;
+multiBatchParentType = type;
+multiBatchParentKeys = keys.slice();
 
-  const allRows = (type === "AJMZ" ? AJMZ_ALL : CALIB_ALL);
-  const rows = allRows.filter(r => keys.includes(r.key));
+document.getElementById("multiBatchCount").textContent = keys.length;
 
-  let html = `
-    <div style="font-size:12px;margin-bottom:6px;"><b>Selected Rows</b></div>
-    <div style="overflow:auto;max-height:260px;">
-      <table class="mb-selected-table">
-        <thead>
-          <tr>
-            <th>Tx ID</th>
-            <th>Stone</th>
-            <th>${type === "AJMZ" ? "Lot Format" : "Grade"}</th>
-            <th>Description</th>
-            <th>Original CTS</th>
-  `;
+const allRows = (type === "AJMZ" ? AJMZ_ALL : CALIB_ALL);
+const rows = allRows.filter(r => keys.includes(r.key));
 
-  if (type === "AJMZ") {
-    html += `
-            <th>Original PCS</th>
-            <th>Price</th>
-            <th>Amount</th>
-            <th>Add CTS</th>
-            <th>Add PCS</th>
-            <th>Add Price</th>
-            <th>Add Amount</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-  } else {
-    html += `
-            <th>Price</th>
-            <th>Amount</th>
-            <th>Add CTS</th>
-            <th>Add Price</th>
-            <th>Add Amount</th>
-            <th>Remarks</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
-  }
+let html = `<div style="font-size:12px;margin-bottom:6px;"><b>Selected Rows</b></div>
+<div style="overflow:auto;max-height:260px;">
+<table class="mb-selected-table">
+<thead>
+<tr>
+<th>Tx ID</th>
+<th>Stone</th>
+<th>${type === "AJMZ" ? "Lot Format" : "Grade"}</th>
+<th>Description</th>
+<th>Original CTS</th>
+`;
 
-  rows.forEach(r => {
-    const lotGradeValue = type === "AJMZ" ? esc(r.lotFormat || "") : esc(r.grade || "");
-    const baseCols = `
-      <td>${esc(r.txId || "")}</td>
-      <td>${type === "AJMZ" ? "AJMZ" : "CALIB"}</td>
-      <td>${lotGradeValue}</td>
-      <td>${esc(r.description || "")}</td>
-      <td>${fmtNumber(r.cts)}</td>
-    `;
+if (type === "AJMZ") {
+html += `<th>Original PCS</th>
+<th>Price</th>
+<th>Amount</th>
+<th>Add CTS</th>
+<th>Add PCS</th>
+<th>Add Price</th>
+<th>Add Amount</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+`;
+} else {
+html += `<th>Price</th>
+<th>Amount</th>
+<th>Add CTS</th>
+<th>Add Price</th>
+<th>Add Amount</th>
+<th>Remarks</th>
+</tr>
+</thead>
+<tbody>
+`;
+}
 
-    if (type === "AJMZ") {
-      html += `
-        <tr data-key="${r.key}">
-          ${baseCols}
-          <td>${fmtNumber(r.pcs)}</td>
-          <td>${fmtNumber(r.price)}</td>
-          <td>${fmtNumber(r.amount)}</td>
-          <td><input type="number" step="0.0001" data-add="cts"   style="width:100%;"></td>
-          <td><input type="number" step="1"       data-add="pcs"   style="width:100%;"></td>
-          <td><input type="number" step="0.0001" data-add="price" style="width:100%;"></td>
-          <td><input type="text"   data-add="amount" style="width:100%;" readonly></td>
-          <td><input type="text"   data-add="remarks" style="width:100%;"></td>
-        </tr>
-      `;
-    } else {
-      html += `
-        <tr data-key="${r.key}">
-          ${baseCols}
-          <td>${fmtNumber(r.price)}</td>
-          <td>${fmtNumber(r.amount)}</td>
-          <td><input type="number" step="0.0001" data-add="cts"   style="width:100%;"></td>
-          <td><input type="number" step="0.0001" data-add="price" style="width:100%;"></td>
-          <td><input type="text"   data-add="amount" style="width:100%;" readonly></td>
-          <td><input type="text"   data-add="remarks" style="width:100%;"></td>
-        </tr>
-      `;
-    }
-  });
+rows.forEach(r => {
+const lotGradeValue = type === "AJMZ" ? esc(r.lotFormat || "") : esc(r.grade || "");
+const baseCols = `<td>${esc(r.txId || "")}</td>
+<td>${type === "AJMZ" ? "AJMZ" : "CALIB"}</td>
+<td>${lotGradeValue}</td>
+<td>${esc(r.description || "")}</td>
+<td>${fmtNumber(r.cts)}</td>
+`;
 
-  html += `
-        </tbody>
-      </table>
-    </div>
-  `;
+if (type === "AJMZ") {
+html += `<tr data-key="${r.key}">
+${baseCols}
+<td>${fmtNumber(r.pcs)}</td>
+<td>${fmtNumber(r.price)}</td>
+<td>${fmtNumber(r.amount)}</td>
+<td><input type="number" step="0.0001" data-add="cts" style="width:100%;"></td>
+<td><input type="number" step="1" data-add="pcs" style="width:100%;"></td>
+<td><input type="number" step="0.0001" data-add="price" style="width:100%;"></td>
+<td><input type="text" data-add="amount" style="width:100%;" readonly></td>
+<td><input type="text" data-add="remarks" style="width:100%;"></td>
+</tr>
+`;
+} else {
+html += `<tr data-key="${r.key}">
+${baseCols}
+<td>${fmtNumber(r.price)}</td>
+<td>${fmtNumber(r.amount)}</td>
+<td><input type="number" step="0.0001" data-add="cts" style="width:100%;"></td>
+<td><input type="number" step="0.0001" data-add="price" style="width:100%;"></td>
+<td><input type="text" data-add="amount" style="width:100%;" readonly></td>
+<td><input type="text" data-add="remarks" style="width:100%;"></td>
+</tr>
+`;
+}
+});
 
-  multiBatchSelectedWrapper.innerHTML = html;
-  multiBatchModalEl.style.display = "flex";
+html += `</tbody>
+</table>
+</div>
+`;
+
+multiBatchSelectedWrapper.innerHTML = html;
+multiBatchModalEl.style.display = "flex";
 }
 
 function closeMultiBatchModal(){
-  multiBatchModalEl.style.display="none";
-  multiBatchParentType=null;
-  multiBatchParentKeys=[];
+multiBatchModalEl.style.display="none";
+multiBatchParentType=null;
+multiBatchParentKeys=[];
 }
 
 async function saveMultiBatch(){
-  if (!multiBatchParentType || !multiBatchParentKeys.length) {
-    closeMultiBatchModal();
-    return;
-  }
-
-  const type = multiBatchParentType;
-  const rows = multiBatchSelectedWrapper.querySelectorAll("tbody tr[data-key]");
-
-  const tasks = [];
-
-  rows.forEach(tr => {
-    const parentKey = tr.dataset.key;
-    if (!parentKey) return;
-
-    const ctsInput     = tr.querySelector('input[data-add="cts"]');
-    const pcsInput     = tr.querySelector('input[data-add="pcs"]');
-    const priceInput   = tr.querySelector('input[data-add="price"]');
-    const remarksInput = tr.querySelector('input[data-add="remarks"]');
-
-    const cts   = Number((ctsInput?.value || "0").replace(/,/g, ""));
-    const pcs   = (type === "AJMZ")
-                  ? Number((pcsInput?.value || "0").replace(/,/g, ""))
-                  : 0;
-    const price = Number((priceInput?.value || "0").replace(/,/g, ""));
-    const remarks = remarksInput ? remarksInput.value.trim() : "";
-
-    const anything = cts || pcs || price || remarks;
-    if (!anything) return;
-
-    const amount = cts * price;
-
-    const batchData = {
-      cts,
-      pcs,
-      price,
-      amount,
-      remarks,
-      createdAt: nowStamp()
-    };
-
-    tasks.push(
-      (async () => {
-        const batchesRef = db.ref("batches/add/" + parentKey);
-        
-        const existingSnap = await batchesRef.once("value");
-        
-        if (!existingSnap.exists()) {
-          const parentPath = type === "AJMZ" ? "ajmzRecords" : "calibRecords";
-          const parentSnap = await db.ref(parentPath + "/" + parentKey).once("value");
-          if (parentSnap.exists()) {
-            const parent = parentSnap.val();
-            const firstBatch = {
-              cts: Number(parent.cts || 0),
-              pcs: Number(parent.pcs || 0),
-              price: Number(parent.price || 0),
-              amount: Number(parent.amount || 0),
-              remarks: "Original entry",
-              createdAt: parent.date || nowStamp()
-            };
-            const firstKey = batchesRef.push().key;
-            await batchesRef.child(firstKey).set(firstBatch);
-          }
-        }
-        
-        const newKey = batchesRef.push().key;
-        await batchesRef.child(newKey).set(batchData);
-        await recomputeParentFromBatches(parentKey, type);
-      })()
-    );
-  });
-
-  if (!tasks.length) {
-    closeMultiBatchModal();
-    return;
-  }
-
-  await Promise.all(tasks);
-  await loadAllData();
-  closeMultiBatchModal();
+if (!multiBatchParentType || !multiBatchParentKeys.length) {
+closeMultiBatchModal();
+return;
 }
+
+const type = multiBatchParentType;
+const rows = multiBatchSelectedWrapper.querySelectorAll("tbody tr[data-key]");
+const tasks = [];
+
+rows.forEach(tr => {
+const parentKey = tr.dataset.key;
+if (!parentKey) return;
+
+const ctsInput = tr.querySelector('input[data-add="cts"]');
+const pcsInput = tr.querySelector('input[data-add="pcs"]');
+const priceInput = tr.querySelector('input[data-add="price"]');
+const remarksInput = tr.querySelector('input[data-add="remarks"]');
+
+const cts = Number((ctsInput?.value || "0").replace(/,/g, ""));
+const pcs = (type === "AJMZ") ? Number((pcsInput?.value || "0").replace(/,/g, "")) : 0;
+const price = Number((priceInput?.value || "0").replace(/,/g, ""));
+const remarks = remarksInput ? remarksInput.value.trim() : "";
+
+const anything = cts || pcs || price || remarks;
+if (!anything) return;
+
+const amount = cts * price;
+
+const batchData = {
+cts,
+pcs,
+price,
+amount,
+remarks,
+createdAt: nowStamp()
+};
+
+tasks.push(
+(async () => {
+const batchesRef = db.ref(`batches/add/${parentKey}`);
+const existingSnap = await batchesRef.once("value");
+
+if (!existingSnap.exists()) {
+const parentPath = type === "AJMZ" ? "ajmzRecords" : "calibRecords";
+const parentSnap = await db.ref(`${parentPath}/${parentKey}`).once("value");
+if (parentSnap.exists()) {
+const parent = parentSnap.val();
+const firstBatch = {
+cts: Number(parent.cts || 0),
+pcs: Number(parent.pcs || 0),
+price: Number(parent.price || 0),
+amount: Number(parent.amount || 0),
+remarks: "Original entry",
+createdAt: parent.date || nowStamp()
+};
+const firstKey = batchesRef.push().key;
+await batchesRef.child(firstKey).set(firstBatch);
+}
+}
+
+const newKey = batchesRef.push().key;
+await batchesRef.child(newKey).set(batchData);
+await recomputeParentFromBatches(parentKey, type);
+})()
+);
+});
+
+if (!tasks.length) {
+closeMultiBatchModal();
+return;
+}
+
+await Promise.all(tasks);
+await loadAllData();
+closeMultiBatchModal();
+}
+
 /* ============================================================
-   BINDINGS
-   ============================================================ */
+BINDINGS
+============================================================ */
 function bindFilters(){
-  document.getElementById("ajmzSearch").addEventListener("input",applyFiltersAndRender);
-  [
-    "ajmzFilter_txId","ajmzFilter_stone","ajmzFilter_date","ajmzFilter_party","ajmzFilter_deet",
-    "ajmzFilter_lotName","ajmzFilter_lotFormat","ajmzFilter_desc","ajmzFilter_shape",
-    "ajmzFilter_cts","ajmzFilter_pcs","ajmzFilter_price","ajmzFilter_amount","ajmzFilter_remarks"
-  ].forEach(id=>{
-    document.getElementById(id).addEventListener("input",applyFiltersAndRender);
-  });
+document.getElementById("ajmzSearch").addEventListener("input",applyFiltersAndRender);
+[
+"ajmzFilter_txId","ajmzFilter_stone","ajmzFilter_date","ajmzFilter_party","ajmzFilter_deet",
+"ajmzFilter_lotName","ajmzFilter_lotFormat","ajmzFilter_desc","ajmzFilter_shape",
+"ajmzFilter_cts","ajmzFilter_pcs","ajmzFilter_price","ajmzFilter_amount","ajmzFilter_remarks"
+].forEach(id=>{
+document.getElementById(id).addEventListener("input",applyFiltersAndRender);
+});
 
-  document.getElementById("calibSearch").addEventListener("input",applyFiltersAndRender);
-  [
-    "calibFilter_txId","calibFilter_stone","calibFilter_date","calibFilter_party","calibFilter_deet",
-    "calibFilter_lotName","calibFilter_grade","calibFilter_desc","calibFilter_shape","calibFilter_size",
-    "calibFilter_cts","calibFilter_price","calibFilter_amount","calibFilter_remarks"
-  ].forEach(id=>{
-    document.getElementById(id).addEventListener("input",applyFiltersAndRender);
-  });
-}
-
-function bindPagination(){
-  document.getElementById("ajmzPrevPage").addEventListener("click",()=>{
-    if(ajmzPage>1){ajmzPage--;renderAJMZ();}
-  });
-  document.getElementById("ajmzNextPage").addEventListener("click",()=>{
-    if((ajmzPage*ROWS_PER_PAGE)<AJMZ_FILTERED.length){
-      ajmzPage++;renderAJMZ();
-    }
-  });
-  document.getElementById("calibPrevPage").addEventListener("click",()=>{
-    if(calibPage>1){calibPage--;renderCALIB();}
-  });
-  document.getElementById("calibNextPage").addEventListener("click",()=>{
-    if((calibPage*ROWS_PER_PAGE)<CALIB_FILTERED.length){
-      calibPage++;renderCALIB();
-    }
-  });
+document.getElementById("calibSearch").addEventListener("input",applyFiltersAndRender);
+[
+"calibFilter_txId","calibFilter_stone","calibFilter_date","calibFilter_party","calibFilter_deet",
+"calibFilter_lotName","calibFilter_grade","calibFilter_desc","calibFilter_shape","calibFilter_size",
+"calibFilter_cts","calibFilter_price","calibFilter_amount","calibFilter_remarks"
+].forEach(id=>{
+document.getElementById(id).addEventListener("input",applyFiltersAndRender);
+});
 }
 
 function bindTabs(){
-  document.querySelectorAll(".rtab").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const target=btn.dataset.target;
-      document.querySelectorAll(".rtab").forEach(b=>b.classList.toggle("active",b===btn));
-      document.querySelectorAll(".record-section").forEach(sec=>{
-        sec.style.display=(sec.id===target)?"block":"none";
-      });
-    });
-  });
+document.querySelectorAll(".rtab").forEach(btn=>{
+btn.addEventListener("click",()=>{
+const target=btn.dataset.target;
+document.querySelectorAll(".rtab").forEach(b=>b.classList.toggle("active",b===btn));
+document.querySelectorAll(".record-section").forEach(sec=>{
+sec.style.display=(sec.id===target)?"block":"none";
+});
+});
+});
 }
 
 /* ============================================================
-   DOM READY
-   ============================================================ */
+DOM READY
+============================================================ */
 window.addEventListener("DOMContentLoaded",()=>{
-  chooserModalEl=document.getElementById("chooserModal");
-  chooserTitleEl=document.getElementById("chooserTitle");
-  chooserListEl=document.getElementById("chooserList");
-  chooserCancelBtn=document.getElementById("chooserCancel");
-  chooserApplyBtn=document.getElementById("chooserApply");
-  batchModalEl=document.getElementById("batchModal");
-  batchModalTitleEl=document.getElementById("batchModalTitle");
-  batchExistingEl=document.getElementById("batchExisting");
-  batchNewBodyEl=document.getElementById("batchNewBody");
-  addNewBatchRowBtn=document.getElementById("addNewBatchRow");
-  batchCancelBtn=document.getElementById("batchCancel");
-  batchSaveBtn=document.getElementById("batchSave");
+chooserModalEl=document.getElementById("chooserModal");
+chooserTitleEl=document.getElementById("chooserTitle");
+chooserListEl=document.getElementById("chooserList");
+chooserCancelBtn=document.getElementById("chooserCancel");
+chooserApplyBtn=document.getElementById("chooserApply");
 
-  multiBatchModalEl=document.getElementById("multiBatchModal");
-  multiBatchSelectedWrapper=document.getElementById("multiBatchSelectedWrapper");
-  multiBatchCancelBtn=document.getElementById("multiBatchCancel");
-  multiBatchSaveBtn=document.getElementById("multiBatchSave");
+batchModalEl=document.getElementById("batchModal");
+batchModalTitleEl=document.getElementById("batchModalTitle");
+batchExistingEl=document.getElementById("batchExisting");
+batchNewBodyEl=document.getElementById("batchNewBody");
+addNewBatchRowBtn=document.getElementById("addNewBatchRow");
+batchCancelBtn=document.getElementById("batchCancel");
+batchSaveBtn=document.getElementById("batchSave");
 
-  chooserCancelBtn.addEventListener("click",closeChooserModal);
-  chooserModalEl.addEventListener("mousedown",e=>{
-    if(e.target===chooserModalEl)closeChooserModal();
-  });
-  chooserApplyBtn.addEventListener("click",handleChooserApply);
+multiBatchModalEl=document.getElementById("multiBatchModal");
+multiBatchSelectedWrapper=document.getElementById("multiBatchSelectedWrapper");
+multiBatchCancelBtn=document.getElementById("multiBatchCancel");
+multiBatchSaveBtn=document.getElementById("multiBatchSave");
 
-  addNewBatchRowBtn.addEventListener("click",addNewBatchLine);
-  batchCancelBtn.addEventListener("click",closeBatchModal);
-  batchModalEl.addEventListener("mousedown",e=>{
-    if(e.target===batchModalEl)closeBatchModal();
-  });
+editBatchModalEl=document.getElementById("editBatchModal");
+editBatchDateInput=document.getElementById("editBatchDate");
+editBatchCTSInput=document.getElementById("editBatchCTS");
+editBatchPCSInput=document.getElementById("editBatchPCS");
+editBatchPriceInput=document.getElementById("editBatchPrice");
+editBatchAmountInput=document.getElementById("editBatchAmount");
+editBatchRemarksInput=document.getElementById("editBatchRemarks");
+editBatchCancelBtn=document.getElementById("editBatchCancel");
+editBatchSaveBtn=document.getElementById("editBatchSave");
+editBatchPCSRow=document.getElementById("editBatchPCSRow");
 
-  batchNewBodyEl.addEventListener("click",e=>{
-    const btn=e.target.closest("button");
-    if(!btn)return;
-    const tr=btn.closest("tr");
-    if(tr && batchNewBodyEl.children.length>1){
-      tr.remove();
-    }
-  });
+chooserCancelBtn.addEventListener("click",closeChooserModal);
+chooserModalEl.addEventListener("mousedown",e=>{
+if(e.target===chooserModalEl)closeChooserModal();
+});
+chooserApplyBtn.addEventListener("click",handleChooserApply);
 
-  batchSaveBtn.addEventListener("click",async ()=>{
-    if(!batchParentKey)return;
-    const newBatches=[];
-    [...batchNewBodyEl.children].forEach(tr=>{
-      const get=f=>tr.querySelector(`[data-field="${f}"]`)?.value.trim()||"";
-      const cts=Number(get("cts")||0);
-      const pcs=Number(get("pcs")||0);
-      const price=Number(get("price")||0);
-      let amount=Number(get("amount")||0);
-      const remarks=get("remarks");
-      if(!cts&&!pcs&&!price&&!amount&&!remarks)return;
-      if(!amount && cts && price)amount=cts*price;
-      newBatches.push({cts,pcs,price,amount,remarks,createdAt:nowStamp()});
-    });
-    if(!newBatches.length){closeBatchModal();return;}
+addNewBatchRowBtn.addEventListener("click",addNewBatchLine);
+batchCancelBtn.addEventListener("click",closeBatchModal);
+batchModalEl.addEventListener("mousedown",e=>{
+if(e.target===batchModalEl)closeBatchModal();
+});
 
-    const batchesRef=db.ref("batches/add/"+batchParentKey);
-    const existingSnap=await batchesRef.once("value");
-    
-    if(!existingSnap.exists()){
-      const parentPath=batchParentType==="AJMZ"?"ajmzRecords":"calibRecords";
-      const parentSnap=await db.ref(parentPath+"/"+batchParentKey).once("value");
-      if(parentSnap.exists()){
-        const parent=parentSnap.val();
-        const firstBatch={
-          cts:Number(parent.cts||0),
-          pcs:Number(parent.pcs||0),
-          price:Number(parent.price||0),
-          amount:Number(parent.amount||0),
-          remarks:"Original entry",
-          createdAt:parent.date||nowStamp()
-        };
-        const firstKey=batchesRef.push().key;
-        await batchesRef.child(firstKey).set(firstBatch);
-      }
-    }
+batchNewBodyEl.addEventListener("click",e=>{
+const btn=e.target.closest("button");
+if(!btn)return;
+const tr=btn.closest("tr");
+if(tr && batchNewBodyEl.children.length>1){
+tr.remove();
+}
+});
 
-    const updates={};
-    newBatches.forEach(b=>{
-      const key=batchesRef.push().key;
-      updates[key]=b;
-    });
-    await batchesRef.update(updates);
-    await recomputeParentFromBatches(batchParentKey,batchParentType);
-    await loadAllData();
-    closeBatchModal();
-  });
+batchSaveBtn.addEventListener("click",async ()=>{
+if(!batchParentKey)return;
 
-  multiBatchCancelBtn.addEventListener("click",closeMultiBatchModal);
-  multiBatchModalEl.addEventListener("mousedown",e=>{
-    if(e.target===multiBatchModalEl)closeMultiBatchModal();
-  });
-  multiBatchSaveBtn.addEventListener("click",saveMultiBatch);
+const newBatches=[];
+[...batchNewBodyEl.children].forEach(tr=>{
+const get=f=>tr.querySelector(`[data-field="${f}"]`)?.value.trim()||"";
+const cts=Number(get("cts")||0);
+const pcs=Number(get("pcs")||0);
+const price=Number(get("price")||0);
+let amount=Number(get("amount")||0);
+const remarks=get("remarks");
 
-  multiBatchSelectedWrapper.addEventListener("input", e => {
-    const input = e.target;
-    const tr = input.closest("tr[data-key]");
-    if (!tr) return;
+if(!cts&&!pcs&&!price&&!amount&&!remarks)return;
+if(!amount && cts && price)amount=cts*price;
 
-    if (input.dataset.add === "cts" || input.dataset.add === "price") {
-      const ctsInput   = tr.querySelector('input[data-add="cts"]');
-      const priceInput = tr.querySelector('input[data-add="price"]');
-      const amtInput   = tr.querySelector('input[data-add="amount"]');
+newBatches.push({cts,pcs,price,amount,remarks,createdAt:nowStamp()});
+});
 
-      if (!amtInput) return;
+if(!newBatches.length){closeBatchModal();return;}
 
-      const cts   = Number((ctsInput?.value || "0").replace(/,/g, ""));
-      const price = Number((priceInput?.value || "0").replace(/,/g, ""));
-      const amt   = cts * price;
+const batchesRef=db.ref(`batches/add/${batchParentKey}`);
+const existingSnap=await batchesRef.once("value");
 
-      amtInput.value = amt ? fmtNumber(amt) : "";
-    }
-  });
+if(!existingSnap.exists()){
+const parentPath=batchParentType==="AJMZ"?"ajmzRecords":"calibRecords";
+const parentSnap=await db.ref(`${parentPath}/${batchParentKey}`).once("value");
+if(parentSnap.exists()){
+const parent=parentSnap.val();
+const firstBatch={
+cts:Number(parent.cts||0),
+pcs:Number(parent.pcs||0),
+price:Number(parent.price||0),
+amount:Number(parent.amount||0),
+remarks:"Original entry",
+createdAt:parent.date||nowStamp()
+};
+const firstKey=batchesRef.push().key;
+await batchesRef.child(firstKey).set(firstBatch);
+}
+}
 
-  document.getElementById("btnAjmzBatchMulti").addEventListener("click",()=>{
-    const checked=[...document.querySelectorAll("#tbodyAJMZ .row-select:checked")];
-    const keys=checked.map(c=>c.dataset.key);
-    openMultiBatchModal("AJMZ",keys);
-  });
-  document.getElementById("btnCalibBatchMulti").addEventListener("click",()=>{
-    const checked=[...document.querySelectorAll("#tbodyCALIB .row-select:checked")];
-    const keys=checked.map(c=>c.dataset.key);
-    openMultiBatchModal("CALIB",keys);
-  });
+const updates={};
+newBatches.forEach(b=>{
+const key=batchesRef.push().key;
+updates[key]=b;
+});
 
-  document.getElementById("btnRefresh").addEventListener("click",loadAllData);
+await batchesRef.update(updates);
+await recomputeParentFromBatches(batchParentKey,batchParentType);
+await loadAllData();
 
-  bindTabs();
-  bindFilters();
-  bindPagination();
-  loadAllData();
+closeBatchModal();
+});
+
+multiBatchCancelBtn.addEventListener("click",closeMultiBatchModal);
+multiBatchModalEl.addEventListener("mousedown",e=>{
+if(e.target===multiBatchModalEl)closeMultiBatchModal();
+});
+multiBatchSaveBtn.addEventListener("click",saveMultiBatch);
+
+multiBatchSelectedWrapper.addEventListener("input", e => {
+const input = e.target;
+const tr = input.closest("tr[data-key]");
+if (!tr) return;
+
+if (input.dataset.add === "cts" || input.dataset.add === "price") {
+const ctsInput = tr.querySelector('input[data-add="cts"]');
+const priceInput = tr.querySelector('input[data-add="price"]');
+const amtInput = tr.querySelector('input[data-add="amount"]');
+if (!amtInput) return;
+
+const cts = Number((ctsInput?.value || "0").replace(/,/g, ""));
+const price = Number((priceInput?.value || "0").replace(/,/g, ""));
+const amt = cts * price;
+amtInput.value = amt ? fmtNumber(amt) : "";
+}
+});
+
+editBatchCancelBtn.addEventListener("click", closeEditBatchModal);
+editBatchModalEl.addEventListener("mousedown", e => {
+if(e.target === editBatchModalEl) closeEditBatchModal();
+});
+editBatchSaveBtn.addEventListener("click", saveEditBatch);
+
+[editBatchCTSInput, editBatchPriceInput].forEach(input => {
+input.addEventListener("input", () => {
+const cts = Number(editBatchCTSInput.value || 0);
+const price = Number(editBatchPriceInput.value || 0);
+const amount = cts * price;
+editBatchAmountInput.value = fmtNumber(amount);
+});
+});
+
+document.getElementById("btnAjmzBatchMulti").addEventListener("click",()=>{
+const checked=[...document.querySelectorAll("#tbodyAJMZ .row-select:checked")];
+const keys=checked.map(c=>c.dataset.key);
+openMultiBatchModal("AJMZ",keys);
+});
+
+document.getElementById("btnCalibBatchMulti").addEventListener("click",()=>{
+const checked=[...document.querySelectorAll("#tbodyCALIB .row-select:checked")];
+const keys=checked.map(c=>c.dataset.key);
+openMultiBatchModal("CALIB",keys);
+});
+
+document.getElementById("btnRefresh").addEventListener("click",loadAllData);
+
+bindTabs();
+bindFilters();
+loadAllData();
 });
 </script>
 </body>
