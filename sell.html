@@ -7,7 +7,6 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
-<!-- Firebase compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -26,15 +25,10 @@
   --muted:#f9f7f1;
   --danger:#c75252;
   --info:#4A70A9;
-
-  /* exact colors from screenshot */
-  --row-add:#E9F7EC;   /* parent ADD rows */
-  --row-sell:#FDECEA;  /* child SELL rows */
+  --row-add:#E9F7EC;
+  --row-sell:#FDECEA;
 }
 
-/* -------------------------------------------------
-   RESET + BASE
-   ------------------------------------------------- */
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
 body{
@@ -46,9 +40,6 @@ body{
   overflow:hidden;
 }
 
-/* -------------------------------------------------
-   LEFT FIXED NAV
-   ------------------------------------------------- */
 .nav-vertical{
   width:60px;
   background:#fff;
@@ -60,18 +51,13 @@ body{
   padding:14px 0;
   box-shadow:6px 0 20px var(--shadow);
   position:fixed;
-  left:0;
-  top:0;
-  bottom:0;
+  left:0;top:0;bottom:0;
   z-index:2000;
 }
 .nav-item{
-  width:44px;
-  height:44px;
+  width:44px;height:44px;
   border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:flex;align-items:center;justify-content:center;
   font-size:22px;
   text-decoration:none;
   color:var(--ink);
@@ -89,9 +75,6 @@ body{
   border-color:transparent;
 }
 
-/* -------------------------------------------------
-   WORKSPACE
-   ------------------------------------------------- */
 .workspace{
   flex:1;
   margin-left:60px;
@@ -100,9 +83,6 @@ body{
   overflow:auto;
 }
 
-/* -------------------------------------------------
-   TOP PANEL
-   ------------------------------------------------- */
 .panel{
   background:#fff;
   border:1px solid var(--line);
@@ -136,8 +116,7 @@ body{
   color:var(--ink-soft);
 }
 .badge-dot{
-  width:8px;
-  height:8px;
+  width:8px;height:8px;
   border-radius:999px;
   background:var(--accent);
 }
@@ -170,9 +149,6 @@ body{
   padding:0;
 }
 
-/* -------------------------------------------------
-   RECORD TABS
-   ------------------------------------------------- */
 .record-tabs{
   margin-top:14px;
   display:flex;
@@ -199,9 +175,6 @@ body{
   border-color:transparent;
 }
 
-/* -------------------------------------------------
-   CARD WRAPPER
-   ------------------------------------------------- */
 .card{
   background:var(--card);
   border:1px solid var(--line);
@@ -212,9 +185,6 @@ body{
 }
 .record-section{margin-top:8px;}
 
-/* -------------------------------------------------
-   TOOLBAR ROW
-   ------------------------------------------------- */
 .toolbar-row{
   display:flex;
   flex-wrap:wrap;
@@ -238,9 +208,6 @@ body{
   color:var(--ink);
 }
 
-/* -------------------------------------------------
-   TABLE SHELL + SCROLL + PAGINATION
-   ------------------------------------------------- */
 .table-shell{
   margin-top:4px;
   border:1px solid var(--line);
@@ -273,12 +240,10 @@ body{
   z-index:1;
 }
 
-/* filter row is visible and slightly tinted */
 .table thead tr.filter-row{
   background:#fdf8ed;
 }
 
-/* Filter dropdown wrapper */
 .filter-dropdown-wrapper{
   position:relative;
   width:100%;
@@ -312,39 +277,34 @@ body{
   z-index:100;
   display:none;
 }
-.filter-dropdown.show{
-  display:block;
-}
+.filter-dropdown.show{display:block;}
 .filter-dropdown-item{
   padding:6px 8px;
   font-size:11px;
   cursor:pointer;
   border-bottom:1px solid #f0f0f0;
 }
-.filter-dropdown-item:last-child{
-  border-bottom:none;
-}
-.filter-dropdown-item:hover{
-  background:var(--accent-soft);
-}
+.filter-dropdown-item:last-child{border-bottom:none;}
+.filter-dropdown-item:hover{background:var(--accent-soft);}
 .filter-dropdown-item.no-results{
   color:var(--ink-soft);
   cursor:default;
   font-style:italic;
 }
-.filter-dropdown-item.no-results:hover{
-  background:transparent;
-}
+.filter-dropdown-item.no-results:hover{background:transparent;}
 
-/* -------------------------------------------------
-   TABLE CELLS
-   ------------------------------------------------- */
+.table tbody tr,
+.table tbody tr:nth-child(even),
+.table tbody tr:nth-child(odd){
+  background:transparent !important;
+}
 .table tbody td{
   border-bottom:1px solid var(--line);
   padding:5px 6px;
   vertical-align:middle;
   white-space:nowrap;
   word-break:break-word;
+  background:transparent;
 }
 .cell{
   min-height:24px;
@@ -353,14 +313,42 @@ body{
   padding:3px 4px;
   display:flex;
   align-items:center;
+  background:transparent;
 }
-.cell.readonly{
-  background:transparent !important;
+.cell.readonly{background:transparent !important;}
+
+.ajmz-main,
+.calib-main{background:var(--row-add) !important;}
+.ajmz-main td,
+.calib-main td{background:var(--row-add) !important;}
+.ajmz-main .cell,
+.calib-main .cell{background:var(--row-add) !important;}
+
+.sell-row{background:var(--row-sell) !important;}
+.sell-row td{background:var(--row-sell) !important;}
+.sell-row .cell{background:var(--row-sell) !important;}
+
+.table tbody tr:hover,
+.table tbody tr:hover td,
+.table tbody tr:hover .cell{background:inherit !important;}
+
+.ajmz-main:hover,
+.ajmz-main:hover td,
+.ajmz-main:hover .cell,
+.calib-main:hover,
+.calib-main:hover td,
+.calib-main:hover .cell{
+  background:var(--row-add) !important;
+  filter:brightness(0.97);
 }
 
-/* -------------------------------------------------
-   ACTIONS + PAGER
-   ------------------------------------------------- */
+.sell-row:hover,
+.sell-row:hover td,
+.sell-row:hover .cell{
+  background:var(--row-sell) !important;
+  filter:brightness(0.97);
+}
+
 .td-actions{white-space:nowrap;text-align:center;}
 .row-actions{
   display:flex;
@@ -380,16 +368,12 @@ body{
   border-color:var(--info);
   color:var(--info);
 }
-.icon-pill.edit:hover{
-  background:#e3edff;
-}
+.icon-pill.edit:hover{background:#e3edff;}
 .icon-pill.delete{
   border-color:var(--danger);
   color:var(--danger);
 }
-.icon-pill.delete:hover{
-  background:#ffeaea;
-}
+.icon-pill.delete:hover{background:#ffeaea;}
 
 .pager{
   display:flex;
@@ -417,18 +401,12 @@ body{
   padding:0 6px;
 }
 .page-btn:hover{background:#f3f0e7}
-.page-btn.disabled{
-  opacity:.4;
-  cursor:default;
-}
+.page-btn.disabled{opacity:.4;cursor:default;}
 .page-indicator b{
   font-weight:700;
   color:var(--ink);
 }
 
-/* -------------------------------------------------
-   MODALS
-   ------------------------------------------------- */
 .modal-overlay{
   position:fixed;
   left:0;top:0;right:0;bottom:0;
@@ -445,9 +423,6 @@ body{
   box-shadow:0 10px 30px rgba(0,0,0,.25);
 }
 
-/* -------------------------------------------------
-   SELL MODAL
-   ------------------------------------------------- */
 .sell-modal-header{
   display:flex;
   flex-wrap:wrap;
@@ -474,7 +449,6 @@ body{
   box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
 
-/* Custom dropdown for party selector */
 .party-dropdown-wrapper{
   position:relative;
   min-width:200px;
@@ -508,29 +482,22 @@ body{
   z-index:1000;
   display:none;
 }
-.party-dropdown-menu.show{
-  display:block;
-}
+.party-dropdown-menu.show{display:block;}
 .party-dropdown-item{
   padding:6px 10px;
   font-size:12px;
   cursor:pointer;
   border-bottom:1px solid var(--line);
 }
-.party-dropdown-item:last-child{
-  border-bottom:none;
-}
-.party-dropdown-item:hover{
-  background:var(--accent-soft);
-}
+.party-dropdown-item:last-child{border-bottom:none;}
+.party-dropdown-item:hover{background:var(--accent-soft);}
 .party-dropdown-item.no-results{
   color:var(--ink-soft);
   cursor:default;
   font-style:italic;
 }
-.party-dropdown-item.no-results:hover{
-  background:transparent;
-}
+.party-dropdown-item.no-results:hover{background:transparent;}
+
 .sell-table{
   width:100%;
   border-collapse:collapse;
@@ -542,9 +509,7 @@ body{
   padding:4px 5px;
   text-align:left;
 }
-.sell-table thead{
-  background:#f3efe6;
-}
+.sell-table thead{background:#f3efe6;}
 .sell-table input{
   width:100%;
   border-radius:6px;
@@ -557,10 +522,11 @@ body{
   border-color:var(--accent);
   box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
+.sell-table input:disabled{
+  background:#f5f5f5;
+  cursor:not-allowed;
+}
 
-/* -------------------------------------------------
-   RESPONSIVE
-   ------------------------------------------------- */
 @media (max-width:1100px){
   .workspace{padding:16px}
 }
@@ -568,89 +534,10 @@ body{
   .workspace{padding:12px}
   .panel{flex-wrap:wrap;row-gap:8px}
 }
-
-/* -------------------------------------------------
-   STRICT ROW COLOR CONTROL — FINAL
-   ------------------------------------------------- */
-
-/* 1. Remove ALL default backgrounds and zebra effects */
-.table tbody tr,
-.table tbody tr:nth-child(even),
-.table tbody tr:nth-child(odd){
-  background:transparent !important;
-}
-
-.table tbody td{
-  background:transparent;
-}
-
-.table tbody td .cell{
-  background:transparent;
-}
-
-/* 2. Parent (ADD) Rows — SOLID GREEN - highest priority */
-.ajmz-main,
-.calib-main{
-  background:var(--row-add) !important;
-}
-
-.ajmz-main td,
-.calib-main td{
-  background:var(--row-add) !important;
-}
-
-.ajmz-main .cell,
-.calib-main .cell{
-  background:var(--row-add) !important;
-}
-
-/* 3. Child (SELL) Rows — SOLID RED - highest priority */
-.sell-row{
-  background:var(--row-sell) !important;
-}
-
-.sell-row td{
-  background:var(--row-sell) !important;
-}
-
-.sell-row .cell{
-  background:var(--row-sell) !important;
-}
-
-/* 4. Hover effects - maintain row colors */
-.table tbody tr:hover,
-.table tbody tr:hover td,
-.table tbody tr:hover .cell{
-  background:inherit !important;
-}
-
-.ajmz-main:hover,
-.ajmz-main:hover td,
-.ajmz-main:hover .cell,
-.calib-main:hover,
-.calib-main:hover td,
-.calib-main:hover .cell{
-  background:var(--row-add) !important;
-  filter:brightness(0.97);
-}
-
-.sell-row:hover,
-.sell-row:hover td,
-.sell-row:hover .cell{
-  background:var(--row-sell) !important;
-  filter:brightness(0.97);
-}
-
-/* Pulse animation for locked fields (currently unused but kept) */
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); box-shadow: 0 0 8px rgba(194, 166, 140, 0.5); }
-}
 </style>
 </head>
 <body>
 
-<!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
   <a href="index.html" class="nav-item" title="Add">➕</a>
   <a href="added.html" class="nav-item" title="Added">📋</a>
@@ -659,7 +546,6 @@ body{
   <a href="reports2.html" class="nav-item" title="Reports 2">📊</a>
 </div>
 
-<!-- MAIN WORKSPACE -->
 <div class="workspace">
 
   <div class="panel">
@@ -672,10 +558,11 @@ body{
       <span>Live Data</span>
     </span>
     <div class="spacer"></div>
+    <button class="button danger" type="button" id="btnClearSelected">🔄 Clear Selected</button>
+    <button class="button" type="button" id="btnSellSelected">💎 Sell Selected</button>
     <button class="button soft" type="button" id="btnRefresh">🔄 Refresh</button>
   </div>
 
-  <!-- TABS -->
   <div class="record-tabs">
     <button class="rtab active" data-target="sectionAJMZ">
       <span class="icon">💎</span>
@@ -689,7 +576,6 @@ body{
 
   <div class="card">
 
-    <!-- AJMZ SECTION -->
     <section class="record-section" id="sectionAJMZ">
       <div class="toolbar-row">
         <div class="metric-chip">
@@ -701,8 +587,6 @@ body{
         <div class="metric-chip">
           Rem. Amount: <span class="metric-value" id="ajmzTotalAmount">0.00</span>
         </div>
-        <div class="spacer"></div>
-        <button class="button" id="btnAjmzSellSelected">💎 Sell Selected</button>
       </div>
 
       <div class="table-shell">
@@ -731,7 +615,6 @@ body{
                 <th style="width:160px;">Remarks</th>
                 <th style="width:90px;">Actions</th>
               </tr>
-              <!-- FILTER ROW -->
               <tr class="filter-row">
                 <th></th>
                 <th>
@@ -821,8 +704,6 @@ body{
         </div>
       </div>
     </section>
-
-    <!-- CALIB SECTION -->
     <section class="record-section" id="sectionCALIB" style="display:none">
       <div class="toolbar-row">
         <div class="metric-chip">
@@ -834,8 +715,6 @@ body{
         <div class="metric-chip">
           Rem. Amount: <span class="metric-value" id="calibTotalAmount">0.00</span>
         </div>
-        <div class="spacer"></div>
-        <button class="button" id="btnCalibSellSelected">💎 Sell Selected</button>
       </div>
 
       <div class="table-shell">
@@ -864,7 +743,6 @@ body{
                 <th style="width:160px;">Remarks</th>
                 <th style="width:90px;">Actions</th>
               </tr>
-              <!-- FILTER ROW -->
               <tr class="filter-row">
                 <th></th>
                 <th>
@@ -955,14 +833,13 @@ body{
       </div>
     </section>
 
-  </div> <!-- end .card -->
-</div> <!-- end .workspace -->
+  </div>
+</div>
 
-<!-- SELL MODAL -->
 <div id="sellModal" class="modal-overlay">
-  <div class="modal-panel" style="width:950px;max-width:98%;max-height:90%;overflow:auto;">
+  <div class="modal-panel" style="width:1100px;max-width:98%;max-height:90%;overflow:auto;">
     <h3 style="margin-bottom:12px;font-size:17px;font-weight:700">
-      <span id="sellModalTitle">Sell Selected</span> – <span id="sellIdLabel">(auto)</span>
+      <span id="sellModalTitle">Sell Selected Rows</span> – <span id="sellIdLabel">(auto)</span>
     </h3>
 
     <div class="sell-modal-header">
@@ -976,8 +853,7 @@ body{
       <input type="date" id="sellDateInput"/>
 
       <span style="font-size:11px;color:var(--ink-soft);">
-        • Same <b>SELL ID</b> will be applied to all rows in this selling.
-        <br>• Edit <b>CTS/PCS</b> directly to control sold quantities.
+        • Same <b>SELL ID</b> for all rows • Edit <b>CTS/PCS</b> directly
       </span>
     </div>
 
@@ -986,7 +862,7 @@ body{
       border-radius:12px;
       padding:8px;
       background:#faf8f4;
-      max-height:420px;
+      max-height:450px;
       overflow:auto;
       margin-bottom:10px;
     "></div>
@@ -1001,9 +877,6 @@ body{
 </div>
 
 <script>
-/* ============================================================
-   UTILITIES
-   ============================================================ */
 function esc(s){
   if(s===null||s===undefined)return "";
   return String(s)
@@ -1046,9 +919,6 @@ function todayISO(){
   return `${y}-${m}-${d}`;
 }
 
-/* ============================================================
-   FIREBASE INIT
-   ============================================================ */
 const firebaseConfig={
   apiKey:"AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
   authDomain:"ajmzinventory.firebaseapp.com",
@@ -1061,84 +931,38 @@ const firebaseConfig={
 firebase.initializeApp(firebaseConfig);
 const db=firebase.database();
 
-/* ============================================================
-   GLOBAL DATA
-   ============================================================ */
 let AJMZ_ALL=[], CALIB_ALL=[], SELLS={};
 let AJMZ_ROWS=[], CALIB_ROWS=[];
 let AJMZ_FILTERED=[], CALIB_FILTERED=[];
-let PARTIES=[];
 let ajmzPage=1, calibPage=1;
 const ROWS_PER_PAGE=50;
 
-/* filter state */
 const AJMZ_FILTER_VALUES = {
-  rowType:"",
-  txId:"",
-  sellId:"",
-  date:"",
-  party:"",
-  lotName:"",
-  format:"",
-  shape:"",
-  size:"",
-  description:""
+  rowType:"",txId:"",sellId:"",date:"",party:"",lotName:"",format:"",shape:"",size:"",description:""
 };
 const CALIB_FILTER_VALUES = {
-  rowType:"",
-  txId:"",
-  sellId:"",
-  date:"",
-  party:"",
-  lotName:"",
-  grade:"",
-  shape:"",
-  size:"",
-  description:""
+  rowType:"",txId:"",sellId:"",date:"",party:"",lotName:"",grade:"",shape:"",size:"",description:""
 };
 
 const AJMZ_UNIQUES = {
-  rowType:[],
-  txId:[],
-  sellId:[],
-  date:[],
-  party:[],
-  lotName:[],
-  format:[],
-  shape:[],
-  size:[],
-  description:[]
+  rowType:[],txId:[],sellId:[],date:[],party:[],lotName:[],format:[],shape:[],size:[],description:[]
 };
 const CALIB_UNIQUES = {
-  rowType:[],
-  txId:[],
-  sellId:[],
-  date:[],
-  party:[],
-  lotName:[],
-  grade:[],
-  shape:[],
-  size:[],
-  description:[]
+  rowType:[],txId:[],sellId:[],date:[],party:[],lotName:[],grade:[],shape:[],size:[],description:[]
 };
 
 let currentSection = "AJMZ";
 
-/* Sell modal globals */
 let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput,
     sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle;
 
 let allUniqueParties = [];
 
-/* Edit mode globals */
 let editMode = false;
 let editSellKey = null;
 let editParentKey = null;
 let editParentType = null;
 
-/* ============================================================
-   HELPERS
-   ============================================================ */
 function getRemainingForRow(row,type){
   const hasRemCts = Object.prototype.hasOwnProperty.call(row,"remainingCts") &&
                     row.remainingCts !== null && row.remainingCts !== undefined && row.remainingCts !== "";
@@ -1158,23 +982,12 @@ function findRowByKey(type,key){
   return arr.find(r=>r.key===key) || null;
 }
 
-/* ============================================================
-   UNIQUE VALUE BUILDING
-   ============================================================ */
 function rebuildAJMZUniques(){
   const sets = {
-    rowType:new Set(),
-    txId:new Set(),
-    sellId:new Set(),
-    date:new Set(),
-    party:new Set(),
-    lotName:new Set(),
-    format:new Set(),
-    shape:new Set(),
-    size:new Set(),
-    description:new Set()
+    rowType:new Set(),txId:new Set(),sellId:new Set(),date:new Set(),party:new Set(),
+    lotName:new Set(),format:new Set(),shape:new Set(),size:new Set(),description:new Set()
   };
-  AJMZ_ROWS.forEach(r=>{
+  AJMZ_ROWS.filter(r=>r.rowType==="ADD").forEach(r=>{
     Object.keys(sets).forEach(k=>{
       const val = (r[k]||"").toString().trim();
       if(val) sets[k].add(val);
@@ -1187,18 +1000,10 @@ function rebuildAJMZUniques(){
 
 function rebuildCALIBUniques(){
   const sets = {
-    rowType:new Set(),
-    txId:new Set(),
-    sellId:new Set(),
-    date:new Set(),
-    party:new Set(),
-    lotName:new Set(),
-    grade:new Set(),
-    shape:new Set(),
-    size:new Set(),
-    description:new Set()
+    rowType:new Set(),txId:new Set(),sellId:new Set(),date:new Set(),party:new Set(),
+    lotName:new Set(),grade:new Set(),shape:new Set(),size:new Set(),description:new Set()
   };
-  CALIB_ROWS.forEach(r=>{
+  CALIB_ROWS.filter(r=>r.rowType==="ADD").forEach(r=>{
     Object.keys(sets).forEach(k=>{
       const val = (r[k]||"").toString().trim();
       if(val) sets[k].add(val);
@@ -1209,7 +1014,6 @@ function rebuildCALIBUniques(){
   });
 }
 
-/* filter dropdown helpers */
 function buildFilterDropdown(input){
   const col = input.dataset.col;
   const section = input.dataset.section;
@@ -1239,10 +1043,6 @@ function buildFilterDropdown(input){
 function closeAllFilterDropdowns(){
   document.querySelectorAll(".filter-dropdown").forEach(dd=>dd.classList.remove("show"));
 }
-
-/* ============================================================
-   DATA LOADING
-   ============================================================ */
 async function loadAllData(){
   const [ajSnap,calSnap,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
@@ -1312,6 +1112,7 @@ async function loadAllData(){
         : (obj.remainingCts * obj.price);
       obj.__sells = SELLS[obj.key] || [];
       if(obj.party) partySet.add(obj.party);
+      delete obj.lotFormat;
       CALIB_ALL.push(obj);
     });
   }
@@ -1319,7 +1120,6 @@ async function loadAllData(){
   AJMZ_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
   CALIB_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
 
-  // Collect all unique parties from ADD and SELL
   const allParties = new Set();
   AJMZ_ALL.forEach(r => { if(r.party) allParties.add(r.party); });
   CALIB_ALL.forEach(r => { if(r.party) allParties.add(r.party); });
@@ -1329,9 +1129,7 @@ async function loadAllData(){
     });
   });
   allUniqueParties = Array.from(allParties).filter(Boolean).sort();
-  PARTIES = Array.from(partySet).filter(Boolean).sort();
 
-  // Build flat row lists
   buildAJMZRows();
   buildCALIBRows();
 
@@ -1457,9 +1255,6 @@ function buildCALIBRows(){
   });
 }
 
-/* ============================================================
-   PARTY DROPDOWN FOR SELL MODAL
-   ============================================================ */
 function updatePartyDropdown(searchTerm = ""){
   if(!partyDropdownMenu) return;
   
@@ -1477,7 +1272,7 @@ function updatePartyDropdown(searchTerm = ""){
   if(filtered.length === 0){
     const noResult = document.createElement("div");
     noResult.className = "party-dropdown-item no-results";
-    noResult.textContent = term ? `No matches found. Type to add "${searchTerm}" as new party.` : "No parties available";
+    noResult.textContent = term ? `No matches. Type to add "${searchTerm}" as new.` : "No parties available";
     partyDropdownMenu.appendChild(noResult);
   } else {
     filtered.forEach(party => {
@@ -1506,9 +1301,6 @@ function hidePartyDropdown(){
   }, 200);
 }
 
-/* ============================================================
-   FILTERS + RENDER
-   ============================================================ */
 function filterAJMZ(){
   AJMZ_FILTERED = AJMZ_ROWS.filter(r=>{
     for(const [key,val] of Object.entries(AJMZ_FILTER_VALUES)){
@@ -1533,9 +1325,6 @@ function filterCALIB(){
   calibPage=1;
 }
 
-/* ============================================================
-   RENDERERS
-   ============================================================ */
 function renderAJMZRow(row){
   const isAdd = row.rowType==="ADD";
   const rowClass = isAdd ? "ajmz-main" : "sell-row";
@@ -1698,7 +1487,6 @@ function renderCALIB(){
   document.getElementById("calibNextPage").classList.toggle("disabled",startIndex+ROWS_PER_PAGE>=totalRows);
 }
 
-/* Metrics */
 function updateMetrics(){
   const ajmzRows = AJMZ_FILTERED;
   const calibRows = CALIB_FILTERED;
@@ -1723,18 +1511,9 @@ function updateMetrics(){
   document.getElementById("calibTotalCTS").textContent=fmtNumber(tCtsC);
   document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
-
-/* ============================================================
-   SELL MODAL + SAVE (EDIT CTS / PCS)
-   ============================================================ */
-function buildSellModalTable(type,keys,editData=null){
-  const rows=[];
-  keys.forEach(k=>{
-    const r=findRowByKey(type,k);
-    if(r)rows.push(r);
-  });
-  if(!rows.length){
-    sellModalTableWrapper.innerHTML="<div style='font-size:12px;color:#777;'>No rows found.</div>";
+function buildSellModalTable(selectedRows,editData=null){
+  if(!selectedRows.length){
+    sellModalTableWrapper.innerHTML="<div style='font-size:12px;color:#777;'>No rows selected.</div>";
     return;
   }
 
@@ -1744,32 +1523,34 @@ function buildSellModalTable(type,keys,editData=null){
     <table class="sell-table">
       <thead>
         <tr>
-          <th>Tx ID</th>
-          <th>Stone</th>
-          <th>Lot / Grade</th>
-          <th>Description</th>
-          <th>Remain CTS</th>
-          ${type==="AJMZ" ? "<th>Remain PCS</th>" : ""}
-          <th>Sell CTS</th>
-          ${type==="AJMZ" ? "<th>Sell PCS</th>" : ""}
-          <th>Price</th>
-          <th>Amount</th>
-          <th>Remarks</th>
+          <th style="width:80px;">Type</th>
+          <th style="width:100px;">Tx ID</th>
+          <th style="width:120px;">Lot/Grade</th>
+          <th style="width:150px;">Description</th>
+          <th style="width:80px;">Rem CTS</th>
+          <th style="width:80px;">Rem PCS</th>
+          <th style="width:80px;">Sell CTS</th>
+          <th style="width:80px;">Sell PCS</th>
+          <th style="width:80px;">Price</th>
+          <th style="width:90px;">Amount</th>
+          <th style="width:120px;">Remarks</th>
         </tr>
       </thead>
       <tbody>
   `;
   let body="";
-  rows.forEach(r=>{
-    const rem=getRemainingForRow(r,type);
-    const price=Number(r.price||0);
+  
+  selectedRows.forEach(rowData=>{
+    const {row, type} = rowData;
+    const rem=getRemainingForRow(row,type);
+    const price=Number(row.price||0);
     
     let sellCts = rem.remainingCts;
     let sellPcs = type==="AJMZ" ? rem.remainingPcs : 0;
     let sellPrice = price;
     let sellRemarks = "";
     
-    if(editData && editData.parentKey === r.key){
+    if(editData && editData.parentKey === row.key){
       sellCts = Number(editData.cts||0);
       sellPcs = Number(editData.pcs||0);
       sellPrice = Number(editData.price||0);
@@ -1778,19 +1559,21 @@ function buildSellModalTable(type,keys,editData=null){
     
     const initAmt = sellCts * sellPrice;
     const lotOrGrade = type==="AJMZ"
-      ? (r.lotName||"") + (r.lotFormat?(" / "+r.lotFormat):"")
-      : (r.lotName||"") + (r.grade?(" / "+r.grade):"");
+      ? (row.lotName||"") + (row.lotFormat?(" / "+row.lotFormat):"")
+      : (row.lotName||"") + (row.grade?(" / "+row.grade):"");
+
+    const pcsDisabled = type==="CALIB" ? "disabled" : "";
 
     body+=`
-      <tr data-key="${r.key}" data-type="${type}">
-        <td>${esc(r.txId||"")}</td>
-        <td>${type==="AJMZ"?"AJMZ":"CALIB"}</td>
+      <tr data-key="${row.key}" data-type="${type}">
+        <td>${type}</td>
+        <td>${esc(row.txId||"")}</td>
         <td>${esc(lotOrGrade)}</td>
-        <td>${esc(r.description||"")}</td>
+        <td>${esc(row.description||"")}</td>
         <td>${fmtNumber(rem.remainingCts)}</td>
-        ${type==="AJMZ" ? `<td>${fmtNumber(rem.remainingPcs)}</td>` : ""}
+        <td>${type==="AJMZ"?fmtNumber(rem.remainingPcs):"-"}</td>
         <td><input type="number" step="0.0001" data-sell="cts" value="${sellCts}"></td>
-        ${type==="AJMZ" ? `<td><input type="number" step="1" data-sell="pcs" value="${sellPcs}"></td>` : ""}
+        <td><input type="number" step="1" data-sell="pcs" value="${sellPcs}" ${pcsDisabled}></td>
         <td><input type="number" step="0.0001" data-sell="price" value="${sellPrice}"></td>
         <td><input type="text" data-sell="amount" value="${initAmt?fmtNumber(initAmt):""}" readonly></td>
         <td><input type="text" data-sell="remarks" placeholder="Optional…" value="${esc(sellRemarks)}"></td>
@@ -1812,41 +1595,41 @@ function recalcSellRowAmount(tr){
   amtInput.value = amt ? fmtNumber(amt) : "";
 }
 
-function openSellModal(section){
-  let selector = section === "AJMZ" 
-    ? "#tbodyAJMZ tr.ajmz-main .row-select:checked"
-    : "#tbodyCALIB tr.calib-main .row-select:checked";
-
-  const checked=Array.from(document.querySelectorAll(selector));
-  const keys=checked.map(c=>c.dataset.key);
-  const types=checked.map(c=>c.dataset.type);
+function openSellModal(){
+  const ajmzChecked=Array.from(document.querySelectorAll("#tbodyAJMZ tr.ajmz-main .row-select:checked"));
+  const calibChecked=Array.from(document.querySelectorAll("#tbodyCALIB tr.calib-main .row-select:checked"));
   
-  if(!keys.length){
-    alert("Please select at least one ADD row.");
+  const selectedRows = [];
+  
+  ajmzChecked.forEach(checkbox => {
+    const key = checkbox.dataset.key;
+    const row = findRowByKey("AJMZ", key);
+    if(row) selectedRows.push({row, type:"AJMZ"});
+  });
+  
+  calibChecked.forEach(checkbox => {
+    const key = checkbox.dataset.key;
+    const row = findRowByKey("CALIB", key);
+    if(row) selectedRows.push({row, type:"CALIB"});
+  });
+  
+  if(!selectedRows.length){
+    alert("Please select at least one ADD row from AJMZ or CALIB.");
     return;
   }
-
-  const uniqueTypes = [...new Set(types)];
-  if(uniqueTypes.length > 1){
-    alert("Please select rows of the same type (either all AJMZ or all CALIB).");
-    return;
-  }
-  
-  const type = uniqueTypes[0];
 
   editMode = false;
   editSellKey = null;
   editParentKey = null;
   editParentType = null;
 
-  sellModalTitle.textContent = "Sell Selected";
+  sellModalTitle.textContent = "Sell Selected Rows";
   sellIdLabelEl.textContent="(auto)";
   sellPartyInput.value="";
   sellDateInput.value=todayISO();
 
-  buildSellModalTable(type,keys);
-  sellModalEl.dataset.type=type;
-  sellModalEl.dataset.keys=JSON.stringify(keys);
+  buildSellModalTable(selectedRows);
+  sellModalEl.dataset.selectedRows=JSON.stringify(selectedRows.map(sr=>({key:sr.row.key,type:sr.type})));
   sellModalEl.style.display="flex";
 }
 
@@ -1868,16 +1651,20 @@ function openEditSellModal(parentKey, sellKey, type){
   sellPartyInput.value = sellRecord.party || "";
   sellDateInput.value = sellRecord.date || todayISO();
 
-  buildSellModalTable(type, [parentKey], sellRecord);
-  sellModalEl.dataset.type = type;
-  sellModalEl.dataset.keys = JSON.stringify([parentKey]);
+  const row = findRowByKey(type, parentKey);
+  if(!row){
+    alert("Parent row not found.");
+    return;
+  }
+
+  buildSellModalTable([{row, type}], sellRecord);
+  sellModalEl.dataset.selectedRows=JSON.stringify([{key:parentKey,type}]);
   sellModalEl.style.display = "flex";
 }
 
 function closeSellModal(){
   sellModalEl.style.display="none";
-  sellModalEl.dataset.type="";
-  sellModalEl.dataset.keys="[]";
+  sellModalEl.dataset.selectedRows="[]";
   sellModalTableWrapper.innerHTML="";
   editMode = false;
   editSellKey = null;
@@ -1885,7 +1672,6 @@ function closeSellModal(){
   editParentType = null;
 }
 
-/* SELL ID generator */
 async function generateSellId(){
   try{
     const counterRef=db.ref("counters/sell");
@@ -1912,13 +1698,11 @@ async function generateSellId(){
   }
 }
 
-/* Save SELL (new + edit) */
 async function handleSaveSell(){
-  const type=sellModalEl.dataset.type || "";
-  const keysRaw=sellModalEl.dataset.keys || "[]";
-  let keys=[];
-  try{keys=JSON.parse(keysRaw);}catch{keys=[];}
-  if(!type || !keys.length){
+  const selectedRowsRaw=sellModalEl.dataset.selectedRows || "[]";
+  let selectedRows=[];
+  try{selectedRows=JSON.parse(selectedRowsRaw);}catch{selectedRows=[];}
+  if(!selectedRows.length){
     closeSellModal();
     return;
   }
@@ -2065,9 +1849,6 @@ async function handleSaveSell(){
   await loadAllData();
 }
 
-/* ============================================================
-   DELETE SELL + RECALC
-   ============================================================ */
 async function deleteSell(parentKey,sellKey,parentType){
   const parentPath = parentType==="AJMZ" ? "ajmzRecords" : "calibRecords";
 
@@ -2092,7 +1873,6 @@ async function deleteSell(parentKey,sellKey,parentType){
   await loadAllData();
 }
 
-/* delegated edit and delete clicks */
 document.body.addEventListener("click",async e=>{
   const editBtn=e.target.closest(".edit-sell");
   if(editBtn){
@@ -2111,12 +1891,11 @@ document.body.addEventListener("click",async e=>{
     const parentType=deleteBtn.dataset.type;
     if(!parentKey || !sellKey || !parentType)return;
 
-    if(!confirm("Delete this sell record and restore its quantity back to the parent row?"))return;
+    if(!confirm("Delete this sell record and restore quantities?"))return;
     await deleteSell(parentKey,sellKey,parentType);
     return;
   }
 
-  // filter dropdown selection
   const item = e.target.closest(".filter-dropdown-item");
   if(item){
     const wrapper=item.closest(".filter-dropdown-wrapper");
@@ -2140,10 +1919,6 @@ document.body.addEventListener("click",async e=>{
     closeAllFilterDropdowns();
   }
 });
-
-/* ============================================================
-   BINDINGS
-   ============================================================ */
 function bindFilterInputs(){
   const ajmzInputs = document.querySelectorAll('#tableAJMZ .filter-input[data-col]');
   ajmzInputs.forEach(input=>{
@@ -2202,12 +1977,7 @@ function bindTabs(){
   });
 }
 
-/* ============================================================
-   SELL MODAL EVENTS — INPUT HANDLERS
-   ============================================================ */
 function bindSellModalEvents(){
-
-  // Recalc amount when CTS or price changes
   sellModalTableWrapper.addEventListener("input", e => {
     const input = e.target;
     const tr = input.closest("tr[data-key]");
@@ -2216,10 +1986,14 @@ function bindSellModalEvents(){
       recalcSellRowAmount(tr);
     }
   });
-
 }
 
-/* main filter/apply pipeline */
+function clearAllSelectedCheckboxes(){
+  document.querySelectorAll(".row-select:checked").forEach(checkbox => {
+    checkbox.checked = false;
+  });
+}
+
 function applyFiltersAndRender(){
   filterAJMZ();
   filterCALIB();
@@ -2228,9 +2002,6 @@ function applyFiltersAndRender(){
   updateMetrics();
 }
 
-/* ============================================================
-   DOM READY
-   ============================================================ */
 window.addEventListener("DOMContentLoaded",()=>{
   sellModalEl=document.getElementById("sellModal");
   sellModalTableWrapper=document.getElementById("sellModalTableWrapper");
@@ -2242,7 +2013,6 @@ window.addEventListener("DOMContentLoaded",()=>{
   partyDropdownMenu=document.getElementById("partyDropdownMenu");
   sellModalTitle=document.getElementById("sellModalTitle");
 
-  // Party dropdown events
   sellPartyInput.addEventListener("focus", showPartyDropdown);
   sellPartyInput.addEventListener("blur", hidePartyDropdown);
   sellPartyInput.addEventListener("input", (e) => {
@@ -2258,8 +2028,8 @@ window.addEventListener("DOMContentLoaded",()=>{
   });
   sellSaveBtn.addEventListener("click",handleSaveSell);
 
-  document.getElementById("btnAjmzSellSelected").addEventListener("click",()=>openSellModal("AJMZ"));
-  document.getElementById("btnCalibSellSelected").addEventListener("click",()=>openSellModal("CALIB"));
+  document.getElementById("btnClearSelected").addEventListener("click",clearAllSelectedCheckboxes);
+  document.getElementById("btnSellSelected").addEventListener("click",openSellModal);
   document.getElementById("btnRefresh").addEventListener("click",loadAllData);
 
   bindTabs();
