@@ -625,7 +625,6 @@ body{
 
   </div> <!-- end .card -->
 </div> <!-- end .workspace -->
-
 <!-- SHAPE / SIZE CHOOSER MODAL -->
 <div id="chooserModal" class="modal-overlay">
   <div class="modal-panel" style="width:420px;max-width:95%;">
@@ -906,7 +905,6 @@ function renderBatchRow(parentKey,batch){
     </td>
   </tr>`;
 }
-
 /* ============================================================
    DATA LOADING
    ============================================================ */
@@ -1226,34 +1224,42 @@ async function handleAddRow(parentKey){
   let parent=AJMZ_ALL.find(r=>r.key===parentKey)||CALIB_ALL.find(r=>r.key===parentKey);
   if(!parent){alert("Parent row not found.");return;}
 
+  const type=parent.grade!==undefined?"CALIB":"AJMZ";
   const txId=parent.txId;
-  const basePart=(parent.lotFormat||"1/000").split("/")[0]||"1";
-  let maxNo=0;
-
-  [...AJMZ_ALL,...CALIB_ALL].forEach(r=>{
-    if(r.txId===txId && r.lotFormat){
-      const parts=String(r.lotFormat).split("/");
-      if(parts.length===2){
-        const n=Number(parts[1]);
-        if(!isNaN(n))maxNo=Math.max(maxNo,n);
-      }
-    }
-  });
-
-  const nextNo=maxNo+1;
-  const newLotFormat=`${basePart}/${String(nextNo).padStart(3,"0")}`;
 
   let newRec=JSON.parse(JSON.stringify(parent));
   delete newRec.key;
   delete newRec.__batches;
-  newRec.lotFormat=newLotFormat;
+
+  if(type==="AJMZ"){
+    // AJMZ: handle lotFormat increment
+    const basePart=(parent.lotFormat||"1/000").split("/")[0]||"1";
+    let maxNo=0;
+
+    [...AJMZ_ALL,...CALIB_ALL].forEach(r=>{
+      if(r.txId===txId && r.lotFormat){
+        const parts=String(r.lotFormat).split("/");
+        if(parts.length===2){
+          const n=Number(parts[1]);
+          if(!isNaN(n))maxNo=Math.max(maxNo,n);
+        }
+      }
+    });
+
+    const nextNo=maxNo+1;
+    newRec.lotFormat=`${basePart}/${String(nextNo).padStart(3,"0")}`;
+  }else{
+    // CALIB: remove lotFormat, ensure grade is set
+    delete newRec.lotFormat;
+    newRec.grade=parent.grade||"";
+  }
+
   newRec.cts=0;
   newRec.pcs=0;
   newRec.price=0;
   newRec.amount=0;
   newRec.remarks="";
 
-  const type=parent.grade!==undefined?"CALIB":"AJMZ";
   const path=type==="AJMZ"?"ajmzRecords":"calibRecords";
   const newKey=db.ref(path).push().key;
   await db.ref(path+"/"+newKey).set(newRec);
@@ -1332,9 +1338,7 @@ function collapseBatchRows(key,type,btn){
   const cnt=(BATCHES[key]||[]).length;
   btn.innerHTML=`▶ Batches (<span class="count">${cnt}</span>)`;
   btn.dataset.open="0";
-}
-
-/* ============================================================
+}/* ============================================================
    SHAPE / SIZE CHOOSER
    ============================================================ */
 function getSavedLists(){
@@ -1445,7 +1449,7 @@ async function openBatchModal(parentKey){
   batchParentType=type;
 
   const label=parent.txId||"";
-  const refPiece=parent.lotFormat||parent.grade||parent.description||"";
+  const refPiece=(type==="AJMZ"?parent.lotFormat:parent.grade)||parent.description||"";
   batchModalTitleEl.textContent=`${label}${refPiece?(" – "+refPiece):""}`;
 
   const existing=BATCHES[parentKey]||[];
@@ -1568,7 +1572,7 @@ function openMultiBatchModal(type, keys){
           <tr>
             <th>Tx ID</th>
             <th>Stone</th>
-            <th>Lot / Grade</th>
+            <th>${type === "AJMZ" ? "Lot Format" : "Grade"}</th>
             <th>Description</th>
             <th>Original CTS</th>
   `;
@@ -1602,10 +1606,11 @@ function openMultiBatchModal(type, keys){
   }
 
   rows.forEach(r => {
+    const lotGradeValue = type === "AJMZ" ? esc(r.lotFormat || "") : esc(r.grade || "");
     const baseCols = `
       <td>${esc(r.txId || "")}</td>
       <td>${type === "AJMZ" ? "AJMZ" : "CALIB"}</td>
-      <td>${esc(r.lotFormat || r.grade || "")}</td>
+      <td>${lotGradeValue}</td>
       <td>${esc(r.description || "")}</td>
       <td>${fmtNumber(r.cts)}</td>
     `;
@@ -1736,7 +1741,6 @@ async function saveMultiBatch(){
   await loadAllData();
   closeMultiBatchModal();
 }
-
 /* ============================================================
    BINDINGS
    ============================================================ */
@@ -1929,5 +1933,3 @@ window.addEventListener("DOMContentLoaded",()=>{
 </script>
 </body>
 </html>
-
-
