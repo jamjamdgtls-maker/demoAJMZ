@@ -832,6 +832,15 @@ async function loadData(){
     });
   }
 
+  // ============================================================
+  // DEBUGGING: Console validation logs
+  // ============================================================
+  console.log("=== FILTER DEBUG INFO ===");
+  console.log("Parent Parties (AJMZ):", AJMZ_PARENTS.map(p => p.party).filter(Boolean));
+  console.log("Parent Parties (CALIB):", CALIB_PARENTS.map(p => p.party).filter(Boolean));
+  console.log("Sell Parties (from SELL_MAP):", Object.values(SELL_MAP).flat().map(s => s.party).filter(Boolean));
+  console.log("=========================");
+
   populateFilters();
   renderAJMZ();
   renderCALIB();
@@ -839,11 +848,44 @@ async function loadData(){
 }
 
 function populateFilters(){
-  // AJMZ filters
-  const ajTxIds=[...new Set(AJMZ_PARENTS.map(p=>p.txId).filter(Boolean))].sort();
-  const ajParties=[...new Set(AJMZ_PARENTS.map(p=>p.party).filter(Boolean))].sort();
-  const ajLots=[...new Set(AJMZ_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  // ============================================================
+  // BUILD FILTER VALUES FROM BOTH PARENTS AND SELL CHILDREN
+  // ============================================================
   
+  // TxID filters - from parents only
+  const ajTxIds=[...new Set(AJMZ_PARENTS.map(p=>p.txId).filter(Boolean))].sort();
+  const calibTxIds=[...new Set(CALIB_PARENTS.map(p=>p.txId).filter(Boolean))].sort();
+  const allTxIds=[...new Set([...ajTxIds,...calibTxIds])].sort();
+  
+  // Party filters - from BOTH parents AND sell children
+  const parties = new Set();
+  
+  // Add parent parties from AJMZ
+  AJMZ_PARENTS.forEach(p => {
+    if(p.party) parties.add(p.party);
+  });
+  
+  // Add parent parties from CALIB
+  CALIB_PARENTS.forEach(p => {
+    if(p.party) parties.add(p.party);
+  });
+  
+  // Add SELL buyer parties from all children
+  Object.values(SELL_MAP).forEach(children => {
+    children.forEach(c => {
+      if(c.party) parties.add(c.party);
+    });
+  });
+  
+  // Convert to sorted array
+  const partiesSorted = [...parties].filter(Boolean).sort();
+  
+  // Lot filters - from parents only
+  const ajLots=[...new Set(AJMZ_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  const calibLots=[...new Set(CALIB_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
+  const allLots=[...new Set([...ajLots,...calibLots])].sort();
+  
+  // Shape filters - from parents only
   const ajShapes=new Set();
   AJMZ_PARENTS.forEach(p=>{
     const shapes=parseMulti(p.shape);
@@ -851,6 +893,15 @@ function populateFilters(){
   });
   const ajShapesSorted=[...ajShapes].filter(Boolean).sort();
   
+  const calibShapes=new Set();
+  CALIB_PARENTS.forEach(p=>{
+    const shapes=parseMulti(p.shape);
+    shapes.forEach(s=>calibShapes.add(s));
+  });
+  const calibShapesSorted=[...calibShapes].filter(Boolean).sort();
+  const allShapes=[...new Set([...ajShapesSorted,...calibShapesSorted])].sort();
+  
+  // Size filters - from parents only
   const ajSizes=new Set();
   AJMZ_PARENTS.forEach(p=>{
     const sizes=parseMulti(p.size);
@@ -858,49 +909,40 @@ function populateFilters(){
   });
   const ajSizesSorted=[...ajSizes].filter(Boolean).sort();
   
-  // CALIB filters
-  const calibTxIds=[...new Set(CALIB_PARENTS.map(p=>p.txId).filter(Boolean))].sort();
-  const calibParties=[...new Set(CALIB_PARENTS.map(p=>p.party).filter(Boolean))].sort();
-  const calibLots=[...new Set(CALIB_PARENTS.map(p=>p.lotName).filter(Boolean))].sort();
-  
-  const calibShapes=new Set();
-  CALIB_PARENTS.forEach(p=>{
-    const shapes=parseMulti(p.shape);
-    shapes.forEach(s=>calibShapes.add(s));
-  });
-  const calibShapesSorted=[...calibShapes].filter(Boolean).sort();
-  
   const calibSizes=new Set();
   CALIB_PARENTS.forEach(p=>{
     const sizes=parseMulti(p.size);
     sizes.forEach(s=>calibSizes.add(s));
   });
   const calibSizesSorted=[...calibSizes].filter(Boolean).sort();
-  
-  // ALL filters (combined)
-  const allTxIds=[...new Set([...ajTxIds,...calibTxIds])].sort();
-  const allParties=[...new Set([...ajParties,...calibParties])].sort();
-  const allLots=[...new Set([...ajLots,...calibLots])].sort();
-  const allShapes=[...new Set([...ajShapesSorted,...calibShapesSorted])].sort();
   const allSizes=[...new Set([...ajSizesSorted,...calibSizesSorted])].sort();
 
-  // Populate AJMZ filters
+  // Debug log for dropdown party values
+  console.log("Dropdown Party Set (sorted):", partiesSorted);
+
+  // ============================================================
+  // POPULATE AJMZ FILTER DROPDOWNS
+  // ============================================================
   document.getElementById("ajmz_filter_txid").innerHTML='<option value="">All</option>'+ajTxIds.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  document.getElementById("ajmz_filter_party").innerHTML='<option value="">All</option>'+ajParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  document.getElementById("ajmz_filter_party").innerHTML='<option value="">All</option>'+partiesSorted.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   document.getElementById("ajmz_filter_lot").innerHTML='<option value="">All</option>'+ajLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
   document.getElementById("ajmz_filter_shape").innerHTML='<option value="">All</option>'+ajShapesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   document.getElementById("ajmz_filter_size").innerHTML='<option value="">All</option>'+ajSizesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   
-  // Populate CALIB filters
+  // ============================================================
+  // POPULATE CALIB FILTER DROPDOWNS
+  // ============================================================
   document.getElementById("calib_filter_txid").innerHTML='<option value="">All</option>'+calibTxIds.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  document.getElementById("calib_filter_party").innerHTML='<option value="">All</option>'+calibParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  document.getElementById("calib_filter_party").innerHTML='<option value="">All</option>'+partiesSorted.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   document.getElementById("calib_filter_lot").innerHTML='<option value="">All</option>'+calibLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
   document.getElementById("calib_filter_shape").innerHTML='<option value="">All</option>'+calibShapesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   document.getElementById("calib_filter_size").innerHTML='<option value="">All</option>'+calibSizesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   
-  // Populate ALL filters
+  // ============================================================
+  // POPULATE ALL STONES FILTER DROPDOWNS
+  // ============================================================
   document.getElementById("all_filter_txid").innerHTML='<option value="">All</option>'+allTxIds.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
-  document.getElementById("all_filter_party").innerHTML='<option value="">All</option>'+allParties.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  document.getElementById("all_filter_party").innerHTML='<option value="">All</option>'+partiesSorted.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   document.getElementById("all_filter_lot").innerHTML='<option value="">All</option>'+allLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
   document.getElementById("all_filter_shape").innerHTML='<option value="">All</option>'+allShapes.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   document.getElementById("all_filter_size").innerHTML='<option value="">All</option>'+allSizes.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
@@ -922,7 +964,14 @@ function renderAJMZ(){
 
   let filtered=AJMZ_PARENTS.filter(p=>{
     if(txid&&p.txId!==txid)return false;
-    if(party&&p.party!==party)return false;
+    
+    // ============================================================
+    // CRITICAL PARTY FILTER FIX: Match parent OR any child sell
+    // ============================================================
+    if(party && p.party !== party && !(p.__sells && p.__sells.some(s => s.party === party))) {
+      return false;
+    }
+    
     if(lot&&p.lotName!==lot)return false;
     if(shape){
       const shapes=parseMulti(p.shape);
@@ -1041,7 +1090,14 @@ function renderCALIB(){
 
   let filtered=CALIB_PARENTS.filter(p=>{
     if(txid&&p.txId!==txid)return false;
-    if(party&&p.party!==party)return false;
+    
+    // ============================================================
+    // CRITICAL PARTY FILTER FIX: Match parent OR any child sell
+    // ============================================================
+    if(party && p.party !== party && !(p.__sells && p.__sells.some(s => s.party === party))) {
+      return false;
+    }
+    
     if(lot&&p.lotName!==lot)return false;
     if(shape){
       const shapes=parseMulti(p.shape);
@@ -1153,7 +1209,14 @@ function renderALL(){
 
   let filtered=combined.filter(p=>{
     if(txid&&p.txId!==txid)return false;
-    if(party&&p.party!==party)return false;
+    
+    // ============================================================
+    // CRITICAL PARTY FILTER FIX: Match parent OR any child sell
+    // ============================================================
+    if(party && p.party !== party && !(p.__sells && p.__sells.some(s => s.party === party))) {
+      return false;
+    }
+    
     if(lot&&p.lotName!==lot)return false;
     if(shape){
       const shapes=parseMulti(p.shape);
