@@ -222,13 +222,6 @@ body{
   border-bottom:1px solid var(--line);
 }
 
-.ledger-table thead .hdr-row-3 th{
-  background:#faf7f3;
-  border-bottom:2px solid var(--accent-2);
-  font-weight:700;
-  padding:12px 8px;
-}
-
 .section-header{background:#e5dfd1;text-align:center;font-size:10px;border-left:2px solid var(--line);}
 .total-section{background:#bdd7ee;color:#1f4788;}
 .sold-section{background:#f4c7c3;color:#8b1a1a;}
@@ -250,6 +243,31 @@ body{
 .num-cell{
   text-align:right;
   font-variant-numeric:tabular-nums;
+}
+
+/* Parent row styling */
+.parent-row{
+  background:#d4edda !important;
+  font-weight:700;
+}
+.parent-row:hover{
+  background:#c3e6cb !important;
+}
+
+/* Child row styling */
+.child-row{
+  background:#f8d7da !important;
+}
+.child-row:hover{
+  background:#f5c6cb !important;
+}
+.child-row td:first-child{
+  padding-left:30px;
+}
+.child-row td:first-child::before{
+  content:"↳ ";
+  color:#999;
+  margin-right:5px;
 }
 
 /* Collapsible section toggles */
@@ -356,6 +374,14 @@ body{
   
   .ledger-table tbody tr:hover {
     background: transparent;
+  }
+  
+  .parent-row {
+    background: #d4edda !important;
+  }
+  
+  .child-row {
+    background: #f8d7da !important;
   }
   
   /* Add page title at top of print */
@@ -479,21 +505,6 @@ body{
               <th class="balance-col">Price</th>
               <th class="balance-col">Amount</th>
             </tr>
-            <tr class="hdr-row-3">
-              <th colspan="8" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
-              <th class="num-cell section-col total-col" id="ajmz_total_cts">0.00</th>
-              <th class="num-cell total-col" id="ajmz_total_pcs">0.00</th>
-              <th class="num-cell total-col"></th>
-              <th class="num-cell total-col" id="ajmz_total_amt">0.00</th>
-              <th class="num-cell section-col sold-col" id="ajmz_sold_cts">0.00</th>
-              <th class="num-cell sold-col" id="ajmz_sold_pcs">0.00</th>
-              <th class="num-cell sold-col"></th>
-              <th class="num-cell sold-col" id="ajmz_sold_amt">0.00</th>
-              <th class="num-cell section-col balance-col" id="ajmz_bal_cts">0.00</th>
-              <th class="num-cell balance-col" id="ajmz_bal_pcs">0.00</th>
-              <th class="num-cell balance-col"></th>
-              <th class="num-cell balance-col" id="ajmz_bal_amt">0.00</th>
-            </tr>
           </thead>
           <tbody id="tbody_ajmz"></tbody>
         </table>
@@ -579,18 +590,6 @@ body{
               <th class="balance-col">Price</th>
               <th class="balance-col">Amount</th>
             </tr>
-            <tr class="hdr-row-3">
-              <th colspan="8" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
-              <th class="num-cell section-col total-col" id="calib_total_cts">0.00</th>
-              <th class="num-cell total-col"></th>
-              <th class="num-cell total-col" id="calib_total_amt">0.00</th>
-              <th class="num-cell section-col sold-col" id="calib_sold_cts">0.00</th>
-              <th class="num-cell sold-col"></th>
-              <th class="num-cell sold-col" id="calib_sold_amt">0.00</th>
-              <th class="num-cell section-col balance-col" id="calib_bal_cts">0.00</th>
-              <th class="num-cell balance-col"></th>
-              <th class="num-cell balance-col" id="calib_bal_amt">0.00</th>
-            </tr>
           </thead>
           <tbody id="tbody_calib"></tbody>
         </table>
@@ -674,18 +673,6 @@ body{
               <th class="section-col balance-col">CTS</th>
               <th class="balance-col">Price</th>
               <th class="balance-col">Amount</th>
-            </tr>
-            <tr class="hdr-row-3">
-              <th colspan="7" style="text-align:right;font-weight:700;background:#faf7f3;">TOTALS:</th>
-              <th class="num-cell section-col total-col" id="all_total_cts">0.00</th>
-              <th class="num-cell total-col"></th>
-              <th class="num-cell total-col" id="all_total_amt">0.00</th>
-              <th class="num-cell section-col sold-col" id="all_sold_cts">0.00</th>
-              <th class="num-cell sold-col"></th>
-              <th class="num-cell sold-col" id="all_sold_amt">0.00</th>
-              <th class="num-cell section-col balance-col" id="all_bal_cts">0.00</th>
-              <th class="num-cell balance-col"></th>
-              <th class="num-cell balance-col" id="all_bal_amt">0.00</th>
             </tr>
           </thead>
           <tbody id="tbody_all"></tbody>
@@ -881,8 +868,6 @@ function renderAJMZ(){
   const tbody=document.getElementById("tbody_ajmz");
   tbody.innerHTML="";
 
-  let totalCTS=0,totalPCS=0,totalAmt=0,soldCTS=0,soldPCS=0,soldAmt=0,balCTS=0,balPCS=0,balAmt=0;
-
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
@@ -899,22 +884,56 @@ function renderAJMZ(){
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    totalCTS+=totalC;totalPCS+=totalP;totalAmt+=totalA;
-    soldCTS+=soldC;soldPCS+=soldP;soldAmt+=soldA;
-    balCTS+=balC;balPCS+=balP;balAmt+=balA;
+    // Parent row
+    tbody.insertAdjacentHTML("beforeend",`
+      <tr class="parent-row">
+        <td>${esc(parent.txId)}</td>
+        <td>${esc(parent.date)}</td>
+        <td>${esc(parent.party)}</td>
+        <td>${esc(parent.lotName||"")}</td>
+        <td>${esc(parent.lotFormat||"")}</td>
+        <td>${esc(multiDisplay(parent.shape))}</td>
+        <td>${esc(multiDisplay(parent.size))}</td>
+        <td>${esc(parent.description||"")}</td>
+        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+        <td class="num-cell total-col">${fmt(totalP)}</td>
+        <td class="num-cell total-col">${fmt(parent.price)}</td>
+        <td class="num-cell total-col">${fmt(totalA)}</td>
+        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+        <td class="num-cell sold-col">${fmt(soldP)}</td>
+        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
+        <td class="num-cell sold-col">${fmt(soldA)}</td>
+        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+        <td class="num-cell balance-col">${fmt(balP)}</td>
+        <td class="num-cell balance-col">${fmt(parent.price)}</td>
+        <td class="num-cell balance-col">${fmt(balA)}</td>
+      </tr>
+    `);
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.lotFormat||"")}</td><td>${esc(multiDisplay(parent.shape))}</td><td>${esc(multiDisplay(parent.size))}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(totalP)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(soldP)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(balP)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    // Child rows for each sell - showing sell.party (buyer)
+    sells.forEach(sell=>{
+      tbody.insertAdjacentHTML("beforeend",`
+        <tr class="child-row">
+          <td>${esc(sell.sellId||'')}</td>
+          <td>${esc(sell.date||'')}</td>
+          <td>${esc(sell.party||'')}</td>
+          <td colspan="5"></td>
+          <td class="section-col total-col"></td>
+          <td class="total-col"></td>
+          <td class="total-col"></td>
+          <td class="total-col"></td>
+          <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+          <td class="num-cell sold-col">${fmt(sell.pcs)}</td>
+          <td class="num-cell sold-col">${fmt(sell.price)}</td>
+          <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+          <td class="section-col balance-col"></td>
+          <td class="balance-col"></td>
+          <td class="balance-col"></td>
+          <td class="balance-col"></td>
+        </tr>
+      `);
+    });
   });
-
-  document.getElementById("ajmz_total_cts").textContent=fmt(totalCTS);
-  document.getElementById("ajmz_total_pcs").textContent=fmt(totalPCS);
-  document.getElementById("ajmz_total_amt").textContent=fmt(totalAmt);
-  document.getElementById("ajmz_sold_cts").textContent=fmt(soldCTS);
-  document.getElementById("ajmz_sold_pcs").textContent=fmt(soldPCS);
-  document.getElementById("ajmz_sold_amt").textContent=fmt(soldAmt);
-  document.getElementById("ajmz_bal_cts").textContent=fmt(balCTS);
-  document.getElementById("ajmz_bal_pcs").textContent=fmt(balPCS);
-  document.getElementById("ajmz_bal_amt").textContent=fmt(balAmt);
 }
 
 function renderCALIB(){
@@ -948,8 +967,6 @@ function renderCALIB(){
   const tbody=document.getElementById("tbody_calib");
   tbody.innerHTML="";
 
-  let totalCTS=0,totalAmt=0,soldCTS=0,soldAmt=0,balCTS=0,balAmt=0;
-
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
@@ -963,19 +980,50 @@ function renderCALIB(){
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    totalCTS+=totalC;totalAmt+=totalA;
-    soldCTS+=soldC;soldAmt+=soldA;
-    balCTS+=balC;balAmt+=balA;
+    // Parent row
+    tbody.insertAdjacentHTML("beforeend",`
+      <tr class="parent-row">
+        <td>${esc(parent.txId)}</td>
+        <td>${esc(parent.date)}</td>
+        <td>${esc(parent.party)}</td>
+        <td>${esc(parent.lotName||"")}</td>
+        <td>${esc(parent.grade||"")}</td>
+        <td>${esc(multiDisplay(parent.shape))}</td>
+        <td>${esc(multiDisplay(parent.size))}</td>
+        <td>${esc(parent.description||"")}</td>
+        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+        <td class="num-cell total-col">${fmt(parent.price)}</td>
+        <td class="num-cell total-col">${fmt(totalA)}</td>
+        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
+        <td class="num-cell sold-col">${fmt(soldA)}</td>
+        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+        <td class="num-cell balance-col">${fmt(parent.price)}</td>
+        <td class="num-cell balance-col">${fmt(balA)}</td>
+      </tr>
+    `);
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(parent.grade||"")}</td><td>${esc(multiDisplay(parent.shape))}</td><td>${esc(multiDisplay(parent.size))}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSellPrice)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    // Child rows for each sell - showing sell.party (buyer)
+    sells.forEach(sell=>{
+      tbody.insertAdjacentHTML("beforeend",`
+        <tr class="child-row">
+          <td>${esc(sell.sellId||'')}</td>
+          <td>${esc(sell.date||'')}</td>
+          <td>${esc(sell.party||'')}</td>
+          <td colspan="5"></td>
+          <td class="section-col total-col"></td>
+          <td class="total-col"></td>
+          <td class="total-col"></td>
+          <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+          <td class="num-cell sold-col">${fmt(sell.price)}</td>
+          <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+          <td class="section-col balance-col"></td>
+          <td class="balance-col"></td>
+          <td class="balance-col"></td>
+        </tr>
+      `);
+    });
   });
-
-  document.getElementById("calib_total_cts").textContent=fmt(totalCTS);
-  document.getElementById("calib_total_amt").textContent=fmt(totalAmt);
-  document.getElementById("calib_sold_cts").textContent=fmt(soldCTS);
-  document.getElementById("calib_sold_amt").textContent=fmt(soldAmt);
-  document.getElementById("calib_bal_cts").textContent=fmt(balCTS);
-  document.getElementById("calib_bal_amt").textContent=fmt(balAmt);
 }
 
 function renderALL(){
@@ -1011,8 +1059,6 @@ function renderALL(){
   const tbody=document.getElementById("tbody_all");
   tbody.innerHTML="";
 
-  let tCTS=0,tAmt=0,sCTS=0,sAmt=0,bCTS=0,bAmt=0;
-
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
@@ -1026,19 +1072,49 @@ function renderALL(){
 
     const avgSell=soldC>0?soldA/soldC:0;
 
-    tCTS+=totalC;tAmt+=totalA;
-    sCTS+=soldC;sAmt+=soldA;
-    bCTS+=balC;bAmt+=balA;
+    // Parent row
+    tbody.insertAdjacentHTML("beforeend",`
+      <tr class="parent-row">
+        <td>${esc(parent.txId)}</td>
+        <td>${esc(parent.date)}</td>
+        <td>${esc(parent.party)}</td>
+        <td>${esc(parent.lotName||"")}</td>
+        <td>${esc(multiDisplay(parent.shape))}</td>
+        <td>${esc(multiDisplay(parent.size))}</td>
+        <td>${esc(parent.description||"")}</td>
+        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+        <td class="num-cell total-col">${fmt(parent.price)}</td>
+        <td class="num-cell total-col">${fmt(totalA)}</td>
+        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+        <td class="num-cell sold-col">${fmt(avgSell)}</td>
+        <td class="num-cell sold-col">${fmt(soldA)}</td>
+        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+        <td class="num-cell balance-col">${fmt(parent.price)}</td>
+        <td class="num-cell balance-col">${fmt(balA)}</td>
+      </tr>
+    `);
 
-    tbody.insertAdjacentHTML("beforeend",`<tr><td>${esc(parent.txId)}</td><td>${esc(parent.date)}</td><td>${esc(parent.party)}</td><td>${esc(parent.lotName||"")}</td><td>${esc(multiDisplay(parent.shape))}</td><td>${esc(multiDisplay(parent.size))}</td><td>${esc(parent.description||"")}</td><td class="num-cell section-col total-col">${fmt(totalC)}</td><td class="num-cell total-col">${fmt(parent.price)}</td><td class="num-cell total-col">${fmt(totalA)}</td><td class="num-cell section-col sold-col">${fmt(soldC)}</td><td class="num-cell sold-col">${fmt(avgSell)}</td><td class="num-cell sold-col">${fmt(soldA)}</td><td class="num-cell section-col balance-col">${fmt(balC)}</td><td class="num-cell balance-col">${fmt(parent.price)}</td><td class="num-cell balance-col">${fmt(balA)}</td></tr>`);
+    // Child rows for each sell - showing sell.party (buyer)
+    sells.forEach(sell=>{
+      tbody.insertAdjacentHTML("beforeend",`
+        <tr class="child-row">
+          <td>${esc(sell.sellId||'')}</td>
+          <td>${esc(sell.date||'')}</td>
+          <td>${esc(sell.party||'')}</td>
+          <td colspan="4"></td>
+          <td class="section-col total-col"></td>
+          <td class="total-col"></td>
+          <td class="total-col"></td>
+          <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+          <td class="num-cell sold-col">${fmt(sell.price)}</td>
+          <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+          <td class="section-col balance-col"></td>
+          <td class="balance-col"></td>
+          <td class="balance-col"></td>
+        </tr>
+      `);
+    });
   });
-
-  document.getElementById("all_total_cts").textContent=fmt(tCTS);
-  document.getElementById("all_total_amt").textContent=fmt(tAmt);
-  document.getElementById("all_sold_cts").textContent=fmt(sCTS);
-  document.getElementById("all_sold_amt").textContent=fmt(sAmt);
-  document.getElementById("all_bal_cts").textContent=fmt(bCTS);
-  document.getElementById("all_bal_amt").textContent=fmt(bAmt);
 }
 
 function exportToCSV(type){
