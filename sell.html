@@ -148,6 +148,11 @@ body{
   justify-content:center;
   padding:0;
 }
+.button.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
 
 .record-tabs{
   margin-top:14px;
@@ -375,38 +380,6 @@ body{
 }
 .icon-pill.delete:hover{background:#ffeaea;}
 
-.pager{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:6px 10px;
-  border-top:1px solid var(--line);
-  background:#faf8f4;
-  font-size:11px;
-  color:var(--ink-soft);
-}
-.pager-controls{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-.page-btn{
-  min-width:26px;
-  height:24px;
-  border-radius:7px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:11px;
-  cursor:pointer;
-  padding:0 6px;
-}
-.page-btn:hover{background:#f3f0e7}
-.page-btn.disabled{opacity:.4;cursor:default;}
-.page-indicator b{
-  font-weight:700;
-  color:var(--ink);
-}
-
 .modal-overlay{
   position:fixed;
   left:0;top:0;right:0;bottom:0;
@@ -558,6 +531,7 @@ body{
       <span>Live Data</span>
     </span>
     <div class="spacer"></div>
+    <button class="button" type="button" id="btnToggleAddOnly">📋 Show Add Rows Only</button>
     <button class="button danger" type="button" id="btnClearSelected">🔄 Clear Selected</button>
     <button class="button" type="button" id="btnSellSelected">💎 Sell Selected</button>
     <button class="button soft" type="button" id="btnRefresh">🔄 Refresh</button>
@@ -594,7 +568,9 @@ body{
           <table class="table" id="tableAJMZ">
             <thead>
               <tr>
-                <th style="width:32px;text-align:center;">✔</th>
+                <th style="width:32px;text-align:center;">
+                  <input type="checkbox" id="selectAllAJMZ" title="Select/Unselect All">
+                </th>
                 <th style="width:80px;">Row Type</th>
                 <th style="width:120px;">Tx ID</th>
                 <th style="width:120px;">Sell ID</th>
@@ -691,19 +667,9 @@ body{
             <tbody id="tbodyAJMZ"></tbody>
           </table>
         </div>
-
-        <div class="pager" id="pagerAJMZ">
-          <div class="page-indicator">
-            Showing <b id="ajmzPageFrom">0</b>–<b id="ajmzPageTo">0</b> of <b id="ajmzPageTotal">0</b> rows
-          </div>
-          <div class="pager-controls">
-            <button class="page-btn" id="ajmzPrevPage">&lt;</button>
-            <span class="page-indicator">Page <b id="ajmzPageNumber">1</b></span>
-            <button class="page-btn" id="ajmzNextPage">&gt;</button>
-          </div>
-        </div>
       </div>
     </section>
+
     <section class="record-section" id="sectionCALIB" style="display:none">
       <div class="toolbar-row">
         <div class="metric-chip">
@@ -722,7 +688,9 @@ body{
           <table class="table" id="tableCALIB">
             <thead>
               <tr>
-                <th style="width:32px;text-align:center;">✔</th>
+                <th style="width:32px;text-align:center;">
+                  <input type="checkbox" id="selectAllCALIB" title="Select/Unselect All">
+                </th>
                 <th style="width:80px;">Row Type</th>
                 <th style="width:120px;">Tx ID</th>
                 <th style="width:120px;">Sell ID</th>
@@ -818,17 +786,6 @@ body{
             </thead>
             <tbody id="tbodyCALIB"></tbody>
           </table>
-        </div>
-
-        <div class="pager" id="pagerCALIB">
-          <div class="page-indicator">
-            Showing <b id="calibPageFrom">0</b>–<b id="calibPageTo">0</b> of <b id="calibPageTotal">0</b> rows
-          </div>
-          <div class="pager-controls">
-            <button class="page-btn" id="calibPrevPage">&lt;</button>
-            <span class="page-indicator">Page <b id="calibPageNumber">1</b></span>
-            <button class="page-btn" id="calibNextPage">&gt;</button>
-          </div>
         </div>
       </div>
     </section>
@@ -934,8 +891,6 @@ const db=firebase.database();
 let AJMZ_ALL=[], CALIB_ALL=[], SELLS={};
 let AJMZ_ROWS=[], CALIB_ROWS=[];
 let AJMZ_FILTERED=[], CALIB_FILTERED=[];
-let ajmzPage=1, calibPage=1;
-const ROWS_PER_PAGE=50;
 
 const AJMZ_FILTER_VALUES = {
   rowType:"",txId:"",sellId:"",date:"",party:"",lotName:"",format:"",shape:"",size:"",description:""
@@ -952,6 +907,7 @@ const CALIB_UNIQUES = {
 };
 
 let currentSection = "AJMZ";
+let showAddOnlyMode = false;
 
 let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput,
     sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle;
@@ -1303,6 +1259,8 @@ function hidePartyDropdown(){
 
 function filterAJMZ(){
   AJMZ_FILTERED = AJMZ_ROWS.filter(r=>{
+    if(showAddOnlyMode && r.rowType !== "ADD") return false;
+    
     for(const [key,val] of Object.entries(AJMZ_FILTER_VALUES)){
       if(!val) continue;
       const field = (r[key]||"").toString().toLowerCase();
@@ -1310,11 +1268,12 @@ function filterAJMZ(){
     }
     return true;
   });
-  ajmzPage=1;
 }
 
 function filterCALIB(){
   CALIB_FILTERED = CALIB_ROWS.filter(r=>{
+    if(showAddOnlyMode && r.rowType !== "ADD") return false;
+    
     for(const [key,val] of Object.entries(CALIB_FILTER_VALUES)){
       if(!val) continue;
       const field = (r[key]||"").toString().toLowerCase();
@@ -1322,7 +1281,6 @@ function filterCALIB(){
     }
     return true;
   });
-  calibPage=1;
 }
 
 function renderAJMZRow(row){
@@ -1445,46 +1403,22 @@ function renderAJMZ(){
   const tbody=document.getElementById("tbodyAJMZ");
   tbody.innerHTML="";
 
-  const totalRows=AJMZ_FILTERED.length;
-  const startIndex=(ajmzPage-1)*ROWS_PER_PAGE;
-  const pageRows=AJMZ_FILTERED.slice(startIndex,startIndex+ROWS_PER_PAGE);
-
   let html="";
-  pageRows.forEach(r=>{
+  AJMZ_FILTERED.forEach(r=>{
     html+=renderAJMZRow(r);
   });
   tbody.innerHTML=html;
-
-  document.getElementById("ajmzPageFrom").textContent=totalRows===0?0:startIndex+1;
-  document.getElementById("ajmzPageTo").textContent=startIndex+pageRows.length;
-  document.getElementById("ajmzPageTotal").textContent=totalRows;
-  document.getElementById("ajmzPageNumber").textContent=ajmzPage;
-
-  document.getElementById("ajmzPrevPage").classList.toggle("disabled",ajmzPage===1);
-  document.getElementById("ajmzNextPage").classList.toggle("disabled",startIndex+ROWS_PER_PAGE>=totalRows);
 }
 
 function renderCALIB(){
   const tbody=document.getElementById("tbodyCALIB");
   tbody.innerHTML="";
 
-  const totalRows=CALIB_FILTERED.length;
-  const startIndex=(calibPage-1)*ROWS_PER_PAGE;
-  const pageRows=CALIB_FILTERED.slice(startIndex,startIndex+ROWS_PER_PAGE);
-
   let html="";
-  pageRows.forEach(r=>{
+  CALIB_FILTERED.forEach(r=>{
     html+=renderCALIBRow(r);
   });
   tbody.innerHTML=html;
-
-  document.getElementById("calibPageFrom").textContent=totalRows===0?0:startIndex+1;
-  document.getElementById("calibPageTo").textContent=startIndex+pageRows.length;
-  document.getElementById("calibPageTotal").textContent=totalRows;
-  document.getElementById("calibPageNumber").textContent=calibPage;
-
-  document.getElementById("calibPrevPage").classList.toggle("disabled",calibPage===1);
-  document.getElementById("calibNextPage").classList.toggle("disabled",startIndex+ROWS_PER_PAGE>=totalRows);
 }
 
 function updateMetrics(){
@@ -1873,6 +1807,39 @@ async function deleteSell(parentKey,sellKey,parentType){
   await loadAllData();
 }
 
+function toggleSelectAllAJMZ(){
+  const checkbox = document.getElementById("selectAllAJMZ");
+  const allCheckboxes = document.querySelectorAll("#tbodyAJMZ .row-select[data-type='AJMZ']");
+  
+  allCheckboxes.forEach(cb => {
+    cb.checked = checkbox.checked;
+  });
+}
+
+function toggleSelectAllCALIB(){
+  const checkbox = document.getElementById("selectAllCALIB");
+  const allCheckboxes = document.querySelectorAll("#tbodyCALIB .row-select[data-type='CALIB']");
+  
+  allCheckboxes.forEach(cb => {
+    cb.checked = checkbox.checked;
+  });
+}
+
+function toggleAddOnlyMode(){
+  const btn = document.getElementById("btnToggleAddOnly");
+  showAddOnlyMode = !showAddOnlyMode;
+  
+  if(showAddOnlyMode){
+    btn.classList.add("active");
+    btn.textContent = "📋 Show All Rows";
+  } else {
+    btn.classList.remove("active");
+    btn.textContent = "📋 Show Add Rows Only";
+  }
+  
+  applyFiltersAndRender();
+}
+
 document.body.addEventListener("click",async e=>{
   const editBtn=e.target.closest(".edit-sell");
   if(editBtn){
@@ -1919,6 +1886,7 @@ document.body.addEventListener("click",async e=>{
     closeAllFilterDropdowns();
   }
 });
+
 function bindFilterInputs(){
   const ajmzInputs = document.querySelectorAll('#tableAJMZ .filter-input[data-col]');
   ajmzInputs.forEach(input=>{
@@ -1940,25 +1908,6 @@ function bindFilterInputs(){
       buildFilterDropdown(input);
       applyFiltersAndRender();
     });
-  });
-}
-
-function bindPagination(){
-  document.getElementById("ajmzPrevPage").addEventListener("click",()=>{
-    if(ajmzPage>1){ajmzPage--;renderAJMZ();}
-  });
-  document.getElementById("ajmzNextPage").addEventListener("click",()=>{
-    if((ajmzPage*ROWS_PER_PAGE)<AJMZ_FILTERED.length){
-      ajmzPage++;renderAJMZ();
-    }
-  });
-  document.getElementById("calibPrevPage").addEventListener("click",()=>{
-    if(calibPage>1){calibPage--;renderCALIB();}
-  });
-  document.getElementById("calibNextPage").addEventListener("click",()=>{
-    if((calibPage*ROWS_PER_PAGE)<CALIB_FILTERED.length){
-      calibPage++;renderCALIB();
-    }
   });
 }
 
@@ -1992,6 +1941,11 @@ function clearAllSelectedCheckboxes(){
   document.querySelectorAll(".row-select:checked").forEach(checkbox => {
     checkbox.checked = false;
   });
+  
+  const selectAllAJMZ = document.getElementById("selectAllAJMZ");
+  const selectAllCALIB = document.getElementById("selectAllCALIB");
+  if(selectAllAJMZ) selectAllAJMZ.checked = false;
+  if(selectAllCALIB) selectAllCALIB.checked = false;
 }
 
 function applyFiltersAndRender(){
@@ -2028,12 +1982,15 @@ window.addEventListener("DOMContentLoaded",()=>{
   });
   sellSaveBtn.addEventListener("click",handleSaveSell);
 
+  document.getElementById("selectAllAJMZ").addEventListener("change", toggleSelectAllAJMZ);
+  document.getElementById("selectAllCALIB").addEventListener("change", toggleSelectAllCALIB);
+  
+  document.getElementById("btnToggleAddOnly").addEventListener("click", toggleAddOnlyMode);
   document.getElementById("btnClearSelected").addEventListener("click",clearAllSelectedCheckboxes);
   document.getElementById("btnSellSelected").addEventListener("click",openSellModal);
   document.getElementById("btnRefresh").addEventListener("click",loadAllData);
 
   bindTabs();
-  bindPagination();
   bindSellModalEvents();
   bindFilterInputs();
 
