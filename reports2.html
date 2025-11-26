@@ -182,6 +182,25 @@ body{
   border-color:var(--accent);
 }
 
+.checkbox-toggle{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 8px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:12px;
+  cursor:pointer;
+  user-select:none;
+}
+.checkbox-toggle input[type="checkbox"]{
+  cursor:pointer;
+}
+.checkbox-toggle:hover{
+  background:#faf8f0;
+}
+
 .card{
   background:#fff;
   border:1px solid var(--line);
@@ -456,7 +475,23 @@ body{
         <label class="filter-label">Date To</label>
         <input type="date" id="ajmz_filter_date_to" class="filter-select">
       </div>
+      <div class="filter-group">
+        <label class="filter-label">View Mode</label>
+        <select id="ajmz_view_mode" class="filter-select">
+          <option value="both">BOTH</option>
+          <option value="add">ADD ONLY</option>
+          <option value="sell">SELL ONLY</option>
+        </select>
+      </div>
       <div class="spacer"></div>
+      <label class="checkbox-toggle">
+        <input type="checkbox" id="ajmz_show_added" checked>
+        <span>Added</span>
+      </label>
+      <label class="checkbox-toggle">
+        <input type="checkbox" id="ajmz_show_sell" checked>
+        <span>Sell</span>
+      </label>
       <span class="section-toggle" id="ajmz_toggle_total">
         <span class="section-toggle-icon"></span>
         <span>Opening Balance</span>
@@ -544,7 +579,23 @@ body{
         <label class="filter-label">Date To</label>
         <input type="date" id="calib_filter_date_to" class="filter-select">
       </div>
+      <div class="filter-group">
+        <label class="filter-label">View Mode</label>
+        <select id="calib_view_mode" class="filter-select">
+          <option value="both">BOTH</option>
+          <option value="add">ADD ONLY</option>
+          <option value="sell">SELL ONLY</option>
+        </select>
+      </div>
       <div class="spacer"></div>
+      <label class="checkbox-toggle">
+        <input type="checkbox" id="calib_show_added" checked>
+        <span>Show Added Rows</span>
+      </label>
+      <label class="checkbox-toggle">
+        <input type="checkbox" id="calib_show_sell" checked>
+        <span>Show Sell Rows</span>
+      </label>
       <span class="section-toggle" id="calib_toggle_total">
         <span class="section-toggle-icon"></span>
         <span>Total</span>
@@ -629,7 +680,23 @@ body{
         <label class="filter-label">Date To</label>
         <input type="date" id="all_filter_date_to" class="filter-select">
       </div>
+      <div class="filter-group">
+        <label class="filter-label">View Mode</label>
+        <select id="all_view_mode" class="filter-select">
+          <option value="both">BOTH</option>
+          <option value="add">ADD ONLY</option>
+          <option value="sell">SELL ONLY</option>
+        </select>
+      </div>
       <div class="spacer"></div>
+      <label class="checkbox-toggle">
+        <input type="checkbox" id="all_show_added" checked>
+        <span>Show Added Rows</span>
+      </label>
+      <label class="checkbox-toggle">
+        <input type="checkbox" id="all_show_sell" checked>
+        <span>Show Sell Rows</span>
+      </label>
       <span class="section-toggle" id="all_toggle_total">
         <span class="section-toggle-icon"></span>
         <span>Total</span>
@@ -759,6 +826,8 @@ async function loadData(){
       v.price=parseNum(v.price);
       v.amount=parseNum(v.amount||(v.cts*v.price));
       v.__sells=SELL_MAP[v.key]||[];
+      // Ensure CALIB never has lotFormat
+      delete v.lotFormat;
       CALIB_PARENTS.push(v);
     });
   }
@@ -846,6 +915,10 @@ function renderAJMZ(){
   const size=document.getElementById("ajmz_filter_size").value;
   const dateFrom=document.getElementById("ajmz_filter_date_from").value;
   const dateTo=document.getElementById("ajmz_filter_date_to").value;
+  
+  const viewMode=document.getElementById("ajmz_view_mode").value;
+  const showAdded=document.getElementById("ajmz_show_added").checked;
+  const showSell=document.getElementById("ajmz_show_sell").checked;
 
   let filtered=AJMZ_PARENTS.filter(p=>{
     if(txid&&p.txId!==txid)return false;
@@ -884,55 +957,71 @@ function renderAJMZ(){
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    // Parent row
-    tbody.insertAdjacentHTML("beforeend",`
-      <tr class="parent-row">
-        <td>${esc(parent.txId)}</td>
-        <td>${esc(parent.date)}</td>
-        <td>${esc(parent.party)}</td>
-        <td>${esc(parent.lotName||"")}</td>
-        <td>${esc(parent.lotFormat||"")}</td>
-        <td>${esc(multiDisplay(parent.shape))}</td>
-        <td>${esc(multiDisplay(parent.size))}</td>
-        <td>${esc(parent.description||"")}</td>
-        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-        <td class="num-cell total-col">${fmt(totalP)}</td>
-        <td class="num-cell total-col">${fmt(parent.price)}</td>
-        <td class="num-cell total-col">${fmt(totalA)}</td>
-        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
-        <td class="num-cell sold-col">${fmt(soldP)}</td>
-        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
-        <td class="num-cell sold-col">${fmt(soldA)}</td>
-        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-        <td class="num-cell balance-col">${fmt(balP)}</td>
-        <td class="num-cell balance-col">${fmt(parent.price)}</td>
-        <td class="num-cell balance-col">${fmt(balA)}</td>
-      </tr>
-    `);
+    // Determine if we should show parent row
+    let showParent = false;
+    if(viewMode === "both") showParent = showAdded;
+    else if(viewMode === "add") showParent = true;
+    else if(viewMode === "sell") showParent = false;
 
-    // Child rows for each sell - showing sell.party (buyer)
-    sells.forEach(sell=>{
+    // Parent row
+    if(showParent){
       tbody.insertAdjacentHTML("beforeend",`
-        <tr class="child-row">
-          <td>${esc(sell.sellId||'')}</td>
-          <td>${esc(sell.date||'')}</td>
-          <td>${esc(sell.party||'')}</td>
-          <td colspan="5"></td>
-          <td class="section-col total-col"></td>
-          <td class="total-col"></td>
-          <td class="total-col"></td>
-          <td class="total-col"></td>
-          <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
-          <td class="num-cell sold-col">${fmt(sell.pcs)}</td>
-          <td class="num-cell sold-col">${fmt(sell.price)}</td>
-          <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-          <td class="section-col balance-col"></td>
-          <td class="balance-col"></td>
-          <td class="balance-col"></td>
-          <td class="balance-col"></td>
+        <tr class="parent-row">
+          <td>${esc(parent.txId)}</td>
+          <td>${esc(parent.date)}</td>
+          <td>${esc(parent.party)}</td>
+          <td>${esc(parent.lotName||"")}</td>
+          <td>${esc(parent.lotFormat||"")}</td>
+          <td>${esc(multiDisplay(parent.shape))}</td>
+          <td>${esc(multiDisplay(parent.size))}</td>
+          <td>${esc(parent.description||"")}</td>
+          <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+          <td class="num-cell total-col">${fmt(totalP)}</td>
+          <td class="num-cell total-col">${fmt(parent.price)}</td>
+          <td class="num-cell total-col">${fmt(totalA)}</td>
+          <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+          <td class="num-cell sold-col">${fmt(soldP)}</td>
+          <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
+          <td class="num-cell sold-col">${fmt(soldA)}</td>
+          <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+          <td class="num-cell balance-col">${fmt(balP)}</td>
+          <td class="num-cell balance-col">${fmt(parent.price)}</td>
+          <td class="num-cell balance-col">${fmt(balA)}</td>
         </tr>
       `);
-    });
+    }
+
+    // Determine if we should show child rows
+    let showChildren = false;
+    if(viewMode === "both") showChildren = showSell;
+    else if(viewMode === "add") showChildren = false;
+    else if(viewMode === "sell") showChildren = true;
+
+    // Child rows for each sell - showing sell.party (buyer)
+    if(showChildren){
+      sells.forEach(sell=>{
+        tbody.insertAdjacentHTML("beforeend",`
+          <tr class="child-row">
+            <td>${esc(sell.sellId||'')}</td>
+            <td>${esc(sell.date||'')}</td>
+            <td>${esc(sell.party||'')}</td>
+            <td colspan="5"></td>
+            <td class="section-col total-col"></td>
+            <td class="total-col"></td>
+            <td class="total-col"></td>
+            <td class="total-col"></td>
+            <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+            <td class="num-cell sold-col">${fmt(sell.pcs)}</td>
+            <td class="num-cell sold-col">${fmt(sell.price)}</td>
+            <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+            <td class="section-col balance-col"></td>
+            <td class="balance-col"></td>
+            <td class="balance-col"></td>
+            <td class="balance-col"></td>
+          </tr>
+        `);
+      });
+    }
   });
 }
 
@@ -945,6 +1034,10 @@ function renderCALIB(){
   const size=document.getElementById("calib_filter_size").value;
   const dateFrom=document.getElementById("calib_filter_date_from").value;
   const dateTo=document.getElementById("calib_filter_date_to").value;
+  
+  const viewMode=document.getElementById("calib_view_mode").value;
+  const showAdded=document.getElementById("calib_show_added").checked;
+  const showSell=document.getElementById("calib_show_sell").checked;
 
   let filtered=CALIB_PARENTS.filter(p=>{
     if(txid&&p.txId!==txid)return false;
@@ -980,49 +1073,65 @@ function renderCALIB(){
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    // Parent row
-    tbody.insertAdjacentHTML("beforeend",`
-      <tr class="parent-row">
-        <td>${esc(parent.txId)}</td>
-        <td>${esc(parent.date)}</td>
-        <td>${esc(parent.party)}</td>
-        <td>${esc(parent.lotName||"")}</td>
-        <td>${esc(parent.grade||"")}</td>
-        <td>${esc(multiDisplay(parent.shape))}</td>
-        <td>${esc(multiDisplay(parent.size))}</td>
-        <td>${esc(parent.description||"")}</td>
-        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-        <td class="num-cell total-col">${fmt(parent.price)}</td>
-        <td class="num-cell total-col">${fmt(totalA)}</td>
-        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
-        <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
-        <td class="num-cell sold-col">${fmt(soldA)}</td>
-        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-        <td class="num-cell balance-col">${fmt(parent.price)}</td>
-        <td class="num-cell balance-col">${fmt(balA)}</td>
-      </tr>
-    `);
+    // Determine if we should show parent row
+    let showParent = false;
+    if(viewMode === "both") showParent = showAdded;
+    else if(viewMode === "add") showParent = true;
+    else if(viewMode === "sell") showParent = false;
 
-    // Child rows for each sell - showing sell.party (buyer)
-    sells.forEach(sell=>{
+    // Parent row - CALIB shows grade, NOT lotFormat
+    if(showParent){
       tbody.insertAdjacentHTML("beforeend",`
-        <tr class="child-row">
-          <td>${esc(sell.sellId||'')}</td>
-          <td>${esc(sell.date||'')}</td>
-          <td>${esc(sell.party||'')}</td>
-          <td colspan="5"></td>
-          <td class="section-col total-col"></td>
-          <td class="total-col"></td>
-          <td class="total-col"></td>
-          <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
-          <td class="num-cell sold-col">${fmt(sell.price)}</td>
-          <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-          <td class="section-col balance-col"></td>
-          <td class="balance-col"></td>
-          <td class="balance-col"></td>
+        <tr class="parent-row">
+          <td>${esc(parent.txId)}</td>
+          <td>${esc(parent.date)}</td>
+          <td>${esc(parent.party)}</td>
+          <td>${esc(parent.lotName||"")}</td>
+          <td>${esc(parent.grade||"")}</td>
+          <td>${esc(multiDisplay(parent.shape))}</td>
+          <td>${esc(multiDisplay(parent.size))}</td>
+          <td>${esc(parent.description||"")}</td>
+          <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+          <td class="num-cell total-col">${fmt(parent.price)}</td>
+          <td class="num-cell total-col">${fmt(totalA)}</td>
+          <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+          <td class="num-cell sold-col">${fmt(avgSellPrice)}</td>
+          <td class="num-cell sold-col">${fmt(soldA)}</td>
+          <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+          <td class="num-cell balance-col">${fmt(parent.price)}</td>
+          <td class="num-cell balance-col">${fmt(balA)}</td>
         </tr>
       `);
-    });
+    }
+
+    // Determine if we should show child rows
+    let showChildren = false;
+    if(viewMode === "both") showChildren = showSell;
+    else if(viewMode === "add") showChildren = false;
+    else if(viewMode === "sell") showChildren = true;
+
+    // Child rows for each sell - showing sell.party (buyer)
+    if(showChildren){
+      sells.forEach(sell=>{
+        tbody.insertAdjacentHTML("beforeend",`
+          <tr class="child-row">
+            <td>${esc(sell.sellId||'')}</td>
+            <td>${esc(sell.date||'')}</td>
+            <td>${esc(sell.party||'')}</td>
+            <td colspan="5"></td>
+            <td class="section-col total-col"></td>
+            <td class="total-col"></td>
+            <td class="total-col"></td>
+            <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+            <td class="num-cell sold-col">${fmt(sell.price)}</td>
+            <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+            <td class="section-col balance-col"></td>
+            <td class="balance-col"></td>
+            <td class="balance-col"></td>
+          </tr>
+        `);
+      });
+    }
   });
 }
 
@@ -1035,6 +1144,10 @@ function renderALL(){
   const size=document.getElementById("all_filter_size").value;
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
+  
+  const viewMode=document.getElementById("all_view_mode").value;
+  const showAdded=document.getElementById("all_show_added").checked;
+  const showSell=document.getElementById("all_show_sell").checked;
 
   let combined=[...AJMZ_PARENTS,...CALIB_PARENTS];
 
@@ -1072,48 +1185,64 @@ function renderALL(){
 
     const avgSell=soldC>0?soldA/soldC:0;
 
-    // Parent row
-    tbody.insertAdjacentHTML("beforeend",`
-      <tr class="parent-row">
-        <td>${esc(parent.txId)}</td>
-        <td>${esc(parent.date)}</td>
-        <td>${esc(parent.party)}</td>
-        <td>${esc(parent.lotName||"")}</td>
-        <td>${esc(multiDisplay(parent.shape))}</td>
-        <td>${esc(multiDisplay(parent.size))}</td>
-        <td>${esc(parent.description||"")}</td>
-        <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-        <td class="num-cell total-col">${fmt(parent.price)}</td>
-        <td class="num-cell total-col">${fmt(totalA)}</td>
-        <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
-        <td class="num-cell sold-col">${fmt(avgSell)}</td>
-        <td class="num-cell sold-col">${fmt(soldA)}</td>
-        <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-        <td class="num-cell balance-col">${fmt(parent.price)}</td>
-        <td class="num-cell balance-col">${fmt(balA)}</td>
-      </tr>
-    `);
+    // Determine if we should show parent row
+    let showParent = false;
+    if(viewMode === "both") showParent = showAdded;
+    else if(viewMode === "add") showParent = true;
+    else if(viewMode === "sell") showParent = false;
 
-    // Child rows for each sell - showing sell.party (buyer)
-    sells.forEach(sell=>{
+    // Parent row
+    if(showParent){
       tbody.insertAdjacentHTML("beforeend",`
-        <tr class="child-row">
-          <td>${esc(sell.sellId||'')}</td>
-          <td>${esc(sell.date||'')}</td>
-          <td>${esc(sell.party||'')}</td>
-          <td colspan="4"></td>
-          <td class="section-col total-col"></td>
-          <td class="total-col"></td>
-          <td class="total-col"></td>
-          <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
-          <td class="num-cell sold-col">${fmt(sell.price)}</td>
-          <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-          <td class="section-col balance-col"></td>
-          <td class="balance-col"></td>
-          <td class="balance-col"></td>
+        <tr class="parent-row">
+          <td>${esc(parent.txId)}</td>
+          <td>${esc(parent.date)}</td>
+          <td>${esc(parent.party)}</td>
+          <td>${esc(parent.lotName||"")}</td>
+          <td>${esc(multiDisplay(parent.shape))}</td>
+          <td>${esc(multiDisplay(parent.size))}</td>
+          <td>${esc(parent.description||"")}</td>
+          <td class="num-cell section-col total-col">${fmt(totalC)}</td>
+          <td class="num-cell total-col">${fmt(parent.price)}</td>
+          <td class="num-cell total-col">${fmt(totalA)}</td>
+          <td class="num-cell section-col sold-col">${fmt(soldC)}</td>
+          <td class="num-cell sold-col">${fmt(avgSell)}</td>
+          <td class="num-cell sold-col">${fmt(soldA)}</td>
+          <td class="num-cell section-col balance-col">${fmt(balC)}</td>
+          <td class="num-cell balance-col">${fmt(parent.price)}</td>
+          <td class="num-cell balance-col">${fmt(balA)}</td>
         </tr>
       `);
-    });
+    }
+
+    // Determine if we should show child rows
+    let showChildren = false;
+    if(viewMode === "both") showChildren = showSell;
+    else if(viewMode === "add") showChildren = false;
+    else if(viewMode === "sell") showChildren = true;
+
+    // Child rows for each sell - showing sell.party (buyer)
+    if(showChildren){
+      sells.forEach(sell=>{
+        tbody.insertAdjacentHTML("beforeend",`
+          <tr class="child-row">
+            <td>${esc(sell.sellId||'')}</td>
+            <td>${esc(sell.date||'')}</td>
+            <td>${esc(sell.party||'')}</td>
+            <td colspan="4"></td>
+            <td class="section-col total-col"></td>
+            <td class="total-col"></td>
+            <td class="total-col"></td>
+            <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+            <td class="num-cell sold-col">${fmt(sell.price)}</td>
+            <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+            <td class="section-col balance-col"></td>
+            <td class="balance-col"></td>
+            <td class="balance-col"></td>
+          </tr>
+        `);
+      });
+    }
   });
 }
 
@@ -1190,6 +1319,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.getElementById("ajmz_filter_size").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_from").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_to").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_view_mode").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_show_added").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_show_sell").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_clear").addEventListener("click",()=>{
     document.getElementById("ajmz_filter_txid").value="";
     document.getElementById("ajmz_filter_party").value="";
@@ -1198,6 +1330,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("ajmz_filter_size").value="";
     document.getElementById("ajmz_filter_date_from").value="";
     document.getElementById("ajmz_filter_date_to").value="";
+    document.getElementById("ajmz_view_mode").value="both";
+    document.getElementById("ajmz_show_added").checked=true;
+    document.getElementById("ajmz_show_sell").checked=true;
     document.getElementById("globalSearch").value="";
     renderAJMZ();
   });
@@ -1212,6 +1347,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.getElementById("calib_filter_size").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_from").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_to").addEventListener("change",renderCALIB);
+  document.getElementById("calib_view_mode").addEventListener("change",renderCALIB);
+  document.getElementById("calib_show_added").addEventListener("change",renderCALIB);
+  document.getElementById("calib_show_sell").addEventListener("change",renderCALIB);
   document.getElementById("calib_clear").addEventListener("click",()=>{
     document.getElementById("calib_filter_txid").value="";
     document.getElementById("calib_filter_party").value="";
@@ -1220,6 +1358,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("calib_filter_size").value="";
     document.getElementById("calib_filter_date_from").value="";
     document.getElementById("calib_filter_date_to").value="";
+    document.getElementById("calib_view_mode").value="both";
+    document.getElementById("calib_show_added").checked=true;
+    document.getElementById("calib_show_sell").checked=true;
     document.getElementById("globalSearch").value="";
     renderCALIB();
   });
@@ -1234,6 +1375,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.getElementById("all_filter_size").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_from").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_to").addEventListener("change",renderALL);
+  document.getElementById("all_view_mode").addEventListener("change",renderALL);
+  document.getElementById("all_show_added").addEventListener("change",renderALL);
+  document.getElementById("all_show_sell").addEventListener("change",renderALL);
   document.getElementById("all_clear").addEventListener("click",()=>{
     document.getElementById("all_filter_txid").value="";
     document.getElementById("all_filter_party").value="";
@@ -1242,6 +1386,9 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("all_filter_size").value="";
     document.getElementById("all_filter_date_from").value="";
     document.getElementById("all_filter_date_to").value="";
+    document.getElementById("all_view_mode").value="both";
+    document.getElementById("all_show_added").checked=true;
+    document.getElementById("all_show_sell").checked=true;
     document.getElementById("globalSearch").value="";
     renderALL();
   });
