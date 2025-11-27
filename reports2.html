@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>REPORTS (2)</title>
+<title>REPORTS (2) - FIXED</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -737,7 +737,7 @@ body{
 <div class="workspace">
 
   <div class="panel">
-    <div class="page-title">REPORTS (2)</div>
+    <div class="page-title">REPORTS (2) - FIXED CALCULATIONS</div>
     <div class="spacer"></div>
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -1253,17 +1253,21 @@ function renderAJMZ(){
 
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
+    
+    // FIXED: Calculate total sold from all sell records
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
     const soldP=sells.reduce((sum,s)=>sum+s.pcs,0);
     const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    const totalC=parent.cts+soldC;
-    const totalP=parent.pcs+soldP;
-    const totalA=parent.amount+soldA;
+    // FIXED: Opening Balance = Original parent values
+    const totalC=parent.cts;
+    const totalP=parent.pcs;
+    const totalA=totalC * parent.price;
 
-    const balC=parent.cts;
-    const balP=parent.pcs;
-    const balA=parent.amount;
+    // FIXED: Remaining Balance = Opening - Sold
+    const balC=totalC - soldC;
+    const balP=totalP - soldP;
+    const balA=balC * parent.price;
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
@@ -1308,18 +1312,18 @@ function renderAJMZ(){
             <td>${esc(multiDisplay(parent.shape))}</td>
             <td>${esc(multiDisplay(parent.size))}</td>
             <td>${esc(parent.description||"")}</td>
-            <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-            <td class="num-cell total-col">${fmt(totalP)}</td>
-            <td class="num-cell total-col">${fmt(parent.price)}</td>
-            <td class="num-cell total-col">${fmt(totalA)}</td>
+            <td class="num-cell section-col total-col"></td>
+            <td class="num-cell total-col"></td>
+            <td class="num-cell total-col"></td>
+            <td class="num-cell total-col"></td>
             <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
             <td class="num-cell sold-col">${fmt(sell.pcs)}</td>
             <td class="num-cell sold-col">${fmt(sell.price)}</td>
             <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-            <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-            <td class="num-cell balance-col">${fmt(balP)}</td>
-            <td class="num-cell balance-col">${fmt(parent.price)}</td>
-            <td class="num-cell balance-col">${fmt(balA)}</td>
+            <td class="num-cell section-col balance-col"></td>
+            <td class="num-cell balance-col"></td>
+            <td class="num-cell balance-col"></td>
+            <td class="num-cell balance-col"></td>
           </tr>
         `);
       });
@@ -1368,14 +1372,18 @@ function renderCALIB(){
 
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
+    
+    // FIXED: Calculate total sold from all sell records
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
     const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    const totalC=parent.cts+soldC;
-    const totalA=parent.amount+soldA;
+    // FIXED: Opening Balance = Original parent values
+    const totalC=parent.cts;
+    const totalA=totalC * parent.price;
 
-    const balC=parent.cts;
-    const balA=parent.amount;
+    // FIXED: Remaining Balance = Opening - Sold
+    const balC=totalC - soldC;
+    const balA=balC * parent.price;
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
@@ -1417,15 +1425,15 @@ function renderCALIB(){
             <td>${esc(multiDisplay(parent.shape))}</td>
             <td>${esc(multiDisplay(parent.size))}</td>
             <td>${esc(parent.description||"")}</td>
-            <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-            <td class="num-cell total-col">${fmt(parent.price)}</td>
-            <td class="num-cell total-col">${fmt(totalA)}</td>
+            <td class="num-cell section-col total-col"></td>
+            <td class="num-cell total-col"></td>
+            <td class="num-cell total-col"></td>
             <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
             <td class="num-cell sold-col">${fmt(sell.price)}</td>
             <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-            <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-            <td class="num-cell balance-col">${fmt(parent.price)}</td>
-            <td class="num-cell balance-col">${fmt(balA)}</td>
+            <td class="num-cell section-col balance-col"></td>
+            <td class="num-cell balance-col"></td>
+            <td class="num-cell balance-col"></td>
           </tr>
         `);
       });
@@ -1476,14 +1484,18 @@ function renderALL(){
 
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
+    
+    // FIXED: Calculate total sold from all sell records
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
     const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    const totalC=parent.cts+soldC;
-    const totalA=parent.amount+soldA;
+    // FIXED: Opening Balance = Original parent values
+    const totalC=parent.cts;
+    const totalA=totalC * parent.price;
 
-    const balC=parent.cts;
-    const balA=parent.amount;
+    // FIXED: Remaining Balance = Opening - Sold
+    const balC=totalC - soldC;
+    const balA=balC * parent.price;
 
     const avgSell=soldC>0?soldA/soldC:0;
 
@@ -1523,15 +1535,15 @@ function renderALL(){
             <td>${esc(multiDisplay(parent.shape))}</td>
             <td>${esc(multiDisplay(parent.size))}</td>
             <td>${esc(parent.description||"")}</td>
-            <td class="num-cell section-col total-col">${fmt(totalC)}</td>
-            <td class="num-cell total-col">${fmt(parent.price)}</td>
-            <td class="num-cell total-col">${fmt(totalA)}</td>
+            <td class="num-cell section-col total-col"></td>
+            <td class="num-cell total-col"></td>
+            <td class="num-cell total-col"></td>
             <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
             <td class="num-cell sold-col">${fmt(sell.price)}</td>
             <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-            <td class="num-cell section-col balance-col">${fmt(balC)}</td>
-            <td class="num-cell balance-col">${fmt(parent.price)}</td>
-            <td class="num-cell balance-col">${fmt(balA)}</td>
+            <td class="num-cell section-col balance-col"></td>
+            <td class="num-cell balance-col"></td>
+            <td class="num-cell balance-col"></td>
           </tr>
         `);
       });
