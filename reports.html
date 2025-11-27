@@ -320,22 +320,129 @@ body{
 .tab-section{display:none;}
 .tab-section.active{display:block;}
 
-/* Print styles */
+/* Print Dialog Modal */
+.print-modal-overlay{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.5);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+}
+.print-modal-overlay.active{
+  display:flex;
+}
+.print-modal{
+  background:#fff;
+  border-radius:16px;
+  padding:24px;
+  max-width:400px;
+  width:90%;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.print-modal-title{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:16px;
+  color:var(--ink);
+}
+.print-modal-options{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:20px;
+}
+.print-option{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border:2px solid var(--line);
+  border-radius:10px;
+  cursor:pointer;
+  transition:.15s;
+}
+.print-option:hover{
+  border-color:var(--accent);
+  background:#f9f9f9;
+}
+.print-option input[type="radio"]{
+  width:18px;
+  height:18px;
+  cursor:pointer;
+}
+.print-option-label{
+  flex:1;
+  cursor:pointer;
+}
+.print-option-label strong{
+  display:block;
+  font-size:14px;
+  margin-bottom:2px;
+}
+.print-option-label span{
+  font-size:12px;
+  color:var(--ink-soft);
+}
+.print-modal-buttons{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+}
+.print-modal-btn{
+  padding:8px 20px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:.15s;
+}
+.print-modal-btn.primary{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+.print-modal-btn:hover{
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px var(--shadow);
+}
+
+/* Professional Print Styles */
 @media print {
+  /* Page setup */
+  @page {
+    size: landscape;
+    margin: 0.5in 0.75in;
+  }
+  
+  /* Reset body */
   body {
     background: white;
     overflow: visible;
+    margin: 0;
+    padding: 0;
   }
   
+  /* Hide non-printable elements */
   .nav-vertical,
   .panel,
   .tab-row,
-  .kpi-row,
   .slicer-row,
-  .no-print {
+  .action-btn,
+  .slicer-clear-btn,
+  .search-box-global,
+  .no-print,
+  .print-modal-overlay {
     display: none !important;
   }
   
+  /* Workspace adjustments */
   .workspace {
     margin-left: 0;
     height: auto;
@@ -343,38 +450,118 @@ body{
     padding: 0;
   }
   
+  /* Show only active tab */
   .tab-section {
-    display: block !important;
-  }
-  
-  .tab-section:not(.active) {
     display: none !important;
   }
   
+  .tab-section.active {
+    display: block !important;
+    page-break-before: avoid;
+  }
+  
+  /* Print header */
+  .tab-section.active::before {
+    content: "INVENTORY REPORT - " attr(data-print-title);
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 3px solid #333;
+    text-align: center;
+    color: #2f3b33;
+  }
+  
+  /* KPI cards for print - hidden by default */
+  .kpi-row {
+    display: none !important;
+  }
+  
+  /* Show KPIs when summary mode is active */
+  body.print-with-summary .kpi-row {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+    page-break-inside: avoid;
+  }
+  
+  body.print-with-summary .kpi-card {
+    flex: 1 1 180px;
+    background: #f5f5f5 !important;
+    border: 1px solid #ccc !important;
+    border-radius: 6px;
+    padding: 8px 10px;
+    box-shadow: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  body.print-with-summary .kpi-label {
+    font-size: 9px;
+    color: #666 !important;
+    margin-bottom: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  body.print-with-summary .kpi-main {
+    font-size: 14px;
+    font-weight: 700;
+    color: #000 !important;
+  }
+  
+  body.print-with-summary .kpi-sub {
+    font-size: 9px;
+    color: #666 !important;
+  }
+  
+  /* Card container */
   .card {
     border: none;
     box-shadow: none;
     overflow: visible;
     border-radius: 0;
+    margin-top: 0;
   }
   
   .table-shell {
     overflow: visible;
+    border: none;
   }
   
+  /* Table styling */
   .table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9px;
     page-break-inside: auto;
-    font-size: 10px;
   }
   
+  /* Headers repeat on every page */
   .table thead {
     display: table-header-group;
   }
   
   .table thead th {
-    background: #e0e0e0 !important;
+    background: #e8e8e8 !important;
+    border: 1px solid #999 !important;
+    padding: 6px 4px;
+    color: #000 !important;
+    text-align: left;
+    font-weight: 700;
+    font-size: 9px;
+    position: static;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
+  }
+  
+  /* Table body */
+  .table tbody {
+    display: table-row-group;
   }
   
   .table tbody tr {
@@ -382,32 +569,100 @@ body{
     page-break-after: auto;
   }
   
+  .table tbody td {
+    border: 1px solid #ccc !important;
+    padding: 4px 4px;
+    font-size: 9px;
+    color: #000 !important;
+  }
+  
+  /* Remove row background colors - use bold/regular text instead */
   .add-row {
-    background: #e9f7ec !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    background: white !important;
+    font-weight: 700 !important;
   }
   
   .sell-row {
-    background: #fce9e9 !important;
+    background: white !important;
+    font-weight: 400 !important;
+  }
+  
+  /* Badges */
+  .badge {
+    display: inline-block;
+    font-size: 8px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 700;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
   
-  /* Add page title at top of print */
-  .tab-section.active::before {
-    content: "REPORTS - " attr(data-print-title);
-    display: block;
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
+  .badge-add {
+    background: #9CD8A5 !important;
+    color: #1f3a27 !important;
+  }
+  
+  .badge-sell {
+    background: #E8A3A3 !important;
+    color: #4f1f1f !important;
+  }
+  
+  .badge-source-ajmz {
+    background: #d1e5ff !important;
+    color: #204f7a !important;
+  }
+  
+  .badge-source-calib {
+    background: #ffe3b3 !important;
+    color: #7a4f20 !important;
+  }
+  
+  /* Profit/Loss colors */
+  .kpi-profit {
+    color: #2e7d32 !important;
+  }
+  
+  .kpi-loss {
+    color: #c62828 !important;
+  }
+  
+  /* Prevent orphaned rows */
+  .table tbody tr:nth-last-child(-n+3) {
+    page-break-after: avoid;
   }
 }
 </style>
 </head>
 
 <body>
+
+<!-- Print Modal -->
+<div class="print-modal-overlay" id="printModal">
+  <div class="print-modal">
+    <div class="print-modal-title">Print Options</div>
+    <div class="print-modal-options">
+      <label class="print-option">
+        <input type="radio" name="printOption" value="with-summary" checked>
+        <div class="print-option-label">
+          <strong>Include Summary Section</strong>
+          <span>Print with KPI cards and table</span>
+        </div>
+      </label>
+      <label class="print-option">
+        <input type="radio" name="printOption" value="table-only">
+        <div class="print-option-label">
+          <strong>Table Only</strong>
+          <span>Print table without summary KPIs</span>
+        </div>
+      </label>
+    </div>
+    <div class="print-modal-buttons">
+      <button class="print-modal-btn" onclick="closePrintModal()">Cancel</button>
+      <button class="print-modal-btn primary" onclick="confirmPrint()">Print</button>
+    </div>
+  </div>
+</div>
 
 <!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
@@ -502,6 +757,7 @@ body{
               <th>Tx ID</th>
               <th>Sell ID</th>
               <th>Lot</th>
+              <th>Format/Grade</th>
               <th>Shape</th>
               <th>Size</th>
               <th>Description</th>
@@ -663,6 +919,7 @@ function buildUnifiedRows(){
       txId:p.txId||"",
       sellId:"",
       lot:p.lotName||"",
+      formatGrade:p.lotFormat||"",
       desc:p.description||"",
       cts:p.cts,
       pcs:p.pcs,
@@ -680,9 +937,10 @@ function buildUnifiedRows(){
         source:"AJMZ",
         type:"SELL",
         date:s.date||"",
-        txId:p.txId||"",        // parent Tx ID
-        sellId:s.sellId||"",    // sell ID
+        txId:p.txId||"",
+        sellId:s.sellId||"",
         lot:p.lotName||"",
+        formatGrade:p.lotFormat||"",
         desc:p.description||"",
         cts:s.cts,
         pcs:s.pcs,
@@ -717,6 +975,7 @@ function buildUnifiedRows(){
       txId:p.txId||"",
       sellId:"",
       lot:p.lotName||"",
+      formatGrade:p.grade||"",
       desc:p.description||"",
       cts:p.cts,
       pcs:0,
@@ -737,6 +996,7 @@ function buildUnifiedRows(){
         txId:p.txId||"",
         sellId:s.sellId||"",
         lot:p.lotName||"",
+        formatGrade:p.grade||"",
         desc:p.description||"",
         cts:s.cts,
         pcs:0,
@@ -922,6 +1182,31 @@ function matchesFilter(value,filterValue){
   return String(value||"").trim()===filterValue;
 }
 
+// Print Modal Functions
+function showPrintModal(){
+  document.getElementById('printModal').classList.add('active');
+}
+
+function closePrintModal(){
+  document.getElementById('printModal').classList.remove('active');
+}
+
+function confirmPrint(){
+  const selectedOption=document.querySelector('input[name="printOption"]:checked').value;
+  
+  if(selectedOption==='with-summary'){
+    document.body.classList.add('print-with-summary');
+  }else{
+    document.body.classList.remove('print-with-summary');
+  }
+  
+  closePrintModal();
+  
+  setTimeout(()=>{
+    window.print();
+  },100);
+}
+
 function applyALLFilters(q=""){
   const srcVal=document.getElementById("all_filter_source").value;
   const rowTypeVal=selects.all_rowType?.getValue()||"";
@@ -934,34 +1219,42 @@ function applyALLFilters(q=""){
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
   const tbody=document.getElementById("tbodyALL");
-  tbody.innerHTML="";
   
-  let addCTS=0,addPCS=0,addAmt=0,soldCTS=0,soldPCS=0,soldAmt=0;
+  // Show loading indicator
+  tbody.innerHTML='<tr><td colspan="16" style="text-align:center;padding:40px;"><div style="font-size:14px;color:var(--ink-soft);">⏳ Loading data...</div></td></tr>';
   
-  ALL_ROWS.forEach(r=>{
-    if(srcVal&&r.source!==srcVal)return;
-    if(rowTypeVal&&r.type!==rowTypeVal)return;
-    if(txIdVal&&r.txId!==txIdVal)return;
-    if(sellIdVal&&r.sellId!==sellIdVal)return;
-    if(lotVal&&r.lot!==lotVal)return;
-    if(!matchesFilter(r.shape,shapeVal))return;
-    if(!matchesFilter(r.size,sizeVal))return;
-    if(partyVal&&r.party!==partyVal)return;
-    if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
-    const txt=JSON.stringify(r).toLowerCase();
-    if(q&&!txt.includes(q))return;
+  // Use setTimeout to allow UI to update
+  setTimeout(()=>{
+    const fragment=document.createDocumentFragment();
+    let addCTS=0,addPCS=0,addAmt=0,soldCTS=0,soldPCS=0,soldAmt=0;
     
-    const srcBadge=r.source==="AJMZ"
-      ?`<span class="badge badge-source-ajmz">AJMZ</span>`
-      :`<span class="badge badge-source-calib">CALIB</span>`;
-    tbody.innerHTML+=`
-      <tr class="${r.type==="ADD"?"add-row":"sell-row"}">
+    ALL_ROWS.forEach(r=>{
+      if(srcVal&&r.source!==srcVal)return;
+      if(rowTypeVal&&r.type!==rowTypeVal)return;
+      if(txIdVal&&r.txId!==txIdVal)return;
+      if(sellIdVal&&r.sellId!==sellIdVal)return;
+      if(lotVal&&r.lot!==lotVal)return;
+      if(!matchesFilter(r.shape,shapeVal))return;
+      if(!matchesFilter(r.size,sizeVal))return;
+      if(partyVal&&r.party!==partyVal)return;
+      if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
+      const txt=JSON.stringify(r).toLowerCase();
+      if(q&&!txt.includes(q))return;
+      
+      const srcBadge=r.source==="AJMZ"
+        ?`<span class="badge badge-source-ajmz">AJMZ</span>`
+        :`<span class="badge badge-source-calib">CALIB</span>`;
+      
+      const tr=document.createElement('tr');
+      tr.className=r.type==="ADD"?"add-row":"sell-row";
+      tr.innerHTML=`
         <td>${srcBadge}</td>
         <td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td>
         <td>${esc(r.date)}</td>
         <td>${esc(r.txId)}</td>
         <td>${esc(r.sellId)}</td>
         <td>${esc(r.lot)}</td>
+        <td>${esc(r.formatGrade)}</td>
         <td>${esc(multiDisplay(r.shape))}</td>
         <td>${esc(multiDisplay(r.size))}</td>
         <td>${esc(r.desc)}</td>
@@ -971,28 +1264,33 @@ function applyALLFilters(q=""){
         <td>${fmt(r.amount)}</td>
         <td>${esc(r.party)}</td>
         <td>${esc(r.remarks)}</td>
-      </tr>`;
+      `;
+      fragment.appendChild(tr);
+      
+      if(r.type==="ADD"){
+        addCTS+=r.cts;
+        addPCS+=r.pcs;
+        addAmt+=r.amount;
+      }else{
+        soldCTS+=r.cts;
+        soldPCS+=r.pcs;
+        soldAmt+=r.amount;
+      }
+    });
     
-    if(r.type==="ADD"){
-      addCTS+=r.cts;
-      addPCS+=r.pcs;
-      addAmt+=r.amount;
-    }else{
-      soldCTS+=r.cts;
-      soldPCS+=r.pcs;
-      soldAmt+=r.amount;
-    }
-  });
-  
-  document.getElementById("all_kpi_added_main").textContent=`${fmt(addCTS)} CTS / ${fmt(addPCS)} PCS`;
-  document.getElementById("all_kpi_added_sub").textContent=`Amount: ${fmt(addAmt)}`;
-  document.getElementById("all_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
-  document.getElementById("all_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
-  document.getElementById("all_kpi_inv_main").textContent=`${fmt(addCTS-soldCTS)} CTS / ${fmt(addPCS-soldPCS)} PCS`;
-  const profitEl=document.getElementById("all_kpi_profit_main");
-  profitEl.textContent=fmt(soldAmt);
-  profitEl.classList.remove("kpi-profit","kpi-loss");
-  if(soldAmt>0)profitEl.classList.add("kpi-profit");
+    tbody.innerHTML="";
+    tbody.appendChild(fragment);
+    
+    document.getElementById("all_kpi_added_main").textContent=`${fmt(addCTS)} CTS / ${fmt(addPCS)} PCS`;
+    document.getElementById("all_kpi_added_sub").textContent=`Amount: ${fmt(addAmt)}`;
+    document.getElementById("all_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
+    document.getElementById("all_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
+    document.getElementById("all_kpi_inv_main").textContent=`${fmt(addCTS-soldCTS)} CTS / ${fmt(addPCS-soldPCS)} PCS`;
+    const profitEl=document.getElementById("all_kpi_profit_main");
+    profitEl.textContent=fmt(soldAmt);
+    profitEl.classList.remove("kpi-profit","kpi-loss");
+    if(soldAmt>0)profitEl.classList.add("kpi-profit");
+  },10);
 }
 
 function applyPARTYFilters(q=""){
@@ -1001,25 +1299,32 @@ function applyPARTYFilters(q=""){
   const dateFrom=document.getElementById("py_filter_date_from").value;
   const dateTo=document.getElementById("py_filter_date_to").value;
   const tbody=document.getElementById("tbodyPARTY");
-  tbody.innerHTML="";
   
-  let soldCTS=0,soldPCS=0,soldAmt=0;
-  const partySet=new Set();
-  let ajCTS=0,cbCTS=0;
+  // Show loading indicator
+  tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;"><div style="font-size:14px;color:var(--ink-soft);">⏳ Loading data...</div></td></tr>';
   
-  PARTY_ROWS.forEach(r=>{
-    if(partyVal&&r.party!==partyVal)return;
-    if(srcVal&&r.source!==srcVal)return;
-    if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
-    const txt=JSON.stringify(r).toLowerCase();
-    if(q&&!txt.includes(q))return;
+  // Use setTimeout to allow UI to update
+  setTimeout(()=>{
+    const fragment=document.createDocumentFragment();
+    let soldCTS=0,soldPCS=0,soldAmt=0;
+    const partySet=new Set();
+    let ajCTS=0,cbCTS=0;
     
-    partySet.add(r.party);
-    const srcBadge=r.source==="AJMZ"
-      ?`<span class="badge badge-source-ajmz">AJMZ</span>`
-      :`<span class="badge badge-source-calib">CALIB</span>`;
-    tbody.innerHTML+=`
-      <tr class="sell-row">
+    PARTY_ROWS.forEach(r=>{
+      if(partyVal&&r.party!==partyVal)return;
+      if(srcVal&&r.source!==srcVal)return;
+      if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
+      const txt=JSON.stringify(r).toLowerCase();
+      if(q&&!txt.includes(q))return;
+      
+      partySet.add(r.party);
+      const srcBadge=r.source==="AJMZ"
+        ?`<span class="badge badge-source-ajmz">AJMZ</span>`
+        :`<span class="badge badge-source-calib">CALIB</span>`;
+      
+      const tr=document.createElement('tr');
+      tr.className="sell-row";
+      tr.innerHTML=`
         <td>${esc(r.party)}</td>
         <td>${srcBadge}</td>
         <td>${esc(r.date)}</td>
@@ -1030,22 +1335,27 @@ function applyPARTYFilters(q=""){
         <td>${fmt(r.price)}</td>
         <td>${fmt(r.amount)}</td>
         <td>${esc(r.remarks)}</td>
-      </tr>`;
+      `;
+      fragment.appendChild(tr);
+      
+      soldCTS+=r.cts;
+      soldPCS+=r.pcs;
+      soldAmt+=r.amount;
+      if(r.source==="AJMZ")ajCTS+=r.cts;else cbCTS+=r.cts;
+    });
     
-    soldCTS+=r.cts;
-    soldPCS+=r.pcs;
-    soldAmt+=r.amount;
-    if(r.source==="AJMZ")ajCTS+=r.cts;else cbCTS+=r.cts;
-  });
-  
-  document.getElementById("py_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
-  document.getElementById("py_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
-  document.getElementById("py_kpi_party_main").textContent=partySet.size;
-  document.getElementById("py_kpi_split_main").textContent=`${fmt(ajCTS)} / ${fmt(cbCTS)}`;
-  const profitEl=document.getElementById("py_kpi_profit_main");
-  profitEl.textContent=fmt(soldAmt);
-  profitEl.classList.remove("kpi-profit","kpi-loss");
-  if(soldAmt>0)profitEl.classList.add("kpi-profit");
+    tbody.innerHTML="";
+    tbody.appendChild(fragment);
+    
+    document.getElementById("py_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
+    document.getElementById("py_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
+    document.getElementById("py_kpi_party_main").textContent=partySet.size;
+    document.getElementById("py_kpi_split_main").textContent=`${fmt(ajCTS)} / ${fmt(cbCTS)}`;
+    const profitEl=document.getElementById("py_kpi_profit_main");
+    profitEl.textContent=fmt(soldAmt);
+    profitEl.classList.remove("kpi-profit","kpi-loss");
+    if(soldAmt>0)profitEl.classList.add("kpi-profit");
+  },10);
 }
 
 function bindTabs(){
@@ -1069,17 +1379,17 @@ document.addEventListener("DOMContentLoaded",async()=>{
   
   const globalInput=document.getElementById("searchGlobal");
   globalInput.addEventListener("input",()=>{
-    const q=globalInput.value;
+    const q=globalInput.value.toLowerCase();
     applyALLFilters(q);
     applyPARTYFilters(q);
   });
   
   // ALL STONES events
   ["all_filter_source","all_filter_date_from","all_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));
+    document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value.toLowerCase()));
   });
   ["all_filter_rowtype","all_filter_txid","all_filter_sellid","all_filter_lot","all_filter_shape","all_filter_size","all_filter_party"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value));
+    document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value.toLowerCase()));
   });
   document.getElementById("all_clear_filters").addEventListener("click",()=>{
     document.getElementById("all_filter_source").value="";
@@ -1092,24 +1402,24 @@ document.addEventListener("DOMContentLoaded",async()=>{
     selects.all_party?.reset();
     document.getElementById("all_filter_date_from").value="";
     document.getElementById("all_filter_date_to").value="";
-    applyALLFilters(globalInput.value);
+    applyALLFilters(globalInput.value.toLowerCase());
   });
-  document.getElementById("all_print").addEventListener("click",()=>window.print());
+  document.getElementById("all_print").addEventListener("click",()=>showPrintModal());
   document.getElementById("all_export_csv").addEventListener("click",()=>exportCSV("all_print_area","All_Stones_Export.csv"));
   
   // PARTY events
   ["py_filter_source","py_filter_date_from","py_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>applyPARTYFilters(globalInput.value));
+    document.getElementById(id).addEventListener("change",()=>applyPARTYFilters(globalInput.value.toLowerCase()));
   });
-  document.getElementById("py_filter_party").addEventListener("change",()=>applyPARTYFilters(globalInput.value));
+  document.getElementById("py_filter_party").addEventListener("change",()=>applyPARTYFilters(globalInput.value.toLowerCase()));
   document.getElementById("py_clear_filters").addEventListener("click",()=>{
     selects.py_party?.reset();
     document.getElementById("py_filter_source").value="";
     document.getElementById("py_filter_date_from").value="";
     document.getElementById("py_filter_date_to").value="";
-    applyPARTYFilters(globalInput.value);
+    applyPARTYFilters(globalInput.value.toLowerCase());
   });
-  document.getElementById("py_print").addEventListener("click",()=>window.print());
+  document.getElementById("py_print").addEventListener("click",()=>showPrintModal());
   document.getElementById("py_export_csv").addEventListener("click",()=>exportCSV("py_print_area","Party_Export.csv"));
   
   // initial render
