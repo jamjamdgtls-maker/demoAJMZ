@@ -335,27 +335,106 @@ body{
   display:none !important;
 }
 
-/* Print styles */
+/* ============================================
+   PROFESSIONAL PRINT STYLES
+   ============================================ */
 @media print {
+  
+  /* Page setup */
+  @page {
+    margin: 0.75in 0.5in 0.75in 0.5in;
+  }
+  
+  /* Reset body for print */
   body {
     background: white;
     overflow: visible;
+    font-size: 9pt;
+    color: #000;
+    line-height: 1.3;
   }
   
+  /* ============================================
+     HIDE NON-PRINTABLE ELEMENTS
+     ============================================ */
   .nav-vertical,
   .panel,
   .tab-row,
   .toolbar,
-  .no-print {
+  .no-print,
+  .search-box,
+  .button,
+  .filter-group,
+  .checkbox-toggle,
+  .section-toggle {
     display: none !important;
   }
   
+  /* ============================================
+     WORKSPACE LAYOUT
+     ============================================ */
   .workspace {
     margin-left: 0;
+    padding: 0;
     height: auto;
     overflow: visible;
   }
   
+  /* ============================================
+     REPORT HEADER - Company & Report Info
+     ============================================ */
+  .tab-section.active::before {
+    content: '';
+    display: block;
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #5D866C;
+    page-break-after: avoid;
+  }
+  
+  /* Report Title */
+  .tab-section#tabAJMZ.active::before {
+    content: 'AJMZ INVENTORY LEDGER REPORT';
+    font-size: 20pt;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  
+  .tab-section#tabCALIB.active::before {
+    content: 'CALIB INVENTORY LEDGER REPORT';
+    font-size: 20pt;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  
+  .tab-section#tabALL.active::before {
+    content: 'ALL STONES INVENTORY LEDGER REPORT';
+    font-size: 20pt;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+  
+  /* Print Date - Add after title */
+  .tab-section.active::after {
+    content: 'Generated: ' attr(data-print-date);
+    display: block;
+    text-align: center;
+    font-size: 9pt;
+    color: #666;
+    margin-top: 5px;
+    page-break-after: avoid;
+  }
+  
+  /* ============================================
+     TAB SECTION VISIBILITY
+     ============================================ */
   .tab-section {
     display: block !important;
     margin: 0;
@@ -366,24 +445,92 @@ body{
     display: none !important;
   }
   
+  /* ============================================
+     CARD CONTAINER
+     ============================================ */
   .card {
-    border: none;
+    border: 2px solid #333;
     box-shadow: none;
     overflow: visible;
     border-radius: 0;
+    page-break-inside: avoid;
+    background: white;
   }
   
   .table-wrapper {
     overflow: visible;
     max-height: none;
+    border: none;
   }
   
+  /* ============================================
+     TABLE STRUCTURE & TYPOGRAPHY
+     ============================================ */
   .ledger-table {
     page-break-inside: auto;
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 7.5pt;
+    border: 1px solid #000;
   }
   
+  /* ============================================
+     TABLE HEADER STYLING
+     ============================================ */
   .ledger-table thead {
     display: table-header-group;
+    background: #f3efe6 !important;
+  }
+  
+  .ledger-table thead th {
+    padding: 8px 4px;
+    font-size: 7pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 1px solid #000;
+    background: #e5dfd1 !important;
+    color: #000 !important;
+    vertical-align: middle;
+    line-height: 1.2;
+  }
+  
+  /* Section Headers - Color-coded */
+  .section-header {
+    background: #d0d0d0 !important;
+    font-weight: bold;
+    border: 1px solid #000 !important;
+    text-align: center;
+    padding: 6px 4px;
+  }
+  
+  .total-section {
+    background: #bdd7ee !important;
+    color: #1f4788 !important;
+    border: 2px solid #1f4788 !important;
+  }
+  
+  .sold-section {
+    background: #f4c7c3 !important;
+    color: #8b1a1a !important;
+    border: 2px solid #8b1a1a !important;
+  }
+  
+  .balance-section {
+    background: #fff2cc !important;
+    color: #7f6000 !important;
+    border: 2px solid #7f6000 !important;
+  }
+  
+  /* ============================================
+     TABLE BODY - DATA ROWS
+     ============================================ */
+  .ledger-table tbody td {
+    padding: 5px 4px;
+    border: 1px solid #999;
+    font-size: 7.5pt;
+    vertical-align: top;
+    line-height: 1.3;
   }
   
   .ledger-table tbody tr {
@@ -395,22 +542,182 @@ body{
     background: transparent;
   }
   
+  /* ============================================
+     PARENT ROWS - Stock Added Entries
+     ============================================ */
   .parent-row {
-    background: #d4edda !important;
+    background: transparent !important;
+    font-weight: 700;
+    border-top: 2px solid #000 !important;
+    border-bottom: 1px solid #666 !important;
   }
   
+  .parent-row td {
+    border: 1px solid #666 !important;
+    padding: 6px 4px;
+    background: transparent !important;
+  }
+  
+  /* Prevent page break after parent row */
+  .parent-row {
+    page-break-after: avoid;
+  }
+  
+  /* ============================================
+     CHILD ROWS - Sell Transactions
+     ============================================ */
   .child-row {
-    background: #f8d7da !important;
+    background: transparent !important;
+    font-weight: 400;
   }
   
-  /* Add page title at top of print */
-  .tab-section.active::before {
-    content: "REPORTS - " attr(data-print-title);
-    display: block;
-    font-size: 24px;
+  .child-row td {
+    border: 1px solid #ccc !important;
+    background: transparent !important;
+  }
+  
+  /* Indent child row first column */
+  .child-row td:first-child {
+    padding-left: 20px;
+    font-style: italic;
+  }
+  
+  .child-row td:first-child::before {
+    content: "↳ ";
+    color: #666;
+    margin-right: 5px;
     font-weight: bold;
-    margin-bottom: 20px;
-    text-align: center;
+  }
+  
+  /* Allow page break after last child in a group */
+  .child-row:last-of-type {
+    page-break-after: auto;
+    border-bottom: 2px solid #999 !important;
+  }
+  
+  /* ============================================
+     COLUMN SECTION BACKGROUNDS
+     ============================================ */
+  .total-col {
+    background: #f0f8ff !important;
+  }
+  
+  .sold-col {
+    background: #fff5f5 !important;
+  }
+  
+  .balance-col {
+    background: #fffef0 !important;
+  }
+  
+  .section-col {
+    border-left: 2px solid #000 !important;
+  }
+  
+  /* ============================================
+     NUMBER FORMATTING
+     ============================================ */
+  .num-cell {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Courier New', monospace;
+    white-space: nowrap;
+  }
+  
+  /* ============================================
+     PAGE NUMBERS & FOOTER INFO
+     ============================================ */
+  @page {
+    @bottom-right {
+      content: "Page " counter(page);
+      font-size: 8pt;
+      font-family: Inter, sans-serif;
+      color: #666;
+    }
+    
+    @bottom-center {
+      content: "CONFIDENTIAL - Internal Use Only";
+      font-size: 7pt;
+      font-family: Inter, sans-serif;
+      color: #999;
+      font-weight: 600;
+    }
+    
+    @bottom-left {
+      content: string(print-date);
+      font-size: 8pt;
+      font-family: Inter, sans-serif;
+      color: #666;
+    }
+  }
+  
+  /* ============================================
+     COLLAPSED SECTIONS - Honor Hide State
+     ============================================ */
+  .ledger-table.section-hidden-total .total-col,
+  .ledger-table.section-hidden-total .total-section {
+    display: none !important;
+  }
+  
+  .ledger-table.section-hidden-sold .sold-col,
+  .ledger-table.section-hidden-sold .sold-section {
+    display: none !important;
+  }
+  
+  .ledger-table.section-hidden-balance .balance-col,
+  .ledger-table.section-hidden-balance .balance-section {
+    display: none !important;
+  }
+  
+  /* ============================================
+     PREVENT ORPHAN HEADERS
+     ============================================ */
+  thead {
+    page-break-after: avoid;
+  }
+  
+  thead tr {
+    page-break-inside: avoid;
+  }
+  
+  /* ============================================
+     TABLE BORDERS - Professional Grid
+     ============================================ */
+  .ledger-table,
+  .ledger-table thead th,
+  .ledger-table tbody td {
+    border-color: #333 !important;
+  }
+  
+  /* Outer table border */
+  .ledger-table {
+    border: 2px solid #000;
+  }
+  
+  /* ============================================
+     PRINT QUALITY OPTIMIZATION
+     ============================================ */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  /* Ensure text is black and readable */
+  body, td, th {
+    color: #000 !important;
+  }
+  
+  /* ============================================
+     SPACING IMPROVEMENTS
+     ============================================ */
+  .card {
+    margin-bottom: 0;
+  }
+  
+  /* Add space between major row groups */
+  .parent-row + .parent-row {
+    border-top: 3px solid #000 !important;
   }
 }
 
@@ -1251,6 +1558,21 @@ function exportToCSV(type){
   a.download=`${type}_Ledger_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
+
+// Add print date to reports
+window.addEventListener('beforeprint', function() {
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US', { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  document.querySelectorAll('.tab-section').forEach(section => {
+    section.setAttribute('data-print-date', dateStr);
+  });
+});
 
 document.addEventListener("DOMContentLoaded",async()=>{
   await loadData();
