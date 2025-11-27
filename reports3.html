@@ -1,0 +1,1114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>INVOICE — Inventory System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+<!-- Firebase compat -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+:root{
+  --bg:#F5F5F0;
+  --card:#ffffff;
+  --line:#d6cbb8;
+  --ink:#2f3b33;
+  --ink-soft:#6b7a70;
+  --accent:#5D866C;
+  --accent-2:#C2A68C;
+  --shadow:rgba(0,0,0,0.08);
+  --yellow-highlight:#FFF9E6;
+  --border-dark:#333;
+}
+
+/* Left fixed nav */
+.nav-vertical{
+  width:60px;
+  background:#fff;
+  border-right:3px solid var(--accent-2);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:20px;
+  padding:14px 0;
+  box-shadow:6px 0 20px var(--shadow);
+  position:fixed;
+  left:0; top:0; bottom:0;
+  z-index:2000;
+}
+.nav-item{
+  width:44px; height:44px;
+  border-radius:12px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px;
+  text-decoration:none;
+  color:var(--ink);
+  background:#fff;
+  border:1px solid var(--line);
+  cursor:pointer;
+  font-weight:600;
+  transition:.15s;
+}
+.nav-item:hover{background:#faf8f0}
+.nav-item.active{
+  background:var(--accent);
+  color:#fff;
+  border-color:transparent;
+}
+
+/* Workspace */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:Inter, sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+.workspace{
+  margin-left:60px;
+  min-height:100vh;
+  padding:18px;
+  overflow:auto;
+}
+
+/* Invoice Container */
+.invoice-container{
+  max-width:1200px;
+  margin:0 auto;
+  background:#fff;
+  border:2px solid var(--border-dark);
+  border-radius:12px;
+  box-shadow:0 8px 32px var(--shadow);
+  padding:30px;
+}
+
+/* Invoice Header */
+.invoice-title{
+  text-align:center;
+  font-size:32px;
+  font-weight:700;
+  margin-bottom:30px;
+  color:var(--ink);
+  text-transform:uppercase;
+  letter-spacing:2px;
+  border-bottom:3px solid var(--border-dark);
+  padding-bottom:15px;
+}
+
+/* Header Fields */
+.header-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px 40px;
+  margin-bottom:30px;
+}
+
+.field-group{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.field-label{
+  font-weight:700;
+  font-size:13px;
+  color:var(--ink);
+  min-width:140px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+}
+
+.field-input{
+  flex:1;
+  padding:8px 12px;
+  border:2px solid var(--border-dark);
+  border-radius:6px;
+  font-size:14px;
+  font-weight:600;
+  background:#fff;
+  color:var(--ink);
+}
+
+.field-input:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+
+.field-input[readonly]{
+  background:#f5f5f5;
+  color:var(--ink-soft);
+}
+
+/* Searchable Select */
+.searchable-select-wrapper{
+  position:relative;
+  flex:1;
+}
+.searchable-select-input{
+  width:100%;
+  padding:8px 32px 8px 12px;
+  border:2px solid var(--border-dark);
+  border-radius:6px;
+  font-size:14px;
+  font-weight:600;
+  background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M6 8L2 4h8z"/></svg>') no-repeat right 10px center;
+  cursor:pointer;
+}
+.searchable-select-input:focus{
+  outline:none;
+  border-color:var(--accent);
+}
+.searchable-select-dropdown{
+  position:absolute;
+  top:100%;
+  left:0;
+  right:0;
+  max-height:250px;
+  overflow-y:auto;
+  background:#fff;
+  border:2px solid var(--border-dark);
+  border-radius:6px;
+  margin-top:4px;
+  box-shadow:0 8px 24px var(--shadow);
+  z-index:1000;
+  display:none;
+}
+.searchable-select-dropdown.active{
+  display:block;
+}
+.searchable-select-option{
+  padding:10px 12px;
+  font-size:13px;
+  cursor:pointer;
+  border-bottom:1px solid #eee;
+  transition:.15s;
+}
+.searchable-select-option:last-child{
+  border-bottom:none;
+}
+.searchable-select-option:hover{
+  background:var(--accent);
+  color:#fff;
+}
+.searchable-select-option.selected{
+  background:var(--accent-2);
+  color:#fff;
+  font-weight:600;
+}
+.searchable-select-option.hidden{
+  display:none;
+}
+
+/* Filter Section - Yellow Highlighted */
+.filter-section{
+  background:var(--yellow-highlight);
+  border:2px solid var(--border-dark);
+  border-radius:8px;
+  padding:16px 20px;
+  margin-bottom:25px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:20px;
+  align-items:center;
+}
+
+.filter-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.filter-label{
+  font-weight:700;
+  font-size:12px;
+  color:var(--ink);
+  text-transform:uppercase;
+}
+
+.filter-select{
+  padding:6px 10px;
+  border:2px solid var(--border-dark);
+  border-radius:5px;
+  font-size:13px;
+  font-weight:600;
+  background:#fff;
+  min-width:150px;
+}
+
+/* Action Buttons */
+.action-buttons{
+  display:flex;
+  gap:12px;
+  margin-left:auto;
+}
+
+.btn{
+  padding:8px 20px;
+  border:2px solid var(--border-dark);
+  border-radius:8px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  text-transform:uppercase;
+}
+
+.btn-primary{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+.btn-secondary{
+  background:#fff;
+  color:var(--ink);
+}
+
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px var(--shadow);
+}
+
+/* Invoice Table */
+.invoice-table-wrapper{
+  border:2px solid var(--border-dark);
+  border-radius:8px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.invoice-table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:11px;
+}
+
+.invoice-table thead th{
+  background:#e8e8e8;
+  border:1px solid var(--border-dark);
+  padding:10px 6px;
+  font-weight:700;
+  text-align:center;
+  color:var(--ink);
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  font-size:10px;
+}
+
+.invoice-table tbody td{
+  border:1px solid var(--border-dark);
+  padding:8px 6px;
+  text-align:center;
+  background:#fff;
+}
+
+.invoice-table tbody td:first-child{
+  font-weight:600;
+  background:#f9f9f9;
+}
+
+.invoice-table tbody tr:hover td{
+  background:#fafafa;
+}
+
+.invoice-table input{
+  width:100%;
+  border:none;
+  background:transparent;
+  text-align:center;
+  font-size:11px;
+  padding:2px;
+}
+
+.invoice-table input:focus{
+  outline:2px solid var(--accent);
+  background:#fff;
+}
+
+/* Column widths */
+.col-sr{width:40px;}
+.col-lot{width:80px;}
+.col-desc{width:150px;}
+.col-shape{width:70px;}
+.col-size{width:60px;}
+.col-grade{width:60px;}
+.col-pcs{width:50px;}
+.col-cts{width:60px;}
+.col-price{width:70px;}
+.col-amount{width:80px;}
+.col-remarks{width:120px;}
+
+/* Totals Row */
+.totals-row{
+  font-weight:700;
+  background:#f0f0f0 !important;
+}
+
+.totals-row td{
+  background:#f0f0f0 !important;
+  font-size:12px;
+  padding:12px 6px !important;
+}
+
+/* Print Styles */
+@media print {
+  @page {
+    size:landscape;
+    margin:0.5in;
+  }
+  
+  body{
+    background:#fff;
+  }
+  
+  .nav-vertical,
+  .filter-section,
+  .action-buttons,
+  .no-print{
+    display:none !important;
+  }
+  
+  .workspace{
+    margin-left:0;
+    padding:0;
+  }
+  
+  .invoice-container{
+    border:2px solid #000;
+    box-shadow:none;
+    page-break-inside:avoid;
+  }
+  
+  .invoice-title{
+    border-bottom:3px solid #000;
+  }
+  
+  .field-input,
+  .searchable-select-input{
+    border:1px solid #000 !important;
+  }
+  
+  .invoice-table thead th,
+  .invoice-table tbody td{
+    border:1px solid #000 !important;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
+  
+  .invoice-table thead th{
+    background:#e8e8e8 !important;
+  }
+  
+  .invoice-table tbody tr.empty-row{
+    display:none;
+  }
+  
+  .totals-row td{
+    background:#e8e8e8 !important;
+  }
+}
+
+/* Loading Overlay */
+.loading-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.loading-overlay.active{
+  display:flex;
+}
+
+.loading-spinner{
+  background:#fff;
+  padding:30px 40px;
+  border-radius:12px;
+  text-align:center;
+}
+
+.spinner{
+  border:4px solid #f3f3f3;
+  border-top:4px solid var(--accent);
+  border-radius:50%;
+  width:50px;
+  height:50px;
+  animation:spin 1s linear infinite;
+  margin:0 auto 15px;
+}
+
+@keyframes spin{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
+}
+</style>
+</head>
+
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner">
+    <div class="spinner"></div>
+    <div style="font-weight:600;color:var(--ink);">Loading data...</div>
+  </div>
+</div>
+
+<!-- LEFT NAVIGATION -->
+<div class="nav-vertical">
+  <a href="index.html" class="nav-item" title="Add">➕</a>
+  <a href="added.html" class="nav-item" title="Added">📋</a>
+  <a href="sell.html" class="nav-item" title="Sell">💎</a>
+  <a href="reports.html" class="nav-item" title="Reports">📊</a>
+  <a href="reports2.html" class="nav-item" title="Reports 2">📊</a>
+  <a href="reports3.html" class="nav-item active" title="Reports">📊</a>
+</div>
+
+<div class="workspace">
+  <div class="invoice-container">
+    
+    <!-- Invoice Title -->
+    <div class="invoice-title">INVOICE</div>
+    
+    <!-- Header Fields -->
+    <div class="header-grid">
+      <div class="field-group">
+        <label class="field-label">DATE:</label>
+        <input type="date" class="field-input" id="invoiceDate">
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">INVOICE NO.:</label>
+        <input type="text" class="field-input" id="invoiceNo" readonly>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">PARTY:</label>
+        <div class="searchable-select-wrapper" id="partySelectWrapper"></div>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">TOTAL CTS:</label>
+        <input type="text" class="field-input" id="totalCTS" readonly>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">TRANSACTION TYPE:</label>
+        <div class="searchable-select-wrapper" id="txTypeSelectWrapper"></div>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">TOTAL AMOUNT:</label>
+        <input type="text" class="field-input" id="totalAmount" readonly>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">SELL ID:</label>
+        <div class="searchable-select-wrapper" id="sellIdSelectWrapper"></div>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">AVERAGE PRICE:</label>
+        <input type="text" class="field-input" id="avgPrice" readonly>
+      </div>
+    </div>
+    
+    <!-- Filter Section (Yellow Highlighted) -->
+    <div class="filter-section no-print">
+      <div class="filter-group">
+        <label class="filter-label">DATE FROM:</label>
+        <input type="date" class="filter-select" id="dateFrom" style="width:160px;">
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">DATE TO:</label>
+        <input type="date" class="filter-select" id="dateTo" style="width:160px;">
+      </div>
+      
+      <div class="filter-group">
+        <label class="filter-label">SOURCE:</label>
+        <select class="filter-select" id="sourceFilter">
+          <option value="">All Sources</option>
+          <option value="AJMZ">AJMZ</option>
+          <option value="CALIB">CALIB</option>
+        </select>
+      </div>
+      
+      <div class="action-buttons">
+        <button class="btn btn-secondary" id="clearBtn">🔄 CLEAR</button>
+        <button class="btn btn-secondary" id="exportPdfBtn">📄 EXPORT PDF</button>
+        <button class="btn btn-primary" id="printBtn">🖨️ PRINT</button>
+      </div>
+    </div>
+    
+    <!-- Invoice Table -->
+    <div class="invoice-table-wrapper">
+      <table class="invoice-table">
+        <thead>
+          <tr>
+            <th class="col-sr">SR NO.</th>
+            <th class="col-lot">LOT NO.</th>
+            <th class="col-desc">DESCRIPTION</th>
+            <th class="col-shape">SHAPE</th>
+            <th class="col-size">SIZE</th>
+            <th class="col-grade">GRADE</th>
+            <th class="col-pcs">PCS</th>
+            <th class="col-cts">CTS</th>
+            <th class="col-price">PRICE</th>
+            <th class="col-amount">AMOUNT</th>
+            <th class="col-remarks">REMARKS</th>
+          </tr>
+        </thead>
+        <tbody id="invoiceTableBody">
+          <!-- Rows will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+    
+  </div>
+</div>
+
+<script>
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
+  authDomain: "ajmzinventory.firebaseapp.com",
+  databaseURL: "https://ajmzinventory-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ajmzinventory",
+  storageBucket: "ajmzinventory.firebasestorage.app",
+  messagingSenderId: "1069845316242",
+  appId: "1:1069845316242:web:c55be9de3724734f88dc4b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Utility Functions
+function esc(v){
+  if(v===null||v===undefined)return"";
+  return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function num(v){
+  if(v===null||v===undefined||v==="")return 0;
+  const n=Number(String(v).replace(/,/g,""));
+  return isNaN(n)?0:n;
+}
+
+function fmt(v){
+  return Number(v||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
+function parseMulti(str){
+  if(!str)return [];
+  if(Array.isArray(str))return str;
+  return String(str).split(",").map(s=>s.trim()).filter(Boolean);
+}
+
+function multiDisplay(arr){
+  if(!arr)return "";
+  if(Array.isArray(arr))return arr.join(", ");
+  return arr;
+}
+
+// Global Data Storage
+let AJMZ_PARENTS = [];
+let CALIB_PARENTS = [];
+let ALL_TRANSACTIONS = [];
+let INVOICE_COUNTER = 1;
+
+// Searchable Select Component
+function createSearchableSelect(wrapperId, values, placeholder = "Select..."){
+  const wrapper = document.getElementById(wrapperId);
+  if(!wrapper) return null;
+  
+  wrapper.innerHTML = `
+    <input type="text" class="searchable-select-input" placeholder="${placeholder}" readonly>
+    <div class="searchable-select-dropdown"></div>
+  `;
+  
+  const input = wrapper.querySelector('.searchable-select-input');
+  const dropdown = wrapper.querySelector('.searchable-select-dropdown');
+  let selectedValue = "";
+  
+  const opts = [placeholder, ...values];
+  opts.forEach(val => {
+    const opt = document.createElement('div');
+    opt.className = 'searchable-select-option';
+    opt.textContent = val;
+    opt.dataset.value = val === placeholder ? "" : val;
+    if(val === placeholder) opt.classList.add('selected');
+    
+    opt.addEventListener('click', () => {
+      selectedValue = opt.dataset.value;
+      input.value = opt.textContent;
+      input.setAttribute('data-value', selectedValue);
+      dropdown.querySelectorAll('.searchable-select-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      dropdown.classList.remove('active');
+      wrapper.dispatchEvent(new Event('change', {bubbles: true}));
+    });
+    dropdown.appendChild(opt);
+  });
+  
+  input.addEventListener('click', e => {
+    e.stopPropagation();
+    const isActive = dropdown.classList.contains('active');
+    document.querySelectorAll('.searchable-select-dropdown').forEach(d => d.classList.remove('active'));
+    if(!isActive){
+      dropdown.classList.add('active');
+      input.removeAttribute('readonly');
+      input.focus();
+      input.select();
+    }
+  });
+  
+  input.addEventListener('input', () => {
+    const term = input.value.toLowerCase();
+    dropdown.querySelectorAll('.searchable-select-option').forEach(opt => {
+      const text = opt.textContent.toLowerCase();
+      opt.classList.toggle('hidden', !text.includes(term) && opt.dataset.value !== "");
+    });
+  });
+  
+  input.addEventListener('blur', () => {
+    setTimeout(() => {
+      if(!dropdown.matches(':hover')){
+        dropdown.classList.remove('active');
+        input.setAttribute('readonly', true);
+      }
+    }, 200);
+  });
+  
+  document.addEventListener('click', e => {
+    if(!wrapper.contains(e.target)){
+      dropdown.classList.remove('active');
+      input.setAttribute('readonly', true);
+    }
+  });
+  
+  return {
+    getValue: () => selectedValue,
+    setValue: (val) => {
+      selectedValue = val || "";
+      const opt = dropdown.querySelector(`[data-value="${val || ""}"]`);
+      if(opt){
+        input.value = opt.textContent;
+        input.setAttribute('data-value', selectedValue);
+        dropdown.querySelectorAll('.searchable-select-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      }
+    },
+    reset: () => {
+      selectedValue = "";
+      input.value = placeholder;
+      input.setAttribute('data-value', "");
+      dropdown.querySelectorAll('.searchable-select-option').forEach(o => {
+        o.classList.remove('selected');
+        if(o.dataset.value === "") o.classList.add('selected');
+      });
+    },
+    updateOptions: (newValues) => {
+      dropdown.innerHTML = "";
+      const newOpts = [placeholder, ...newValues];
+      newOpts.forEach(val => {
+        const opt = document.createElement('div');
+        opt.className = 'searchable-select-option';
+        opt.textContent = val;
+        opt.dataset.value = val === placeholder ? "" : val;
+        if(val === placeholder) opt.classList.add('selected');
+        
+        opt.addEventListener('click', () => {
+          selectedValue = opt.dataset.value;
+          input.value = opt.textContent;
+          input.setAttribute('data-value', selectedValue);
+          dropdown.querySelectorAll('.searchable-select-option').forEach(o => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          dropdown.classList.remove('active');
+          wrapper.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+        dropdown.appendChild(opt);
+      });
+    }
+  };
+}
+
+// Load Data from Firebase
+async function loadAllData(){
+  showLoading(true);
+  
+  try {
+    const [ajSnap, cbSnap, sellSnap] = await Promise.all([
+      db.ref("ajmzRecords").once("value"),
+      db.ref("calibRecords").once("value"),
+      db.ref("sellRecords").once("value")
+    ]);
+    
+    AJMZ_PARENTS = [];
+    CALIB_PARENTS = [];
+    const sellMap = {};
+    
+    // Load sell records
+    if(sellSnap.exists()){
+      sellSnap.forEach(parentSnap => {
+        const parentKey = parentSnap.key;
+        sellMap[parentKey] = [];
+        parentSnap.forEach(childSnap => {
+          const obj = childSnap.val();
+          obj.key = childSnap.key;
+          obj.cts = num(obj.cts);
+          obj.pcs = num(obj.pcs);
+          obj.price = num(obj.price);
+          obj.amount = num(obj.amount || (obj.cts * obj.price));
+          sellMap[parentKey].push(obj);
+        });
+      });
+    }
+    
+    // Load AJMZ records
+    if(ajSnap.exists()){
+      ajSnap.forEach(s => {
+        const o = s.val();
+        o.key = s.key;
+        o.shape = parseMulti(o.shape);
+        o.size = parseMulti(o.size);
+        o.cts = num(o.cts);
+        o.pcs = num(o.pcs);
+        o.price = num(o.price);
+        o.amount = num(o.amount || (o.cts * o.price));
+        o.__sells = sellMap[o.key] || [];
+        AJMZ_PARENTS.push(o);
+      });
+    }
+    
+    // Load CALIB records
+    if(cbSnap.exists()){
+      cbSnap.forEach(s => {
+        const o = s.val();
+        o.key = s.key;
+        o.shape = parseMulti(o.shape);
+        o.size = parseMulti(o.size);
+        o.cts = num(o.cts);
+        o.pcs = 0;
+        o.price = num(o.price);
+        o.amount = num(o.amount || (o.cts * o.price));
+        o.__sells = sellMap[o.key] || [];
+        CALIB_PARENTS.push(o);
+      });
+    }
+    
+    buildTransactionsList();
+    
+  } catch(error) {
+    console.error("Error loading data:", error);
+    alert("Failed to load data. Please refresh the page.");
+  } finally {
+    showLoading(false);
+  }
+}
+
+// Build unified transactions list
+function buildTransactionsList(){
+  ALL_TRANSACTIONS = [];
+  
+  // Process AJMZ sells
+  AJMZ_PARENTS.forEach(parent => {
+    parent.__sells.forEach(sell => {
+      ALL_TRANSACTIONS.push({
+        source: "AJMZ",
+        party: sell.party || "",
+        sellId: sell.sellId || "",
+        date: sell.date || "",
+        txId: parent.txId || "",
+        lot: parent.lotName || "",
+        description: parent.description || "",
+        shape: parent.shape,
+        size: parent.size,
+        grade: parent.lotFormat || "",
+        pcs: sell.pcs,
+        cts: sell.cts,
+        price: sell.price,
+        amount: sell.amount,
+        remarks: sell.remarks || ""
+      });
+    });
+  });
+  
+  // Process CALIB sells
+  CALIB_PARENTS.forEach(parent => {
+    parent.__sells.forEach(sell => {
+      ALL_TRANSACTIONS.push({
+        source: "CALIB",
+        party: sell.party || "",
+        sellId: sell.sellId || "",
+        date: sell.date || "",
+        txId: parent.txId || "",
+        lot: parent.lotName || "",
+        description: parent.description || "",
+        shape: parent.shape,
+        size: parent.size,
+        grade: parent.grade || "",
+        pcs: 0,
+        cts: sell.cts,
+        price: sell.price,
+        amount: sell.amount,
+        remarks: sell.remarks || ""
+      });
+    });
+  });
+}
+
+// Initialize dropdowns
+let partySelect, txTypeSelect, sellIdSelect;
+
+function initializeDropdowns(){
+  // Get unique parties
+  const parties = [...new Set(ALL_TRANSACTIONS.map(t => t.party).filter(Boolean))].sort();
+  partySelect = createSearchableSelect("partySelectWrapper", parties, "Select Party");
+  
+  // Transaction types
+  txTypeSelect = createSearchableSelect("txTypeSelectWrapper", ["AJMZ", "CALIB"], "All Types");
+  
+  // Sell IDs
+  const sellIds = [...new Set(ALL_TRANSACTIONS.map(t => t.sellId).filter(Boolean))].sort();
+  sellIdSelect = createSearchableSelect("sellIdSelectWrapper", sellIds, "Select Sell ID");
+  
+  // Add change listeners
+  document.getElementById("partySelectWrapper").addEventListener("change", onPartyChange);
+  document.getElementById("txTypeSelectWrapper").addEventListener("change", filterTransactions);
+  document.getElementById("sellIdSelectWrapper").addEventListener("change", onSellIdChange);
+}
+
+// Party selection handler
+function onPartyChange(){
+  const party = partySelect.getValue();
+  if(!party){
+    sellIdSelect.reset();
+    filterTransactions();
+    return;
+  }
+  
+  // Update sell IDs for selected party
+  const partySellIds = [...new Set(
+    ALL_TRANSACTIONS
+      .filter(t => t.party === party)
+      .map(t => t.sellId)
+      .filter(Boolean)
+  )].sort();
+  
+  sellIdSelect.updateOptions(partySellIds);
+  filterTransactions();
+}
+
+// Sell ID selection handler
+function onSellIdChange(){
+  filterTransactions();
+}
+
+// Filter and display transactions
+function filterTransactions(){
+  const party = partySelect.getValue();
+  const txType = txTypeSelect.getValue();
+  const sellId = sellIdSelect.getValue();
+  const source = document.getElementById("sourceFilter").value;
+  const dateFrom = document.getElementById("dateFrom").value;
+  const dateTo = document.getElementById("dateTo").value;
+  
+  let filtered = ALL_TRANSACTIONS;
+  
+  // Apply filters
+  if(party) filtered = filtered.filter(t => t.party === party);
+  if(txType) filtered = filtered.filter(t => t.source === txType);
+  if(sellId) filtered = filtered.filter(t => t.sellId === sellId);
+  if(source) filtered = filtered.filter(t => t.source === source);
+  
+  // Apply date range filter
+  if(dateFrom || dateTo){
+    filtered = filtered.filter(t => {
+      if(!t.date) return false;
+      const tDate = new Date(t.date);
+      
+      if(dateFrom){
+        const fromDate = new Date(dateFrom);
+        if(tDate < fromDate) return false;
+      }
+      
+      if(dateTo){
+        const toDate = new Date(dateTo);
+        toDate.setHours(23, 59, 59, 999); // Include full day
+        if(tDate > toDate) return false;
+      }
+      
+      return true;
+    });
+  }
+  
+  populateTable(filtered);
+  calculateTotals(filtered);
+}
+
+// Populate invoice table
+function populateTable(transactions){
+  const tbody = document.getElementById("invoiceTableBody");
+  tbody.innerHTML = "";
+  
+  const maxRows = 30;
+  const rowsToShow = Math.max(transactions.length, maxRows);
+  
+  // Add transaction rows
+  for(let i = 0; i < rowsToShow; i++){
+    const tr = document.createElement('tr');
+    
+    if(i < transactions.length){
+      const t = transactions[i];
+      tr.innerHTML = `
+        <td class="col-sr">${i + 1}</td>
+        <td class="col-lot">${esc(t.lot)}</td>
+        <td class="col-desc">${esc(t.description)}</td>
+        <td class="col-shape">${esc(multiDisplay(t.shape))}</td>
+        <td class="col-size">${esc(multiDisplay(t.size))}</td>
+        <td class="col-grade">${esc(t.grade)}</td>
+        <td class="col-pcs">${t.pcs > 0 ? fmt(t.pcs) : "-"}</td>
+        <td class="col-cts">${fmt(t.cts)}</td>
+        <td class="col-price">${fmt(t.price)}</td>
+        <td class="col-amount">${fmt(t.amount)}</td>
+        <td class="col-remarks">${esc(t.remarks)}</td>
+      `;
+    } else {
+      // Empty row
+      tr.classList.add('empty-row');
+      tr.innerHTML = `
+        <td class="col-sr">${i + 1}</td>
+        <td class="col-lot"></td>
+        <td class="col-desc"></td>
+        <td class="col-shape"></td>
+        <td class="col-size"></td>
+        <td class="col-grade"></td>
+        <td class="col-pcs"></td>
+        <td class="col-cts"></td>
+        <td class="col-price"></td>
+        <td class="col-amount"></td>
+        <td class="col-remarks"></td>
+      `;
+    }
+    
+    tbody.appendChild(tr);
+  }
+  
+  // Add totals row
+  const totalCts = transactions.reduce((sum, t) => sum + t.cts, 0);
+  const totalPcs = transactions.reduce((sum, t) => sum + t.pcs, 0);
+  const totalAmt = transactions.reduce((sum, t) => sum + t.amount, 0);
+  
+  const totalsRow = document.createElement('tr');
+  totalsRow.className = 'totals-row';
+  totalsRow.innerHTML = `
+    <td colspan="6" style="text-align:right;">TOTALS:</td>
+    <td>${totalPcs > 0 ? fmt(totalPcs) : "-"}</td>
+    <td>${fmt(totalCts)}</td>
+    <td>-</td>
+    <td>${fmt(totalAmt)}</td>
+    <td></td>
+  `;
+  tbody.appendChild(totalsRow);
+}
+
+// Calculate and display totals
+function calculateTotals(transactions){
+  const totalCts = transactions.reduce((sum, t) => sum + t.cts, 0);
+  const totalAmt = transactions.reduce((sum, t) => sum + t.amount, 0);
+  const avgPrice = totalCts > 0 ? totalAmt / totalCts : 0;
+  
+  document.getElementById("totalCTS").value = fmt(totalCts);
+  document.getElementById("totalAmount").value = fmt(totalAmt);
+  document.getElementById("avgPrice").value = fmt(avgPrice);
+}
+
+// Generate invoice number
+function generateInvoiceNo(){
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const counter = String(INVOICE_COUNTER).padStart(4, '0');
+  return `INV-${year}${month}-${counter}`;
+}
+
+// Clear form
+function clearForm(){
+  partySelect.reset();
+  txTypeSelect.reset();
+  sellIdSelect.reset();
+  document.getElementById("sourceFilter").value = "";
+  document.getElementById("dateFrom").value = "";
+  document.getElementById("dateTo").value = "";
+  document.getElementById("totalCTS").value = "0.00";
+  document.getElementById("totalAmount").value = "0.00";
+  document.getElementById("avgPrice").value = "0.00";
+  
+  // Set today's date
+  document.getElementById("invoiceDate").value = new Date().toISOString().split('T')[0];
+  
+  // Generate new invoice number
+  INVOICE_COUNTER++;
+  document.getElementById("invoiceNo").value = generateInvoiceNo();
+  
+  // Repopulate with all transactions
+  populateTable([]);
+  calculateTotals([]);
+}
+
+// Print function
+function printInvoice(){
+  window.print();
+}
+
+// Export PDF (triggers print dialog)
+function exportPdf(){
+  window.print();
+}
+
+// Loading overlay
+function showLoading(show){
+  document.getElementById("loadingOverlay").classList.toggle('active', show);
+}
+
+// Initialize on page load
+document.addEventListener("DOMContentLoaded", async () => {
+  // Set today's date
+  document.getElementById("invoiceDate").value = new Date().toISOString().split('T')[0];
+  
+  // Generate initial invoice number
+  document.getElementById("invoiceNo").value = generateInvoiceNo();
+  
+  // Load data
+  await loadAllData();
+  
+  // Initialize dropdowns
+  initializeDropdowns();
+  
+  // Populate initial table
+  populateTable([]);
+  
+  // Bind event listeners
+  document.getElementById("clearBtn").addEventListener("click", clearForm);
+  document.getElementById("printBtn").addEventListener("click", printInvoice);
+  document.getElementById("exportPdfBtn").addEventListener("click", exportPdf);
+  document.getElementById("sourceFilter").addEventListener("change", filterTransactions);
+  document.getElementById("dateFrom").addEventListener("change", filterTransactions);
+  document.getElementById("dateTo").addEventListener("change", filterTransactions);
+});
+</script>
+
+</body>
+</html>
