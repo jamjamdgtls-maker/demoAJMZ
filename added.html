@@ -282,6 +282,19 @@ background:#fff;
 border-color:var(--accent);
 box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
+/* Searchable dropdown styling */
+.filter-input[list] {
+background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23666" d="M6 9L1 4h10z"/></svg>');
+background-repeat: no-repeat;
+background-position: right 4px center;
+background-size: 12px;
+padding-right: 20px;
+cursor: pointer;
+}
+.filter-input[list]::-webkit-calendar-picker-indicator {
+opacity: 0;
+}
+
 .table tbody tr:nth-child(even){
 background:#faf8f4;
 }
@@ -501,20 +514,20 @@ Total Amount: <span class="metric-value" id="ajmzTotalAmount">0</span>
 </tr>
 <tr class="filter-row">
 <th></th>
-<th><input class="filter-input" id="ajmzFilter_txId" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_stone" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_date" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_party" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_deet" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_lotName" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_lotFormat" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_desc" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_shape" placeholder="Filter…"></th>
+<th><input class="filter-input" list="ajmzList_txId" id="ajmzFilter_txId" placeholder="All Tx IDs"><datalist id="ajmzList_txId"></datalist></th>
+<th><input class="filter-input" list="ajmzList_stone" id="ajmzFilter_stone" placeholder="All Stones"><datalist id="ajmzList_stone"></datalist></th>
+<th><input class="filter-input" list="ajmzList_date" id="ajmzFilter_date" placeholder="All Dates"><datalist id="ajmzList_date"></datalist></th>
+<th><input class="filter-input" list="ajmzList_party" id="ajmzFilter_party" placeholder="All Parties"><datalist id="ajmzList_party"></datalist></th>
+<th><input class="filter-input" list="ajmzList_deet" id="ajmzFilter_deet" placeholder="All Deets"><datalist id="ajmzList_deet"></datalist></th>
+<th><input class="filter-input" list="ajmzList_lotName" id="ajmzFilter_lotName" placeholder="All Lot Names"><datalist id="ajmzList_lotName"></datalist></th>
+<th><input class="filter-input" list="ajmzList_lotFormat" id="ajmzFilter_lotFormat" placeholder="All Lot Formats"><datalist id="ajmzList_lotFormat"></datalist></th>
+<th><input class="filter-input" list="ajmzList_desc" id="ajmzFilter_desc" placeholder="All Descriptions"><datalist id="ajmzList_desc"></datalist></th>
+<th><input class="filter-input" list="ajmzList_shape" id="ajmzFilter_shape" placeholder="All Shapes"><datalist id="ajmzList_shape"></datalist></th>
 <th><input class="filter-input" id="ajmzFilter_cts" placeholder="Filter…"></th>
 <th><input class="filter-input" id="ajmzFilter_pcs" placeholder="Filter…"></th>
 <th><input class="filter-input" id="ajmzFilter_price" placeholder="Filter…"></th>
 <th><input class="filter-input" id="ajmzFilter_amount" placeholder="Filter…"></th>
-<th><input class="filter-input" id="ajmzFilter_remarks" placeholder="Filter…"></th>
+<th><input class="filter-input" list="ajmzList_remarks" id="ajmzFilter_remarks" placeholder="All Remarks"><datalist id="ajmzList_remarks"></datalist></th>
 <th></th>
 </tr>
 </thead>
@@ -567,20 +580,20 @@ Total Amount: <span class="metric-value" id="calibTotalAmount">0</span>
 </tr>
 <tr class="filter-row">
 <th></th>
-<th><input class="filter-input" id="calibFilter_txId" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_stone" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_date" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_party" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_deet" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_lotName" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_grade" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_desc" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_shape" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_size" placeholder="Filter…"></th>
+<th><input class="filter-input" list="calibList_txId" id="calibFilter_txId" placeholder="All Tx IDs"><datalist id="calibList_txId"></datalist></th>
+<th><input class="filter-input" list="calibList_stone" id="calibFilter_stone" placeholder="All Stones"><datalist id="calibList_stone"></datalist></th>
+<th><input class="filter-input" list="calibList_date" id="calibFilter_date" placeholder="All Dates"><datalist id="calibList_date"></datalist></th>
+<th><input class="filter-input" list="calibList_party" id="calibFilter_party" placeholder="All Parties"><datalist id="calibList_party"></datalist></th>
+<th><input class="filter-input" list="calibList_deet" id="calibFilter_deet" placeholder="All Deets"><datalist id="calibList_deet"></datalist></th>
+<th><input class="filter-input" list="calibList_lotName" id="calibFilter_lotName" placeholder="All Lot Names"><datalist id="calibList_lotName"></datalist></th>
+<th><input class="filter-input" list="calibList_grade" id="calibFilter_grade" placeholder="All Grades"><datalist id="calibList_grade"></datalist></th>
+<th><input class="filter-input" list="calibList_desc" id="calibFilter_desc" placeholder="All Descriptions"><datalist id="calibList_desc"></datalist></th>
+<th><input class="filter-input" list="calibList_shape" id="calibFilter_shape" placeholder="All Shapes"><datalist id="calibList_shape"></datalist></th>
+<th><input class="filter-input" list="calibList_size" id="calibFilter_size" placeholder="All Sizes"><datalist id="calibList_size"></datalist></th>
 <th><input class="filter-input" id="calibFilter_cts" placeholder="Filter…"></th>
 <th><input class="filter-input" id="calibFilter_price" placeholder="Filter…"></th>
 <th><input class="filter-input" id="calibFilter_amount" placeholder="Filter…"></th>
-<th><input class="filter-input" id="calibFilter_remarks" placeholder="Filter…"></th>
+<th><input class="filter-input" list="calibList_remarks" id="calibFilter_remarks" placeholder="All Remarks"><datalist id="calibList_remarks"></datalist></th>
 <th></th>
 </tr>
 </thead>
@@ -783,6 +796,109 @@ let editBatchAmountInput, editBatchRemarksInput, editBatchCancelBtn, editBatchSa
 let editBatchCurrentParentKey=null, editBatchCurrentBatchKey=null, editBatchCurrentType=null;
 
 /* ============================================================
+POPULATE DROPDOWN FILTERS
+============================================================ */
+function populateDropdowns(){
+  // Collect unique values for all filterable columns
+  const ajmzTxIds = new Set();
+  const ajmzStones = new Set();
+  const ajmzDates = new Set();
+  const ajmzParties = new Set();
+  const ajmzDeets = new Set();
+  const ajmzLotNames = new Set();
+  const ajmzLotFormats = new Set();
+  const ajmzDescs = new Set();
+  const ajmzShapes = new Set();
+  const ajmzRemarks = new Set();
+  
+  const calibTxIds = new Set();
+  const calibStones = new Set();
+  const calibDates = new Set();
+  const calibParties = new Set();
+  const calibDeets = new Set();
+  const calibLotNames = new Set();
+  const calibGrades = new Set();
+  const calibDescs = new Set();
+  const calibShapes = new Set();
+  const calibSizes = new Set();
+  const calibRemarks = new Set();
+  
+  AJMZ_ALL.forEach(r => {
+    if(r.txId) ajmzTxIds.add(r.txId);
+    ajmzStones.add("AJMZ");
+    if(r.date) ajmzDates.add(r.date);
+    if(r.party) ajmzParties.add(r.party);
+    if(r.deet) ajmzDeets.add(r.deet);
+    if(r.lotName) ajmzLotNames.add(r.lotName);
+    if(r.lotFormat) ajmzLotFormats.add(r.lotFormat);
+    if(r.description) ajmzDescs.add(r.description);
+    parseMulti(r.shape).forEach(s => ajmzShapes.add(s));
+    if(r.remarks) ajmzRemarks.add(r.remarks);
+  });
+  
+  CALIB_ALL.forEach(r => {
+    if(r.txId) calibTxIds.add(r.txId);
+    calibStones.add("CALIB");
+    if(r.date) calibDates.add(r.date);
+    if(r.party) calibParties.add(r.party);
+    if(r.deet) calibDeets.add(r.deet);
+    if(r.lotName) calibLotNames.add(r.lotName);
+    if(r.grade) calibGrades.add(r.grade);
+    if(r.description) calibDescs.add(r.description);
+    parseMulti(r.shape).forEach(s => calibShapes.add(s));
+    parseMulti(r.size).forEach(s => calibSizes.add(s));
+    if(r.remarks) calibRemarks.add(r.remarks);
+  });
+  
+  // Populate AJMZ dropdowns
+  populateDropdown("ajmzFilter_txId", Array.from(ajmzTxIds).sort());
+  populateDropdown("ajmzFilter_stone", Array.from(ajmzStones).sort());
+  populateDropdown("ajmzFilter_date", Array.from(ajmzDates).sort().reverse());
+  populateDropdown("ajmzFilter_party", Array.from(ajmzParties).sort());
+  populateDropdown("ajmzFilter_deet", Array.from(ajmzDeets).sort());
+  populateDropdown("ajmzFilter_lotName", Array.from(ajmzLotNames).sort());
+  populateDropdown("ajmzFilter_lotFormat", Array.from(ajmzLotFormats).sort());
+  populateDropdown("ajmzFilter_desc", Array.from(ajmzDescs).sort());
+  populateDropdown("ajmzFilter_shape", Array.from(ajmzShapes).sort());
+  populateDropdown("ajmzFilter_remarks", Array.from(ajmzRemarks).sort());
+  
+  // Populate CALIB dropdowns
+  populateDropdown("calibFilter_txId", Array.from(calibTxIds).sort());
+  populateDropdown("calibFilter_stone", Array.from(calibStones).sort());
+  populateDropdown("calibFilter_date", Array.from(calibDates).sort().reverse());
+  populateDropdown("calibFilter_party", Array.from(calibParties).sort());
+  populateDropdown("calibFilter_deet", Array.from(calibDeets).sort());
+  populateDropdown("calibFilter_lotName", Array.from(calibLotNames).sort());
+  populateDropdown("calibFilter_grade", Array.from(calibGrades).sort());
+  populateDropdown("calibFilter_desc", Array.from(calibDescs).sort());
+  populateDropdown("calibFilter_shape", Array.from(calibShapes).sort());
+  populateDropdown("calibFilter_size", Array.from(calibSizes).sort());
+  populateDropdown("calibFilter_remarks", Array.from(calibRemarks).sort());
+}
+
+function populateDropdown(inputId, values, placeholder){
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  
+  // Get the associated datalist ID from the input's list attribute
+  const datalistId = input.getAttribute('list');
+  if(!datalistId) return;
+  
+  const datalist = document.getElementById(datalistId);
+  if(!datalist) return;
+  
+  // Clear existing options
+  datalist.innerHTML = '';
+  
+  // Add options to datalist
+  values.forEach(val => {
+    const opt = document.createElement("option");
+    opt.value = val;
+    datalist.appendChild(opt);
+  });
+}
+
+/* ============================================================
 RENDERERS – MAIN ROWS
 ============================================================ */
 function renderAJMZRow(row){
@@ -958,6 +1074,7 @@ CALIB_ALL.push(obj);
 AJMZ_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
 CALIB_ALL.sort((a,b)=>(a.txId||"").localeCompare(b.txId||"")).reverse();
 
+populateDropdowns();
 applyFiltersAndRender();
 }
 
@@ -990,19 +1107,24 @@ const f_amount=document.getElementById("ajmzFilter_amount").value.toLowerCase();
 const f_remarks=document.getElementById("ajmzFilter_remarks").value.toLowerCase();
 
 function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
+function multiPass(arr,f){
+  if(!f) return true;
+  const filterLower = f.toLowerCase();
+  return parseMulti(arr).some(item => item.toLowerCase().includes(filterLower));
+}
 
 AJMZ_FILTERED=AJMZ_ALL.filter(r=>{
 const text=JSON.stringify(r).toLowerCase();
 if(search && !text.includes(search))return false;
 if(!pass(r.txId,f_txId))return false;
-if(!pass("ajmz",f_stone))return false;
+if(!pass("AJMZ",f_stone))return false;
 if(!pass(r.date,f_date))return false;
 if(!pass(r.party,f_party))return false;
 if(!pass(r.deet,f_deet))return false;
 if(!pass(r.lotName,f_lotName))return false;
 if(!pass(r.lotFormat,f_lotFmt))return false;
 if(!pass(r.description,f_desc))return false;
-if(!pass(multiDisplay(r.shape),f_shape))return false;
+if(!multiPass(r.shape,f_shape))return false;
 if(!pass(r.cts,f_cts))return false;
 if(!pass(r.pcs,f_pcs))return false;
 if(!pass(r.price,f_price))return false;
@@ -1030,20 +1152,25 @@ const f_amount=document.getElementById("calibFilter_amount").value.toLowerCase()
 const f_remarks=document.getElementById("calibFilter_remarks").value.toLowerCase();
 
 function pass(v,f){return !f||(String(v||"").toLowerCase().includes(f));}
+function multiPass(arr,f){
+  if(!f) return true;
+  const filterLower = f.toLowerCase();
+  return parseMulti(arr).some(item => item.toLowerCase().includes(filterLower));
+}
 
 CALIB_FILTERED=CALIB_ALL.filter(r=>{
 const text=JSON.stringify(r).toLowerCase();
 if(search && !text.includes(search))return false;
 if(!pass(r.txId,f_txId))return false;
-if(!pass("calib",f_stone))return false;
+if(!pass("CALIB",f_stone))return false;
 if(!pass(r.date,f_date))return false;
 if(!pass(r.party,f_party))return false;
 if(!pass(r.deet,f_deet))return false;
 if(!pass(r.lotName,f_lotName))return false;
 if(!pass(r.grade,f_grade))return false;
 if(!pass(r.description,f_desc))return false;
-if(!pass(multiDisplay(r.shape),f_shape))return false;
-if(!pass(multiDisplay(r.size),f_size))return false;
+if(!multiPass(r.shape,f_shape))return false;
+if(!multiPass(r.size,f_size))return false;
 if(!pass(r.cts,f_cts))return false;
 if(!pass(r.price,f_price))return false;
 if(!pass(r.amount,f_amount))return false;
@@ -2000,4 +2127,3 @@ loadAllData();
 </script>
 </body>
 </html>
-
