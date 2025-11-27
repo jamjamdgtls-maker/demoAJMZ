@@ -1660,7 +1660,7 @@ async function generateSellId(){
   }
 }
 
-// FIXED: Added validation function
+// Validation function - only prevents negative sell values
 function validateSellInputs(rows){
   const errors = [];
   
@@ -1675,18 +1675,8 @@ function validateSellInputs(rows){
     
     const cts = Number((ctsInput?.value||"").replace(/,/g,""))||0;
     const pcs = rowType==="AJMZ" ? (Number((pcsInput?.value||"").replace(/,/g,""))||0) : 0;
-
-    const rem = getRemainingForRow(rowData, rowType);
     
-    // FIXED: Validate against remaining, not base amounts
-    if(cts > rem.remainingCts){
-      errors.push(`Row ${idx+1} (${rowData.txId}): Cannot sell ${fmtNumber(cts)} CTS. Only ${fmtNumber(rem.remainingCts)} CTS remaining.`);
-    }
-    
-    if(rowType === "AJMZ" && pcs > rem.remainingPcs){
-      errors.push(`Row ${idx+1} (${rowData.txId}): Cannot sell ${fmtNumber(pcs)} PCS. Only ${fmtNumber(rem.remainingPcs)} PCS remaining.`);
-    }
-    
+    // Only validate that sell values are not negative themselves
     if(cts < 0){
       errors.push(`Row ${idx+1} (${rowData.txId}): Sell CTS cannot be negative.`);
     }
@@ -1717,12 +1707,12 @@ async function handleSaveSell(){
     return;
   }
 
-  // FIXED: Validate inputs before saving
-  const validationErrorsList = validateSellInputs(rows);
-  if(validationErrorsList.length > 0){
+  // Validate inputs before saving (only blocks on errors)
+  const validationErrors = validateSellInputs(rows);
+  if(validationErrors.length > 0){
     let errorHTML = '<div class="validation-error">';
     errorHTML += '<strong>⚠ Validation Errors:</strong><ul style="margin:8px 0 0 20px;">';
-    validationErrorsList.forEach(err => {
+    validationErrors.forEach(err => {
       errorHTML += `<li>${err}</li>`;
     });
     errorHTML += '</ul></div>';
