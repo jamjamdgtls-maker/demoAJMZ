@@ -101,15 +101,15 @@ body{
 /* Header Fields */
 .header-grid{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:20px 40px;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:15px 30px;
   margin-bottom:30px;
 }
 
 .field-group{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:3px;
 }
 
 .field-label{
@@ -356,62 +356,144 @@ body{
   padding:12px 6px !important;
 }
 
-/* Print Styles */
-@media print {
-  @page {
-    size:landscape;
-    margin:0.5in;
-  }
-  
-  body{
-    background:#fff;
-  }
-  
-  .nav-vertical,
-  .filter-section,
-  .action-buttons,
-  .no-print{
-    display:none !important;
-  }
-  
-  .workspace{
-    margin-left:0;
-    padding:0;
-  }
-  
-  .invoice-container{
-    border:2px solid #000;
-    box-shadow:none;
-    page-break-inside:avoid;
-  }
-  
-  .invoice-title{
-    border-bottom:3px solid #000;
-  }
-  
-  .field-input,
-  .searchable-select-input{
-    border:1px solid #000 !important;
-  }
-  
-  .invoice-table thead th,
-  .invoice-table tbody td{
-    border:1px solid #000 !important;
-    -webkit-print-color-adjust:exact;
-    print-color-adjust:exact;
-  }
-  
-  .invoice-table thead th{
-    background:#e8e8e8 !important;
-  }
-  
-  .invoice-table tbody tr.empty-row{
-    display:none;
-  }
-  
-  .totals-row td{
-    background:#e8e8e8 !important;
-  }
+/* Print Options Modal */
+.modal-overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.modal-overlay.active{
+  display:flex;
+}
+
+.modal-content{
+  background:#fff;
+  padding:30px;
+  border-radius:12px;
+  max-width:500px;
+  width:90%;
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+}
+
+.modal-header{
+  font-size:24px;
+  font-weight:700;
+  margin-bottom:20px;
+  color:var(--ink);
+  text-align:center;
+}
+
+.modal-body{
+  margin-bottom:25px;
+}
+
+.option-group{
+  margin-bottom:20px;
+}
+
+.option-label{
+  font-weight:700;
+  font-size:14px;
+  color:var(--ink);
+  margin-bottom:10px;
+  display:block;
+}
+
+.radio-group{
+  display:flex;
+  gap:20px;
+}
+
+.radio-option{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  cursor:pointer;
+}
+
+.radio-option input[type="radio"]{
+  width:18px;
+  height:18px;
+  cursor:pointer;
+}
+
+.radio-option label{
+  cursor:pointer;
+  font-size:14px;
+}
+
+.column-options{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.checkbox-option{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.checkbox-option input[type="checkbox"]{
+  width:16px;
+  height:16px;
+  cursor:pointer;
+}
+
+.checkbox-option label{
+  cursor:pointer;
+  font-size:13px;
+}
+
+.modal-footer{
+  display:flex;
+  gap:12px;
+  justify-content:flex-end;
+}
+
+.btn-modal{
+  padding:10px 24px;
+  border:2px solid var(--border-dark);
+  border-radius:8px;
+  font-size:14px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s;
+}
+
+.btn-modal-cancel{
+  background:#fff;
+  color:var(--ink);
+}
+
+.btn-modal-print{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+
+.btn-modal:hover{
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px var(--shadow);
+}
+
+/* Print Preview Info */
+.preview-info{
+  background:#f0f8ff;
+  border:2px solid #2196F3;
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:15px;
+  font-size:13px;
+  color:#1565C0;
 }
 
 /* Loading Overlay */
@@ -452,6 +534,258 @@ body{
 @keyframes spin{
   0%{transform:rotate(0deg);}
   100%{transform:rotate(360deg);}
+}
+
+/* ============================================
+   PRINT STYLES - COMPREHENSIVE FIXES
+   ============================================ */
+
+/* Page Setup - Let browser handle orientation */
+@page {
+  size: auto;
+  margin: 0.4in 0.5in 0.6in 0.5in;
+}
+
+/* Print Media Query */
+@media print {
+  /* Reset body and html for print */
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    color: #000;
+  }
+  
+  /* Hide non-printable elements */
+  .nav-vertical,
+  .filter-section,
+  .action-buttons,
+  .no-print,
+  .modal-overlay,
+  .loading-overlay {
+    display: none !important;
+  }
+  
+  /* Remove workspace margins */
+  .workspace {
+    margin-left: 0;
+    padding: 0;
+    width: 100%;
+  }
+  
+  /* Invoice Container for Print */
+  .invoice-container {
+    border: 2px solid #000;
+    box-shadow: none;
+    padding: 15px;
+    margin: 0;
+    max-width: 100%;
+    border-radius: 0;
+    background: #fff;
+  }
+  
+  /* Invoice Title */
+  .invoice-title {
+    border-bottom: 3px solid #000;
+    font-size: 24px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    page-break-after: avoid;
+  }
+  
+  /* Header Grid */
+  .header-grid {
+    gap: 8px 20px;
+    margin-bottom: 15px;
+    page-break-after: avoid;
+  }
+  
+  /* Responsive header layout for portrait */
+  @media print and (max-width: 8.5in) {
+    .header-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6px 15px !important;
+    }
+  }
+  
+  @media print and (orientation: portrait) {
+    .header-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 6px 15px !important;
+    }
+  }
+  
+  .field-label {
+    min-width: 110px;
+    font-size: 10px;
+  }
+  
+  .field-input,
+  .searchable-select-input {
+    border: 1px solid #000 !important;
+    font-size: 11px;
+    padding: 5px 8px;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  
+  /* Portrait-specific adjustments */
+  @media print and (orientation: portrait) {
+    .invoice-title {
+      font-size: 20px;
+      margin-bottom: 12px;
+    }
+    
+    .field-label {
+      min-width: 95px;
+      font-size: 9px;
+    }
+    
+    .field-input,
+    .searchable-select-input {
+      font-size: 10px;
+      padding: 4px 6px;
+    }
+    
+    .invoice-table {
+      font-size: 9px;
+    }
+    
+    .invoice-table thead th {
+      font-size: 8px;
+      padding: 5px 3px;
+    }
+    
+    .invoice-table tbody td {
+      padding: 5px 3px;
+      font-size: 9px;
+    }
+    
+    .totals-row td {
+      font-size: 10px;
+      padding: 7px 3px !important;
+    }
+  }
+  
+  /* Table Wrapper */
+  .invoice-table-wrapper {
+    margin-bottom: 10px;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+  }
+  
+  /* Invoice Table - Critical Print Fixes */
+  .invoice-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 10px;
+  }
+  
+  /* Table Header - Repeat on Every Page */
+  .invoice-table thead {
+    display: table-header-group;
+  }
+  
+  .invoice-table thead th {
+    background: #e8e8e8 !important;
+    border: 1px solid #000 !important;
+    padding: 6px 4px;
+    font-size: 9px;
+    font-weight: 700;
+    text-align: center;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
+  
+  /* Table Body */
+  .invoice-table tbody {
+    display: table-row-group;
+  }
+  
+  /* Table Rows - Prevent Splitting */
+  .invoice-table tbody tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  
+  .invoice-table tbody td {
+    border: 1px solid #000 !important;
+    padding: 5px 4px;
+    text-align: center;
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 10px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  .invoice-table tbody td:first-child {
+    font-weight: 600;
+    background: #f9f9f9 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Hide Empty Rows in Print */
+  .invoice-table tbody tr.empty-row {
+    display: none !important;
+  }
+  
+  /* Totals Row - Keep with Data */
+  .totals-row {
+    page-break-inside: avoid;
+    page-break-before: avoid;
+    font-weight: 700;
+    background: #e8e8e8 !important;
+  }
+  
+  .totals-row td {
+    background: #e8e8e8 !important;
+    font-size: 11px;
+    padding: 8px 4px !important;
+    border: 1px solid #000 !important;
+    font-weight: 700;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  
+  /* Keep last 5 data rows with totals to prevent orphan */
+  .invoice-table tbody tr:nth-last-child(-n+6) {
+    page-break-after: avoid;
+  }
+  
+
+  
+  /* ============================================
+     BROWSER-SPECIFIC FIXES
+     ============================================ */
+  
+  /* Firefox Print Fixes */
+  @-moz-document url-prefix() {
+    .invoice-table thead {
+      display: table-header-group !important;
+    }
+  }
+  
+  /* Chrome/Edge Print Fixes */
+  @supports (-webkit-appearance: none) {
+    .invoice-table tbody tr {
+      -webkit-print-color-adjust: exact;
+    }
+  }
+  
+  /* Ensure Color Accuracy */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 }
 </style>
 </head>
@@ -495,8 +829,18 @@ body{
       </div>
       
       <div class="field-group">
+        <label class="field-label">TRANSACTION TYPE:</label>
+        <div class="searchable-select-wrapper" id="txTypeSelectWrapper"></div>
+      </div>
+      
+      <div class="field-group">
         <label class="field-label">PARTY:</label>
         <div class="searchable-select-wrapper" id="partySelectWrapper"></div>
+      </div>
+      
+      <div class="field-group">
+        <label class="field-label">SELL ID:</label>
+        <div class="searchable-select-wrapper" id="sellIdSelectWrapper"></div>
       </div>
       
       <div class="field-group">
@@ -505,18 +849,8 @@ body{
       </div>
       
       <div class="field-group">
-        <label class="field-label">TRANSACTION TYPE:</label>
-        <div class="searchable-select-wrapper" id="txTypeSelectWrapper"></div>
-      </div>
-      
-      <div class="field-group">
         <label class="field-label">TOTAL AMOUNT:</label>
         <input type="text" class="field-input" id="totalAmount" readonly>
-      </div>
-      
-      <div class="field-group">
-        <label class="field-label">SELL ID:</label>
-        <div class="searchable-select-wrapper" id="sellIdSelectWrapper"></div>
       </div>
       
       <div class="field-group">
@@ -548,7 +882,6 @@ body{
       
       <div class="action-buttons">
         <button class="btn btn-secondary" id="clearBtn">🔄 CLEAR</button>
-        <button class="btn btn-secondary" id="exportPdfBtn">📄 EXPORT PDF</button>
         <button class="btn btn-primary" id="printBtn">🖨️ PRINT</button>
       </div>
     </div>
@@ -946,7 +1279,7 @@ function filterTransactions(){
       
       if(dateTo){
         const toDate = new Date(dateTo);
-        toDate.setHours(23, 59, 59, 999); // Include full day
+        toDate.setHours(23, 59, 59, 999);
         if(tDate > toDate) return false;
       }
       
@@ -1015,11 +1348,11 @@ function populateTable(transactions){
   totalsRow.className = 'totals-row';
   totalsRow.innerHTML = `
     <td colspan="6" style="text-align:right;">TOTALS:</td>
-    <td>${totalPcs > 0 ? fmt(totalPcs) : "-"}</td>
-    <td>${fmt(totalCts)}</td>
-    <td>-</td>
-    <td>${fmt(totalAmt)}</td>
-    <td></td>
+    <td class="col-pcs">${totalPcs > 0 ? fmt(totalPcs) : "-"}</td>
+    <td class="col-cts">${fmt(totalCts)}</td>
+    <td class="col-price">-</td>
+    <td class="col-amount">${fmt(totalAmt)}</td>
+    <td class="col-remarks"></td>
   `;
   tbody.appendChild(totalsRow);
 }
@@ -1068,13 +1401,8 @@ function clearForm(){
   calculateTotals([]);
 }
 
-// Print function
-function printInvoice(){
-  window.print();
-}
-
-// Export PDF (triggers print dialog)
-function exportPdf(){
+// Print function - directly open browser print dialog
+function executePrint(){
   window.print();
 }
 
@@ -1102,8 +1430,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   
   // Bind event listeners
   document.getElementById("clearBtn").addEventListener("click", clearForm);
-  document.getElementById("printBtn").addEventListener("click", printInvoice);
-  document.getElementById("exportPdfBtn").addEventListener("click", exportPdf);
+  document.getElementById("printBtn").addEventListener("click", executePrint);
   document.getElementById("sourceFilter").addEventListener("change", filterTransactions);
   document.getElementById("dateFrom").addEventListener("change", filterTransactions);
   document.getElementById("dateTo").addEventListener("change", filterTransactions);
