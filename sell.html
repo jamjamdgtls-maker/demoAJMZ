@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>SELL – AJMZ & CALIBRATE</title>
+<title>SELL – AJMZ & CALIBRATE (FIXED)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -500,6 +500,16 @@ body{
   cursor:not-allowed;
 }
 
+.validation-error{
+  color:var(--danger);
+  background:#fff5f5;
+  border:1px solid var(--danger);
+  border-radius:8px;
+  padding:8px 12px;
+  margin:10px 0;
+  font-size:12px;
+}
+
 @media (max-width:1100px){
   .workspace{padding:16px}
 }
@@ -524,7 +534,7 @@ body{
 
   <div class="panel">
     <div>
-      <div class="panel-title">SELL RECORDS</div>
+      <div class="panel-title">SELL RECORDS (FIXED CALCULATIONS)</div>
       <div class="panel-main">AJMZ & Calibrates – Remaining Inventory</div>
     </div>
     <span class="badge">
@@ -815,6 +825,8 @@ body{
       </span>
     </div>
 
+    <div id="validationErrors"></div>
+
     <div id="sellModalTableWrapper" style="
       border:1px solid var(--line);
       border-radius:12px;
@@ -911,7 +923,7 @@ let currentSection = "AJMZ";
 let showAddOnlyMode = false;
 
 let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput,
-    sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle;
+    sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle, validationErrors;
 
 let allUniqueParties = [];
 
@@ -920,20 +932,27 @@ let editSellKey = null;
 let editParentKey = null;
 let editParentType = null;
 
-function getRemainingForRow(row,type){
-  const hasRemCts = Object.prototype.hasOwnProperty.call(row,"remainingCts") &&
-                    row.remainingCts !== null && row.remainingCts !== undefined && row.remainingCts !== "";
-  const hasRemPcs = Object.prototype.hasOwnProperty.call(row,"remainingPcs") &&
-                    row.remainingPcs !== null && row.remainingPcs !== undefined && row.remainingPcs !== "";
+// FIXED: Calculate remaining based on actual sells from database
+function getRemainingForRow(row, type) {
+  // Get all sell records for this parent
+  const sellRecords = SELLS[row.key] || [];
+  
+  // Calculate total sold from all sell records
+  const totalSoldCts = sellRecords.reduce((sum, s) => sum + Number(s.cts || 0), 0);
+  const totalSoldPcs = type === "AJMZ" 
+    ? sellRecords.reduce((sum, s) => sum + Number(s.pcs || 0), 0) 
+    : 0;
 
-  const baseCts = Number(row.cts||0);
-  const basePcs = type==="AJMZ" ? Number(row.pcs||0) : 0;
+  const baseCts = Number(row.cts || 0);
+  const basePcs = type === "AJMZ" ? Number(row.pcs || 0) : 0;
 
-  const remainingCts = hasRemCts ? Number(row.remainingCts||0) : baseCts;
-  const remainingPcs = type==="AJMZ" ? (hasRemPcs ? Number(row.remainingPcs||0) : basePcs) : 0;
+  // Calculate remaining = base - total sold
+  const remainingCts = baseCts - totalSoldCts;
+  const remainingPcs = type === "AJMZ" ? (basePcs - totalSoldPcs) : 0;
 
-  return {remainingCts,remainingPcs};
+  return { remainingCts, remainingPcs };
 }
+
 function findRowByKey(type,key){
   const arr = type==="AJMZ" ? AJMZ_ALL : CALIB_ALL;
   return arr.find(r=>r.key===key) || null;
@@ -1040,12 +1059,14 @@ async function loadAllData(){
       obj.pcs=Number(obj.pcs||0);
       obj.price=Number(obj.price||0);
       obj.amount=Number(obj.amount|| (obj.cts*obj.price));
+      
+      // FIXED: Calculate remaining from actual sells
       const rem=getRemainingForRow(obj,"AJMZ");
       obj.remainingCts = rem.remainingCts;
       obj.remainingPcs = rem.remainingPcs;
-      obj.remainingAmount = Object.prototype.hasOwnProperty.call(obj,"remainingAmount")
-        ? Number(obj.remainingAmount||0)
-        : (obj.remainingCts * obj.price);
+      // FIXED: Always recalculate remaining amount using original price
+      obj.remainingAmount = obj.remainingCts * obj.price;
+      
       obj.__sells = SELLS[obj.key] || [];
       if(obj.party) partySet.add(obj.party);
       AJMZ_ALL.push(obj);
@@ -1062,11 +1083,13 @@ async function loadAllData(){
       obj.cts=Number(obj.cts||0);
       obj.price=Number(obj.price||0);
       obj.amount=Number(obj.amount|| (obj.cts*obj.price));
+      
+      // FIXED: Calculate remaining from actual sells
       const rem=getRemainingForRow(obj,"CALIB");
       obj.remainingCts = rem.remainingCts;
-      obj.remainingAmount = Object.prototype.hasOwnProperty.call(obj,"remainingAmount")
-        ? Number(obj.remainingAmount||0)
-        : (obj.remainingCts * obj.price);
+      // FIXED: Always recalculate remaining amount using original price
+      obj.remainingAmount = obj.remainingCts * obj.price;
+      
       obj.__sells = SELLS[obj.key] || [];
       if(obj.party) partySet.add(obj.party);
       delete obj.lotFormat;
@@ -1100,9 +1123,7 @@ function buildAJMZRows(){
   AJMZ_ROWS = [];
   AJMZ_ALL.forEach(p=>{
     const rem = getRemainingForRow(p,"AJMZ");
-    const remainingAmount = Object.prototype.hasOwnProperty.call(p,"remainingAmount")
-      ? Number(p.remainingAmount||0)
-      : rem.remainingCts*Number(p.price||0);
+    const remainingAmount = p.remainingCts * Number(p.price || 0);
     
     AJMZ_ROWS.push({
       rowType:"ADD",
@@ -1158,9 +1179,7 @@ function buildCALIBRows(){
   CALIB_ROWS = [];
   CALIB_ALL.forEach(p=>{
     const rem = getRemainingForRow(p,"CALIB");
-    const remainingAmount = Object.prototype.hasOwnProperty.call(p,"remainingAmount")
-      ? Number(p.remainingAmount||0)
-      : rem.remainingCts*Number(p.price||0);
+    const remainingAmount = p.remainingCts * Number(p.price || 0);
     
     CALIB_ROWS.push({
       rowType:"ADD",
@@ -1289,12 +1308,14 @@ function renderAJMZRow(row){
   const rowClass = isAdd ? "ajmz-main" : "sell-row";
 
   const pcs = fmtNumber(row.pcs);
-  const remPcs = fmtNumber(row.remainingPcs);
   const cts = fmtNumber(row.cts);
-  const remCts = fmtNumber(row.remainingCts);
   const amount = fmtNumber(row.amount);
-  const remAmt = fmtNumber(row.remainingAmount);
   const price = fmtNumber(row.price);
+  
+  // Only show remaining values for ADD rows, blank for SELL rows
+  const remPcs = isAdd ? fmtNumber(row.remainingPcs) : "";
+  const remCts = isAdd ? fmtNumber(row.remainingCts) : "";
+  const remAmt = isAdd ? fmtNumber(row.remainingAmount) : "";
 
   const checkboxCell = isAdd
     ? `<input type="checkbox" class="row-select" data-key="${esc(row.parentKey)}" data-type="AJMZ">`
@@ -1347,12 +1368,14 @@ function renderCALIBRow(row){
   const rowClass = isAdd ? "calib-main" : "sell-row";
 
   const pcs = fmtNumber(row.pcs);
-  const remPcs = fmtNumber(row.remainingPcs);
   const cts = fmtNumber(row.cts);
-  const remCts = fmtNumber(row.remainingCts);
   const amount = fmtNumber(row.amount);
-  const remAmt = fmtNumber(row.remainingAmount);
   const price = fmtNumber(row.price);
+  
+  // Only show remaining values for ADD rows, blank for SELL rows
+  const remPcs = isAdd ? fmtNumber(row.remainingPcs) : "";
+  const remCts = isAdd ? fmtNumber(row.remainingCts) : "";
+  const remAmt = isAdd ? fmtNumber(row.remainingAmount) : "";
 
   const checkboxCell = isAdd
     ? `<input type="checkbox" class="row-select" data-key="${esc(row.parentKey)}" data-type="CALIB">`
@@ -1446,6 +1469,7 @@ function updateMetrics(){
   document.getElementById("calibTotalCTS").textContent=fmtNumber(tCtsC);
   document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
+
 function buildSellModalTable(selectedRows,editData=null){
   if(!selectedRows.length){
     sellModalTableWrapper.innerHTML="<div style='font-size:12px;color:#777;'>No rows selected.</div>";
@@ -1562,6 +1586,7 @@ function openSellModal(){
   sellIdLabelEl.textContent="(auto)";
   sellPartyInput.value="";
   sellDateInput.value=todayISO();
+  validationErrors.innerHTML="";
 
   buildSellModalTable(selectedRows);
   sellModalEl.dataset.selectedRows=JSON.stringify(selectedRows.map(sr=>({key:sr.row.key,type:sr.type})));
@@ -1585,6 +1610,7 @@ function openEditSellModal(parentKey, sellKey, type){
   sellIdLabelEl.textContent = sellRecord.sellId || "(unknown)";
   sellPartyInput.value = sellRecord.party || "";
   sellDateInput.value = sellRecord.date || todayISO();
+  validationErrors.innerHTML="";
 
   const row = findRowByKey(type, parentKey);
   if(!row){
@@ -1601,6 +1627,7 @@ function closeSellModal(){
   sellModalEl.style.display="none";
   sellModalEl.dataset.selectedRows="[]";
   sellModalTableWrapper.innerHTML="";
+  validationErrors.innerHTML="";
   editMode = false;
   editSellKey = null;
   editParentKey = null;
@@ -1633,6 +1660,45 @@ async function generateSellId(){
   }
 }
 
+// FIXED: Added validation function
+function validateSellInputs(rows){
+  const errors = [];
+  
+  rows.forEach((tr, idx) => {
+    const parentKey = tr.dataset.key;
+    const rowType = tr.dataset.type;
+    const rowData = findRowByKey(rowType, parentKey);
+    if(!rowData) return;
+
+    const ctsInput = tr.querySelector('input[data-sell="cts"]');
+    const pcsInput = tr.querySelector('input[data-sell="pcs"]');
+    
+    const cts = Number((ctsInput?.value||"").replace(/,/g,""))||0;
+    const pcs = rowType==="AJMZ" ? (Number((pcsInput?.value||"").replace(/,/g,""))||0) : 0;
+
+    const rem = getRemainingForRow(rowData, rowType);
+    
+    // FIXED: Validate against remaining, not base amounts
+    if(cts > rem.remainingCts){
+      errors.push(`Row ${idx+1} (${rowData.txId}): Cannot sell ${fmtNumber(cts)} CTS. Only ${fmtNumber(rem.remainingCts)} CTS remaining.`);
+    }
+    
+    if(rowType === "AJMZ" && pcs > rem.remainingPcs){
+      errors.push(`Row ${idx+1} (${rowData.txId}): Cannot sell ${fmtNumber(pcs)} PCS. Only ${fmtNumber(rem.remainingPcs)} PCS remaining.`);
+    }
+    
+    if(cts < 0){
+      errors.push(`Row ${idx+1} (${rowData.txId}): Sell CTS cannot be negative.`);
+    }
+    
+    if(pcs < 0){
+      errors.push(`Row ${idx+1} (${rowData.txId}): Sell PCS cannot be negative.`);
+    }
+  });
+  
+  return errors;
+}
+
 async function handleSaveSell(){
   const selectedRowsRaw=sellModalEl.dataset.selectedRows || "[]";
   let selectedRows=[];
@@ -1650,6 +1716,21 @@ async function handleSaveSell(){
     alert("No rows to sell.");
     return;
   }
+
+  // FIXED: Validate inputs before saving
+  const validationErrorsList = validateSellInputs(rows);
+  if(validationErrorsList.length > 0){
+    let errorHTML = '<div class="validation-error">';
+    errorHTML += '<strong>⚠ Validation Errors:</strong><ul style="margin:8px 0 0 20px;">';
+    validationErrorsList.forEach(err => {
+      errorHTML += `<li>${err}</li>`;
+    });
+    errorHTML += '</ul></div>';
+    validationErrors.innerHTML = errorHTML;
+    return;
+  }
+  
+  validationErrors.innerHTML = "";
 
   let sellId;
   if(editMode && editSellKey){
@@ -1712,10 +1793,12 @@ async function handleSaveSell(){
       const oldCts = Number(oldSell?.cts || 0);
       const oldPcs = Number(oldSell?.pcs || 0);
       
+      // FIXED: Recalculate remaining based on actual change
       const remBefore = getRemainingForRow(rowData, rowType);
       const newRemCts = remBefore.remainingCts + oldCts - cts;
       const newRemPcs = rowType==="AJMZ" ? (remBefore.remainingPcs + oldPcs - pcs) : 0;
-      const newRemAmt = newRemCts * price;
+      // FIXED: Use original price for remaining amount
+      const newRemAmt = newRemCts * Number(rowData.price || 0);
 
       const sellParentRef=db.ref("sellRecords/"+parentKey);
       tasks.push(
@@ -1737,7 +1820,8 @@ async function handleSaveSell(){
       const remBefore=getRemainingForRow(rowData,rowType);
       const newRemCts=remBefore.remainingCts - cts;
       const newRemPcs=rowType==="AJMZ" ? (remBefore.remainingPcs - pcs) : 0;
-      const newRemAmt=newRemCts*price;
+      // FIXED: Use original price from parent record
+      const newRemAmt=newRemCts * Number(rowData.price || 0);
 
       const sellData={
         sellId,
@@ -1798,7 +1882,8 @@ async function deleteSell(parentKey,sellKey,parentType){
   const rem=getRemainingForRow(parent,parentType);
   const newRemCts=rem.remainingCts + Number(sell.cts||0);
   const newRemPcs=parentType==="AJMZ" ? (rem.remainingPcs + Number(sell.pcs||0)) : 0;
-  const newRemAmt=newRemCts*Number(parent.price||0);
+  // FIXED: Use original price for remaining amount
+  const newRemAmt=newRemCts * Number(parent.price||0);
 
   const updates={remainingCts:newRemCts,remainingAmount:newRemAmt};
   if(parentType==="AJMZ")updates.remainingPcs=newRemPcs;
@@ -1967,6 +2052,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   sellCancelBtn=document.getElementById("sellCancelBtn");
   partyDropdownMenu=document.getElementById("partyDropdownMenu");
   sellModalTitle=document.getElementById("sellModalTitle");
+  validationErrors=document.getElementById("validationErrors");
 
   sellPartyInput.addEventListener("focus", showPartyDropdown);
   sellPartyInput.addEventListener("blur", hidePartyDropdown);
@@ -2000,4 +2086,3 @@ window.addEventListener("DOMContentLoaded",()=>{
 </script>
 </body>
 </html>
-
