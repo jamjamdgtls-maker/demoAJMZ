@@ -409,7 +409,8 @@ body{
   color:var(--ink-soft);
 }
 .sell-modal-header input[type="text"],
-.sell-modal-header input[type="date"]{
+.sell-modal-header input[type="date"],
+.sell-modal-header input[type="number"]{
   border-radius:8px;
   border:1px solid var(--line);
   padding:4px 8px;
@@ -820,8 +821,11 @@ body{
       <label for="sellDateInput">Date</label>
       <input type="date" id="sellDateInput"/>
 
+      <label for="sellPriceOverride">Override Price</label>
+      <input type="number" step="0.0001" id="sellPriceOverride" placeholder="Optional override" style="min-width:140px;"/>
+
       <span style="font-size:11px;color:var(--ink-soft);">
-        • Same <b>SELL ID</b> for all rows • Edit <b>CTS/PCS</b> directly
+        • Same <b>SELL ID</b> for all rows • Edit <b>CTS/PCS</b> directly • <b>Price</b> override applies to all
       </span>
     </div>
 
@@ -922,7 +926,7 @@ const CALIB_UNIQUES = {
 let currentSection = "AJMZ";
 let showAddOnlyMode = false;
 
-let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput,
+let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput, sellPriceOverride,
     sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle, validationErrors;
 
 let allUniqueParties = [];
@@ -1502,11 +1506,16 @@ function buildSellModalTable(selectedRows,editData=null){
   selectedRows.forEach(rowData=>{
     const {row, type} = rowData;
     const rem=getRemainingForRow(row,type);
-    const price=Number(row.price||0);
+    
+    // Check if there's a price override
+    const overridePrice = sellPriceOverride?.value ? Number(sellPriceOverride.value) : null;
+    
+    // Use override price if available, otherwise use row price
+    const price = overridePrice !== null ? overridePrice : Number(row.price || 0);
     
     let sellCts = rem.remainingCts;
     let sellPcs = type==="AJMZ" ? rem.remainingPcs : 0;
-    let sellPrice = price;
+    let sellPrice = price; // This now uses the override if available
     let sellRemarks = "";
     
     if(editData && editData.parentKey === row.key){
@@ -1586,6 +1595,7 @@ function openSellModal(){
   sellIdLabelEl.textContent="(auto)";
   sellPartyInput.value="";
   sellDateInput.value=todayISO();
+  sellPriceOverride.value=""; // Clear price override
   validationErrors.innerHTML="";
 
   buildSellModalTable(selectedRows);
@@ -1610,6 +1620,7 @@ function openEditSellModal(parentKey, sellKey, type){
   sellIdLabelEl.textContent = sellRecord.sellId || "(unknown)";
   sellPartyInput.value = sellRecord.party || "";
   sellDateInput.value = sellRecord.date || todayISO();
+  sellPriceOverride.value=""; // Clear price override for editing
   validationErrors.innerHTML="";
 
   const row = findRowByKey(type, parentKey);
@@ -1627,6 +1638,7 @@ function closeSellModal(){
   sellModalEl.style.display="none";
   sellModalEl.dataset.selectedRows="[]";
   sellModalTableWrapper.innerHTML="";
+  sellPriceOverride.value=""; // Clear price override
   validationErrors.innerHTML="";
   editMode = false;
   editSellKey = null;
@@ -1708,11 +1720,11 @@ async function handleSaveSell(){
   }
 
   // Validate inputs before saving (only blocks on errors)
-  const validationErrors = validateSellInputs(rows);
-  if(validationErrors.length > 0){
+  const validationErrorsList = validateSellInputs(rows);
+  if(validationErrorsList.length > 0){
     let errorHTML = '<div class="validation-error">';
     errorHTML += '<strong>⚠ Validation Errors:</strong><ul style="margin:8px 0 0 20px;">';
-    validationErrors.forEach(err => {
+    validationErrorsList.forEach(err => {
       errorHTML += `<li>${err}</li>`;
     });
     errorHTML += '</ul></div>';
@@ -2037,6 +2049,7 @@ window.addEventListener("DOMContentLoaded",()=>{
   sellModalTableWrapper=document.getElementById("sellModalTableWrapper");
   sellPartyInput=document.getElementById("sellPartyInput");
   sellDateInput=document.getElementById("sellDateInput");
+  sellPriceOverride=document.getElementById("sellPriceOverride");
   sellIdLabelEl=document.getElementById("sellIdLabel");
   sellSaveBtn=document.getElementById("sellSaveBtn");
   sellCancelBtn=document.getElementById("sellCancelBtn");
@@ -2051,6 +2064,19 @@ window.addEventListener("DOMContentLoaded",()=>{
     if(!partyDropdownMenu.classList.contains("show")){
       partyDropdownMenu.classList.add("show");
     }
+  });
+
+  // Price Override event listener - updates all price fields when changed
+  sellPriceOverride.addEventListener("input", () => {
+    const overrideValue = sellPriceOverride.value;
+    if(!overrideValue) return;
+    
+    const priceInputs = sellModalTableWrapper.querySelectorAll('input[data-sell="price"]');
+    priceInputs.forEach(input => {
+      input.value = overrideValue;
+      const tr = input.closest("tr");
+      if(tr) recalcSellRowAmount(tr);
+    });
   });
 
   sellCancelBtn.addEventListener("click",closeSellModal);
