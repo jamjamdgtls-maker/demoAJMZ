@@ -1228,7 +1228,7 @@ function renderAJMZ(){
   let filtered=AJMZ_PARENTS.filter(p=>{
     if(txid&&p.txId!==txid)return false;
     
-    // Match parent OR any child sell
+    // Match parent OR any child sell for party filter
     if(party && p.party !== party && !(p.__sells && p.__sells.some(s => s.party === party))) {
       return false;
     }
@@ -1242,8 +1242,6 @@ function renderAJMZ(){
       const sizes=parseMulti(p.size);
       if(!sizes.includes(size))return false;
     }
-    if(dateFrom&&p.date<dateFrom)return false;
-    if(dateTo&&p.date>dateTo)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
@@ -1271,8 +1269,11 @@ function renderAJMZ(){
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    // Parent row
-    if(showAdded){
+    // ✅ FIXED: Check if parent date matches filter
+    const parentDateMatch = (!dateFrom || parent.date >= dateFrom) && (!dateTo || parent.date <= dateTo);
+
+    // Parent row - only show if date matches AND showAdded is checked
+    if(showAdded && parentDateMatch){
       tbody.insertAdjacentHTML("beforeend",`
         <tr class="parent-row">
           <td>${esc(parent.txId)}</td>
@@ -1299,33 +1300,39 @@ function renderAJMZ(){
       `);
     }
 
-    // Child rows for each sell
+    // ✅ FIXED: Filter sell rows by their own dates
     if(showSell){
       sells.forEach(sell=>{
-        tbody.insertAdjacentHTML("beforeend",`
-          <tr class="child-row">
-            <td>${esc(sell.sellId||'')}</td>
-            <td>${esc(sell.date||'')}</td>
-            <td>${esc(sell.party||'')}</td>
-            <td>${esc(parent.lotName||"")}</td>
-            <td>${esc(parent.lotFormat||"")}</td>
-            <td>${esc(multiDisplay(parent.shape))}</td>
-            <td>${esc(multiDisplay(parent.size))}</td>
-            <td>${esc(parent.description||"")}</td>
-            <td class="num-cell section-col total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
-            <td class="num-cell sold-col">${fmt(sell.pcs)}</td>
-            <td class="num-cell sold-col">${fmt(sell.price)}</td>
-            <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-            <td class="num-cell section-col balance-col"></td>
-            <td class="num-cell balance-col"></td>
-            <td class="num-cell balance-col"></td>
-            <td class="num-cell balance-col"></td>
-          </tr>
-        `);
+        // Check if this specific sell's date matches the filter
+        const sellDateMatch = (!dateFrom || sell.date >= dateFrom) && (!dateTo || sell.date <= dateTo);
+        
+        // Only render if sell date matches
+        if(sellDateMatch){
+          tbody.insertAdjacentHTML("beforeend",`
+            <tr class="child-row">
+              <td>${esc(sell.sellId||'')}</td>
+              <td>${esc(sell.date||'')}</td>
+              <td>${esc(sell.party||'')}</td>
+              <td>${esc(parent.lotName||"")}</td>
+              <td>${esc(parent.lotFormat||"")}</td>
+              <td>${esc(multiDisplay(parent.shape))}</td>
+              <td>${esc(multiDisplay(parent.size))}</td>
+              <td>${esc(parent.description||"")}</td>
+              <td class="num-cell section-col total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+              <td class="num-cell sold-col">${fmt(sell.pcs)}</td>
+              <td class="num-cell sold-col">${fmt(sell.price)}</td>
+              <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+              <td class="num-cell section-col balance-col"></td>
+              <td class="num-cell balance-col"></td>
+              <td class="num-cell balance-col"></td>
+              <td class="num-cell balance-col"></td>
+            </tr>
+          `);
+        }
       });
     }
   });
@@ -1347,7 +1354,7 @@ function renderCALIB(){
   let filtered=CALIB_PARENTS.filter(p=>{
     if(txid&&p.txId!==txid)return false;
     
-    // Match parent OR any child sell
+    // Match parent OR any child sell for party filter
     if(party && p.party !== party && !(p.__sells && p.__sells.some(s => s.party === party))) {
       return false;
     }
@@ -1361,8 +1368,6 @@ function renderCALIB(){
       const sizes=parseMulti(p.size);
       if(!sizes.includes(size))return false;
     }
-    if(dateFrom&&p.date<dateFrom)return false;
-    if(dateTo&&p.date>dateTo)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
@@ -1387,8 +1392,11 @@ function renderCALIB(){
 
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    // Parent row - CALIB shows grade, NOT lotFormat
-    if(showAdded){
+    // ✅ FIXED: Check if parent date matches filter
+    const parentDateMatch = (!dateFrom || parent.date >= dateFrom) && (!dateTo || parent.date <= dateTo);
+
+    // Parent row - CALIB shows grade, NOT lotFormat - only show if date matches
+    if(showAdded && parentDateMatch){
       tbody.insertAdjacentHTML("beforeend",`
         <tr class="parent-row">
           <td>${esc(parent.txId)}</td>
@@ -1412,30 +1420,36 @@ function renderCALIB(){
       `);
     }
 
-    // Child rows for each sell
+    // ✅ FIXED: Filter sell rows by their own dates
     if(showSell){
       sells.forEach(sell=>{
-        tbody.insertAdjacentHTML("beforeend",`
-          <tr class="child-row">
-            <td>${esc(sell.sellId||'')}</td>
-            <td>${esc(sell.date||'')}</td>
-            <td>${esc(sell.party||'')}</td>
-            <td>${esc(parent.lotName||"")}</td>
-            <td>${esc(parent.grade||"")}</td>
-            <td>${esc(multiDisplay(parent.shape))}</td>
-            <td>${esc(multiDisplay(parent.size))}</td>
-            <td>${esc(parent.description||"")}</td>
-            <td class="num-cell section-col total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
-            <td class="num-cell sold-col">${fmt(sell.price)}</td>
-            <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-            <td class="num-cell section-col balance-col"></td>
-            <td class="num-cell balance-col"></td>
-            <td class="num-cell balance-col"></td>
-          </tr>
-        `);
+        // Check if this specific sell's date matches the filter
+        const sellDateMatch = (!dateFrom || sell.date >= dateFrom) && (!dateTo || sell.date <= dateTo);
+        
+        // Only render if sell date matches
+        if(sellDateMatch){
+          tbody.insertAdjacentHTML("beforeend",`
+            <tr class="child-row">
+              <td>${esc(sell.sellId||'')}</td>
+              <td>${esc(sell.date||'')}</td>
+              <td>${esc(sell.party||'')}</td>
+              <td>${esc(parent.lotName||"")}</td>
+              <td>${esc(parent.grade||"")}</td>
+              <td>${esc(multiDisplay(parent.shape))}</td>
+              <td>${esc(multiDisplay(parent.size))}</td>
+              <td>${esc(parent.description||"")}</td>
+              <td class="num-cell section-col total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+              <td class="num-cell sold-col">${fmt(sell.price)}</td>
+              <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+              <td class="num-cell section-col balance-col"></td>
+              <td class="num-cell balance-col"></td>
+              <td class="num-cell balance-col"></td>
+            </tr>
+          `);
+        }
       });
     }
   });
@@ -1459,7 +1473,7 @@ function renderALL(){
   let filtered=combined.filter(p=>{
     if(txid&&p.txId!==txid)return false;
     
-    // Match parent OR any child sell
+    // Match parent OR any child sell for party filter
     if(party && p.party !== party && !(p.__sells && p.__sells.some(s => s.party === party))) {
       return false;
     }
@@ -1473,8 +1487,6 @@ function renderALL(){
       const sizes=parseMulti(p.size);
       if(!sizes.includes(size))return false;
     }
-    if(dateFrom&&p.date<dateFrom)return false;
-    if(dateTo&&p.date>dateTo)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
@@ -1499,8 +1511,11 @@ function renderALL(){
 
     const avgSell=soldC>0?soldA/soldC:0;
 
-    // Parent row
-    if(showAdded){
+    // ✅ FIXED: Check if parent date matches filter
+    const parentDateMatch = (!dateFrom || parent.date >= dateFrom) && (!dateTo || parent.date <= dateTo);
+
+    // Parent row - only show if date matches
+    if(showAdded && parentDateMatch){
       tbody.insertAdjacentHTML("beforeend",`
         <tr class="parent-row">
           <td>${esc(parent.txId)}</td>
@@ -1523,29 +1538,35 @@ function renderALL(){
       `);
     }
 
-    // Child rows for each sell
+    // ✅ FIXED: Filter sell rows by their own dates
     if(showSell){
       sells.forEach(sell=>{
-        tbody.insertAdjacentHTML("beforeend",`
-          <tr class="child-row">
-            <td>${esc(sell.sellId||'')}</td>
-            <td>${esc(sell.date||'')}</td>
-            <td>${esc(sell.party||'')}</td>
-            <td>${esc(parent.lotName||"")}</td>
-            <td>${esc(multiDisplay(parent.shape))}</td>
-            <td>${esc(multiDisplay(parent.size))}</td>
-            <td>${esc(parent.description||"")}</td>
-            <td class="num-cell section-col total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell total-col"></td>
-            <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
-            <td class="num-cell sold-col">${fmt(sell.price)}</td>
-            <td class="num-cell sold-col">${fmt(sell.amount)}</td>
-            <td class="num-cell section-col balance-col"></td>
-            <td class="num-cell balance-col"></td>
-            <td class="num-cell balance-col"></td>
-          </tr>
-        `);
+        // Check if this specific sell's date matches the filter
+        const sellDateMatch = (!dateFrom || sell.date >= dateFrom) && (!dateTo || sell.date <= dateTo);
+        
+        // Only render if sell date matches
+        if(sellDateMatch){
+          tbody.insertAdjacentHTML("beforeend",`
+            <tr class="child-row">
+              <td>${esc(sell.sellId||'')}</td>
+              <td>${esc(sell.date||'')}</td>
+              <td>${esc(sell.party||'')}</td>
+              <td>${esc(parent.lotName||"")}</td>
+              <td>${esc(multiDisplay(parent.shape))}</td>
+              <td>${esc(multiDisplay(parent.size))}</td>
+              <td>${esc(parent.description||"")}</td>
+              <td class="num-cell section-col total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell total-col"></td>
+              <td class="num-cell section-col sold-col">${fmt(sell.cts)}</td>
+              <td class="num-cell sold-col">${fmt(sell.price)}</td>
+              <td class="num-cell sold-col">${fmt(sell.amount)}</td>
+              <td class="num-cell section-col balance-col"></td>
+              <td class="num-cell balance-col"></td>
+              <td class="num-cell balance-col"></td>
+            </tr>
+          `);
+        }
       });
     }
   });
