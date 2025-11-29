@@ -341,7 +341,7 @@ body{
   background:#fff;
   border-radius:16px;
   padding:24px;
-  max-width:400px;
+  max-width:500px;
   width:90%;
   box-shadow:0 20px 60px rgba(0,0,0,0.3);
 }
@@ -350,11 +350,92 @@ body{
   font-weight:700;
   margin-bottom:16px;
 }
-  /* Print Styles */
+.print-modal-options{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  margin-bottom:20px;
+}
+.print-option{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  padding:12px;
+  border:2px solid var(--line);
+  border-radius:10px;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.print-option:hover{
+  background:#f9f9f9;
+  border-color:var(--accent);
+}
+.print-option input[type="radio"]{
+  margin-top:3px;
+  cursor:pointer;
+}
+.print-option-label{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.print-option-label strong{
+  font-size:14px;
+  color:var(--ink);
+}
+.print-option-label span{
+  font-size:12px;
+  color:var(--ink-soft);
+}
+.print-modal-section{
+  margin-bottom:16px;
+}
+.print-modal-section-title{
+  font-size:13px;
+  font-weight:600;
+  color:var(--ink-soft);
+  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+}
+.print-modal-buttons{
+  display:flex;
+  gap:10px;
+  justify-content:flex-end;
+  margin-top:20px;
+}
+.print-modal-btn{
+  padding:8px 16px;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:#fff;
+  font-size:13px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all 0.2s;
+}
+.print-modal-btn:hover{
+  background:#f5f5f5;
+}
+.print-modal-btn.primary{
+  background:var(--accent);
+  color:#fff;
+  border-color:var(--accent);
+}
+.print-modal-btn.primary:hover{
+  background:#4f7259;
+}
+
+/* Print Styles - Landscape */
 @media print {
   @page {
     size: landscape;
     margin: 0.5in 0.75in;
+  }
+
+  body.print-portrait {
+    /* This will be overridden by the @page rule below */
   }
 
   body {
@@ -508,6 +589,23 @@ body{
     page-break-after:avoid;
   }
 }
+
+/* Print Styles - Portrait Override */
+@media print {
+  body.print-portrait {
+    /* Portrait-specific styles */
+  }
+}
+
+@page portrait {
+  size: portrait;
+  margin: 0.5in 0.75in;
+}
+
+@page landscape {
+  size: landscape;
+  margin: 0.5in 0.75in;
+}
 </style>
 </head>
 
@@ -517,21 +615,45 @@ body{
 <div class="print-modal-overlay" id="printModal">
   <div class="print-modal">
     <div class="print-modal-title">Print Options</div>
-    <div class="print-modal-options">
-      <label class="print-option">
-        <input type="radio" name="printOption" value="with-summary" checked>
-        <div class="print-option-label">
-          <strong>Include Summary Section</strong>
-          <span>Print with KPI cards and table</span>
-        </div>
-      </label>
-      <label class="print-option">
-        <input type="radio" name="printOption" value="table-only">
-        <div class="print-option-label">
-          <strong>Table Only</strong>
-          <span>Print table without summary KPIs</span>
-        </div>
-      </label>
+    
+    <div class="print-modal-section">
+      <div class="print-modal-section-title">Content</div>
+      <div class="print-modal-options">
+        <label class="print-option">
+          <input type="radio" name="printContent" value="with-summary" checked>
+          <div class="print-option-label">
+            <strong>Include Summary Section</strong>
+            <span>Print with KPI cards and table</span>
+          </div>
+        </label>
+        <label class="print-option">
+          <input type="radio" name="printContent" value="table-only">
+          <div class="print-option-label">
+            <strong>Table Only</strong>
+            <span>Print table without summary KPIs</span>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div class="print-modal-section">
+      <div class="print-modal-section-title">Orientation</div>
+      <div class="print-modal-options">
+        <label class="print-option">
+          <input type="radio" name="printOrientation" value="landscape" checked>
+          <div class="print-option-label">
+            <strong>Landscape</strong>
+            <span>Wider layout, best for tables with many columns</span>
+          </div>
+        </label>
+        <label class="print-option">
+          <input type="radio" name="printOrientation" value="portrait">
+          <div class="print-option-label">
+            <strong>Portrait</strong>
+            <span>Taller layout, standard page orientation</span>
+          </div>
+        </label>
+      </div>
     </div>
 
     <div class="print-modal-buttons">
@@ -1134,14 +1256,45 @@ function closePrintModal(){
   document.getElementById('printModal').classList.remove('active');
 }
 function confirmPrint(){
-  const opt=document.querySelector('input[name="printOption"]:checked').value;
-  if(opt==="with-summary"){
+  const contentOpt=document.querySelector('input[name="printContent"]:checked').value;
+  const orientationOpt=document.querySelector('input[name="printOrientation"]:checked').value;
+  
+  // Apply content option
+  if(contentOpt==="with-summary"){
     document.body.classList.add("print-with-summary");
   } else {
     document.body.classList.remove("print-with-summary");
   }
+  
+  // Apply orientation option
+  if(orientationOpt==="portrait"){
+    document.body.classList.add("print-portrait");
+    
+    // Create a style element to override @page
+    const styleEl = document.createElement('style');
+    styleEl.id = 'print-orientation-override';
+    styleEl.textContent = '@page { size: portrait; margin: 0.5in 0.75in; }';
+    document.head.appendChild(styleEl);
+  } else {
+    document.body.classList.remove("print-portrait");
+    
+    // Remove any existing override
+    const existingStyle = document.getElementById('print-orientation-override');
+    if(existingStyle) {
+      existingStyle.remove();
+    }
+  }
+  
   closePrintModal();
-  setTimeout(()=>window.print(),100);
+  setTimeout(()=>{
+    window.print();
+    
+    // Clean up after print
+    setTimeout(()=>{
+      const styleOverride = document.getElementById('print-orientation-override');
+      if(styleOverride) styleOverride.remove();
+    }, 1000);
+  }, 100);
 }
 
 /* =====================================================
