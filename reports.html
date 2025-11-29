@@ -246,6 +246,7 @@ body{
   display:none;
 }
 
+/* Buttons */
 .slicer-clear-btn, .action-btn{
   height:26px;
   padding:0 12px;
@@ -320,7 +321,7 @@ body{
 .tab-section{display:none;}
 .tab-section.active{display:block;}
 
-/* Print Dialog Modal */
+/* Print Modal */
 .print-modal-overlay{
   display:none;
   position:fixed;
@@ -348,88 +349,21 @@ body{
   font-size:18px;
   font-weight:700;
   margin-bottom:16px;
-  color:var(--ink);
 }
-.print-modal-options{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  margin-bottom:20px;
-}
-.print-option{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px;
-  border:2px solid var(--line);
-  border-radius:10px;
-  cursor:pointer;
-  transition:.15s;
-}
-.print-option:hover{
-  border-color:var(--accent);
-  background:#f9f9f9;
-}
-.print-option input[type="radio"]{
-  width:18px;
-  height:18px;
-  cursor:pointer;
-}
-.print-option-label{
-  flex:1;
-  cursor:pointer;
-}
-.print-option-label strong{
-  display:block;
-  font-size:14px;
-  margin-bottom:2px;
-}
-.print-option-label span{
-  font-size:12px;
-  color:var(--ink-soft);
-}
-.print-modal-buttons{
-  display:flex;
-  gap:10px;
-  justify-content:flex-end;
-}
-.print-modal-btn{
-  padding:8px 20px;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:#fff;
-  font-size:13px;
-  font-weight:600;
-  cursor:pointer;
-  transition:.15s;
-}
-.print-modal-btn.primary{
-  background:var(--accent);
-  color:#fff;
-  border-color:var(--accent);
-}
-.print-modal-btn:hover{
-  transform:translateY(-1px);
-  box-shadow:0 4px 12px var(--shadow);
-}
-
-/* Professional Print Styles */
+  /* Print Styles */
 @media print {
-  /* Page setup */
   @page {
     size: landscape;
     margin: 0.5in 0.75in;
   }
-  
-  /* Reset body */
+
   body {
     background: white;
     overflow: visible;
     margin: 0;
     padding: 0;
   }
-  
-  /* Hide non-printable elements */
+
   .nav-vertical,
   .panel,
   .tab-row,
@@ -439,197 +373,139 @@ body{
   .search-box-global,
   .no-print,
   .print-modal-overlay {
-    display: none !important;
+    display:none !important;
   }
-  
-  /* Workspace adjustments */
+
   .workspace {
-    margin-left: 0;
-    height: auto;
-    overflow: visible;
-    padding: 0;
+    margin-left:0;
+    height:auto;
+    overflow:visible;
+    padding:0;
   }
-  
-  /* Show only active tab */
-  .tab-section {
-    display: none !important;
-  }
-  
+
+  .tab-section {display:none !important;}
   .tab-section.active {
-    display: block !important;
-    page-break-before: avoid;
+    display:block !important;
+    page-break-before:avoid;
   }
-  
-  /* Print header */
+
   .tab-section.active::before {
-    content: "INVENTORY REPORT - " attr(data-print-title);
-    display: block;
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    padding-bottom: 8px;
-    border-bottom: 3px solid #333;
-    text-align: center;
-    color: #2f3b33;
+    content:"INVENTORY REPORT - " attr(data-print-title);
+    display:block;
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:16px;
+    padding-bottom:8px;
+    border-bottom:3px solid #333;
+    text-align:center;
+    color:#2f3b33;
   }
-  
-  /* KPI cards for print - hidden by default */
-  .kpi-row {
-    display: none !important;
-  }
-  
-  /* Show KPIs when summary mode is active */
+
+  .kpi-row {display:none !important;}
+
   body.print-with-summary .kpi-row {
-    display: flex !important;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-    page-break-inside: avoid;
+    display:flex !important;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:16px;
+    page-break-inside:avoid;
   }
-  
   body.print-with-summary .kpi-card {
-    flex: 1 1 180px;
-    background: #f5f5f5 !important;
-    border: 1px solid #ccc !important;
-    border-radius: 6px;
-    padding: 8px 10px;
-    box-shadow: none;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    flex:1 1 180px;
+    background:#f5f5f5 !important;
+    border:1px solid #ccc !important;
+    border-radius:6px;
+    padding:8px 10px;
+    box-shadow:none;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
-  
   body.print-with-summary .kpi-label {
-    font-size: 9px;
-    color: #666 !important;
-    margin-bottom: 3px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    font-size:9px;
+    color:#666 !important;
+    margin-bottom:3px;
+    letter-spacing:0.05em;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
-  
   body.print-with-summary .kpi-main {
-    font-size: 14px;
-    font-weight: 700;
-    color: #000 !important;
+    font-size:14px;
+    font-weight:700;
+    color:#000 !important;
   }
-  
   body.print-with-summary .kpi-sub {
-    font-size: 9px;
-    color: #666 !important;
+    font-size:9px;
+    color:#666 !important;
   }
-  
-  /* Card container */
+
   .card {
-    border: none;
-    box-shadow: none;
-    overflow: visible;
-    border-radius: 0;
-    margin-top: 0;
+    border:none;
+    box-shadow:none;
+    overflow:visible;
+    border-radius:0;
+    margin-top:0;
   }
-  
   .table-shell {
-    overflow: visible;
-    border: none;
+    overflow:visible;
+    border:none;
   }
-  
-  /* Table styling */
+
   .table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 9px;
-    page-break-inside: auto;
+    width:100%;
+    border-collapse:collapse;
+    font-size:9px;
+    page-break-inside:auto;
   }
-  
-  /* Headers repeat on every page */
   .table thead {
-    display: table-header-group;
+    display:table-header-group;
   }
-  
   .table thead th {
-    background: #e8e8e8 !important;
-    border: 1px solid #999 !important;
-    padding: 6px 4px;
-    color: #000 !important;
-    text-align: left;
-    font-weight: 700;
-    font-size: 9px;
-    position: static;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    background:#e8e8e8 !important;
+    border:1px solid #999 !important;
+    padding:6px 4px;
+    color:#000 !important;
+    font-weight:700;
+    font-size:9px;
+    position:static;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
-  
-  /* Table body */
   .table tbody {
-    display: table-row-group;
+    display:table-row-group;
   }
-  
   .table tbody tr {
-    page-break-inside: avoid;
-    page-break-after: auto;
+    page-break-inside:avoid;
+    page-break-after:auto;
   }
-  
   .table tbody td {
-    border: 1px solid #ccc !important;
-    padding: 4px 4px;
-    font-size: 9px;
-    color: #000 !important;
+    border:1px solid #ccc !important;
+    padding:4px 4px;
+    font-size:9px;
+    color:#000 !important;
   }
-  
-  /* Remove row background colors - use bold/regular text instead */
-  .add-row {
-    background: white !important;
-    font-weight: 700 !important;
-  }
-  
-  .sell-row {
-    background: white !important;
-    font-weight: 400 !important;
-  }
-  
-  /* Badges */
+
+  .add-row {background:white !important; font-weight:700 !important;}
+  .sell-row {background:white !important; font-weight:400 !important;}
+
   .badge {
-    display: inline-block;
-    font-size: 8px;
-    padding: 2px 4px;
-    border-radius: 3px;
-    font-weight: 700;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    display:inline-block;
+    font-size:8px;
+    padding:2px 4px;
+    border-radius:3px;
+    font-weight:700;
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
   }
-  
-  .badge-add {
-    background: #9CD8A5 !important;
-    color: #1f3a27 !important;
-  }
-  
-  .badge-sell {
-    background: #E8A3A3 !important;
-    color: #4f1f1f !important;
-  }
-  
-  .badge-source-ajmz {
-    background: #d1e5ff !important;
-    color: #204f7a !important;
-  }
-  
-  .badge-source-calib {
-    background: #ffe3b3 !important;
-    color: #7a4f20 !important;
-  }
-  
-  /* Profit/Loss colors */
-  .kpi-profit {
-    color: #2e7d32 !important;
-  }
-  
-  .kpi-loss {
-    color: #c62828 !important;
-  }
-  
-  /* Prevent orphaned rows */
+  .badge-add {background:#9CD8A5 !important; color:#1f3a27 !important;}
+  .badge-sell {background:#E8A3A3 !important; color:#4f1f1f !important;}
+  .badge-source-ajmz {background:#d1e5ff !important; color:#204f7a !important;}
+  .badge-source-calib {background:#ffe3b3 !important; color:#7a4f20 !important;}
+
+  .kpi-profit {color:#2e7d32 !important;}
+  .kpi-loss {color:#c62828 !important;}
+
   .table tbody tr:nth-last-child(-n+3) {
-    page-break-after: avoid;
+    page-break-after:avoid;
   }
 }
 </style>
@@ -637,7 +513,7 @@ body{
 
 <body>
 
-<!-- Print Modal -->
+<!-- PRINT MODAL -->
 <div class="print-modal-overlay" id="printModal">
   <div class="print-modal">
     <div class="print-modal-title">Print Options</div>
@@ -657,6 +533,7 @@ body{
         </div>
       </label>
     </div>
+
     <div class="print-modal-buttons">
       <button class="print-modal-btn" onclick="closePrintModal()">Cancel</button>
       <button class="print-modal-btn primary" onclick="confirmPrint()">Print</button>
@@ -666,12 +543,12 @@ body{
 
 <!-- LEFT NAVIGATION -->
 <div class="nav-vertical">
-  <a href="index.html" class="nav-item" title="Add">➕</a>
-  <a href="added.html" class="nav-item" title="Added">📝</a>
-  <a href="sell.html" class="nav-item" title="Sell">💎</a>
-  <a href="reports.html" class="nav-item active" title="Reports">📊</a>
-  <a href="reports2.html" class="nav-item" title="Reports">📊</a>
-  <a href="reports3.html" class="nav-item" title="Reports">📊</a>
+  <a href="index.html" class="nav-item">➕</a>
+  <a href="added.html" class="nav-item">📝</a>
+  <a href="sell.html" class="nav-item">💎</a>
+  <a href="reports.html" class="nav-item active">📊</a>
+  <a href="reports2.html" class="nav-item">📊</a>
+  <a href="reports3.html" class="nav-item">📊</a>
 </div>
 
 <div class="workspace">
@@ -690,6 +567,7 @@ body{
 
   <!-- ===================== ALL STONES TAB ====================== -->
   <div class="tab-section active" id="tabALL" data-print-title="ALL STONES">
+
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Added</div><div class="kpi-main" id="all_kpi_added_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_added_sub">Amount: 0.00</div></div>
       <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="all_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="all_kpi_sold_sub">Amount: 0.00</div></div>
@@ -706,42 +584,28 @@ body{
           <option value="CALIB">CALIB</option>
         </select>
       </div>
+
+      <div class="slicer-group"><label class="slicer-label">Row Type</label><div id="all_filter_rowtype" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Tx ID</label><div id="all_filter_txid" class="searchable-select-wrapper"></div></div>
+      <div class="slicer-group"><label class="slicer-label">Sell ID</label><div id="all_filter_sellid" class="searchable-select-wrapper"></div></div>
+
+      <div class="slicer-group"><label class="slicer-label">Lot</label><div id="all_filter_lot" class="searchable-select-wrapper"></div></div>
+
+      <div class="slicer-group"><label class="slicer-label">Shape</label><div id="all_filter_shape" class="searchable-select-wrapper"></div></div>
+
+      <div class="slicer-group"><label class="slicer-label">Size</label><div id="all_filter_size" class="searchable-select-wrapper"></div></div>
+
+      <!-- ⭐ ADDED GRADE FILTER HERE ⭐ -->
       <div class="slicer-group">
-        <label class="slicer-label">Row Type</label>
-        <div id="all_filter_rowtype" class="searchable-select-wrapper"></div>
+        <label class="slicer-label">Grade</label>
+        <div id="all_filter_grade" class="searchable-select-wrapper"></div>
       </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Tx ID</label>
-        <div id="all_filter_txid" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Sell ID</label>
-        <div id="all_filter_sellid" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Lot</label>
-        <div id="all_filter_lot" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Shape</label>
-        <div id="all_filter_shape" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Size</label>
-        <div id="all_filter_size" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Party</label>
-        <div id="all_filter_party" class="searchable-select-wrapper"></div>
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date from</label>
-        <input id="all_filter_date_from" type="date" class="slicer-input">
-      </div>
-      <div class="slicer-group">
-        <label class="slicer-label">Date to</label>
-        <input id="all_filter_date_to" type="date" class="slicer-input">
-      </div>
+
+      <div class="slicer-group"><label class="slicer-label">Party</label><div id="all_filter_party" class="searchable-select-wrapper"></div></div>
+
+      <div class="slicer-group"><label class="slicer-label">Date from</label><input id="all_filter_date_from" type="date" class="slicer-input"></div>
+      <div class="slicer-group"><label class="slicer-label">Date to</label><input id="all_filter_date_to" type="date" class="slicer-input"></div>
+
       <button class="slicer-clear-btn" id="all_clear_filters">Clear</button>
       <button class="action-btn" id="all_print">🖨️ Print</button>
       <button class="action-btn" id="all_export_csv">📊 CSV</button>
@@ -774,10 +638,12 @@ body{
         </table>
       </div>
     </div>
+
   </div>
 
   <!-- ======================= PARTY TAB ========================= -->
   <div class="tab-section" id="tabPARTY" data-print-title="PARTY">
+
     <div class="kpi-row">
       <div class="kpi-card"><div class="kpi-label">Total Sold</div><div class="kpi-main" id="py_kpi_sold_main">0.00 CTS / 0 PCS</div><div class="kpi-sub" id="py_kpi_sold_sub">Amount: 0.00</div></div>
       <div class="kpi-card"><div class="kpi-label">Distinct Parties</div><div class="kpi-main" id="py_kpi_party_main">0</div><div class="kpi-sub" id="py_kpi_party_sub">Parties with sells</div></div>
@@ -798,16 +664,32 @@ body{
     <div class="card print-area" id="py_print_area">
       <div class="table-shell">
         <table class="table">
-          <thead><tr><th>Party</th><th>Source</th><th>Date</th><th>Tx ID</th><th>Lot</th><th>CTS</th><th>PCS</th><th>Price</th><th>Amount</th><th>Remarks</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Party</th>
+              <th>Source</th>
+              <th>Date</th>
+              <th>Tx ID</th>
+              <th>Lot</th>
+              <th>CTS</th>
+              <th>PCS</th>
+              <th>Price</th>
+              <th>Amount</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
           <tbody id="tbodyPARTY"></tbody>
         </table>
       </div>
     </div>
   </div>
 
-</div>
+</div> <!-- end workspace -->
 
 <script>
+/* ==========================
+   FIREBASE INIT
+========================== */
 const firebaseConfig = {
   apiKey: "AIzaSyC72tFu_MdXf4eq4PMI-rtd4PpMfpLNZpM",
   authDomain: "ajmzinventory.firebaseapp.com",
@@ -820,6 +702,9 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+/* ==========================
+   UTILITY FUNCTIONS
+========================== */
 function esc(v){
   if(v===null||v===undefined)return"";
   return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -843,13 +728,19 @@ function parseMulti(str){
   return String(str).split(",").map(s=>s.trim()).filter(Boolean);
 }
 function multiDisplay(arr){
-  if(!arr)return "";
+  if(!arr)return"";
   if(Array.isArray(arr))return arr.join(", ");
   return arr;
 }
 
+/* ==========================
+   DATA BUFFERS
+========================== */
 let AJMZ_PARENTS=[],CALIB_PARENTS=[],ALL_ROWS=[],PARTY_ROWS=[];
 
+/* ==========================
+   LOAD ALL DATA
+========================== */
 async function loadAllData(){
   const [ajSnap,cbSnap,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
@@ -862,44 +753,49 @@ async function loadAllData(){
   const sellMap={};
 
   if(sellSnap.exists()){
-    sellSnap.forEach(parentSnap=>{
-      const parentKey=parentSnap.key;
+    sellSnap.forEach(parent=>{
+      const parentKey=parent.key;
       sellMap[parentKey]=[];
-      parentSnap.forEach(childSnap=>{
-        const obj=childSnap.val();
-        obj.key=childSnap.key;
-        obj.cts=num(obj.cts);
-        obj.pcs=num(obj.pcs);
-        obj.price=num(obj.price);
-        obj.amount=num(obj.amount||(obj.cts*obj.price));
-        sellMap[parentKey].push(obj);
+      parent.forEach(child=>{
+        const s=child.val();
+        s.key=child.key;
+        s.cts=num(s.cts);
+        s.pcs=num(s.pcs);
+        s.price=num(s.price);
+        s.amount=num(s.amount||(s.cts*s.price));
+        sellMap[parentKey].push(s);
       });
     });
   }
 
+  /* ----- Load AJMZ Parents ----- */
   if(ajSnap.exists()){
-    ajSnap.forEach(s=>{
-      const o=s.val();o.key=s.key;
-      o.shape=parseMulti(o.shape);
-      o.size=parseMulti(o.size);
-      o.cts=num(o.cts);o.pcs=num(o.pcs);
-      o.price=num(o.price);
-      o.amount=num(o.amount||(o.cts*o.price));
-      o.__sells=sellMap[o.key]||[];
-      AJMZ_PARENTS.push(o);
+    ajSnap.forEach(row=>{
+      const p=row.val();
+      p.key=row.key;
+      p.shape=parseMulti(p.shape);
+      p.size=parseMulti(p.size);
+      p.cts=num(p.cts);
+      p.pcs=num(p.pcs);
+      p.price=num(p.price);
+      p.amount=num(p.amount||(p.cts*p.price));
+      p.__sells=sellMap[p.key]||[];
+      AJMZ_PARENTS.push(p);
     });
   }
 
+  /* ----- Load CALIB Parents ----- */
   if(cbSnap.exists()){
-    cbSnap.forEach(s=>{
-      const o=s.val();o.key=s.key;
-      o.shape=parseMulti(o.shape);
-      o.size=parseMulti(o.size);
-      o.cts=num(o.cts);
-      o.price=num(o.price);
-      o.amount=num(o.amount||(o.cts*o.price));
-      o.__sells=sellMap[o.key]||[];
-      CALIB_PARENTS.push(o);
+    cbSnap.forEach(row=>{
+      const p=row.val();
+      p.key=row.key;
+      p.shape=parseMulti(p.shape);
+      p.size=parseMulti(p.size);
+      p.cts=num(p.cts);
+      p.price=num(p.price);
+      p.amount=num(p.amount||(p.cts*p.price));
+      p.__sells=sellMap[p.key]||[];
+      CALIB_PARENTS.push(p);
     });
   }
 
@@ -907,12 +803,15 @@ async function loadAllData(){
   populateSlicers();
 }
 
+/* ==========================
+   BUILD UNIFIED ROWS
+========================== */
 function buildUnifiedRows(){
   ALL_ROWS=[];
   PARTY_ROWS=[];
 
+  /* ----- AJMZ ----- */
   AJMZ_PARENTS.forEach(p=>{
-    // ADD row
     ALL_ROWS.push({
       source:"AJMZ",
       type:"ADD",
@@ -931,8 +830,7 @@ function buildUnifiedRows(){
       shape:p.shape,
       size:p.size
     });
-    
-    // SELL rows
+
     (p.__sells||[]).forEach(s=>{
       ALL_ROWS.push({
         source:"AJMZ",
@@ -952,6 +850,7 @@ function buildUnifiedRows(){
         shape:p.shape,
         size:p.size
       });
+
       PARTY_ROWS.push({
         source:"AJMZ",
         party:s.party||"",
@@ -967,8 +866,8 @@ function buildUnifiedRows(){
     });
   });
 
+  /* ----- CALIB ----- */
   CALIB_PARENTS.forEach(p=>{
-    // ADD row
     ALL_ROWS.push({
       source:"CALIB",
       type:"ADD",
@@ -987,8 +886,7 @@ function buildUnifiedRows(){
       shape:p.shape,
       size:p.size
     });
-    
-    // SELL rows
+
     (p.__sells||[]).forEach(s=>{
       ALL_ROWS.push({
         source:"CALIB",
@@ -1008,6 +906,7 @@ function buildUnifiedRows(){
         shape:p.shape,
         size:p.size
       });
+
       PARTY_ROWS.push({
         source:"CALIB",
         party:s.party||"",
@@ -1023,72 +922,92 @@ function buildUnifiedRows(){
     });
   });
 }
-
-function createSearchableSelect(wrapperId,values){
+/* =====================================================
+   SEARCHABLE SELECT COMPONENT
+===================================================== */
+function createSearchableSelect(wrapperId, values){
   const wrapper=document.getElementById(wrapperId);
   if(!wrapper)return null;
-  wrapper.innerHTML=`<input type="text" class="searchable-select-input" placeholder="All" readonly><div class="searchable-select-dropdown"></div>`;
+
+  wrapper.innerHTML=`
+    <input type="text" class="searchable-select-input" placeholder="All" readonly>
+    <div class="searchable-select-dropdown"></div>
+  `;
+
   const input=wrapper.querySelector('.searchable-select-input');
   const dropdown=wrapper.querySelector('.searchable-select-dropdown');
+
   let selectedValue="";
-  const opts=["All",...values];
+  const opts=["All", ...values];
+
   opts.forEach(val=>{
     const opt=document.createElement('div');
     opt.className='searchable-select-option';
     opt.textContent=val;
-    opt.dataset.value=val==="All"?"":val;
-    if(val==="All")opt.classList.add('selected');
+    opt.dataset.value = val==="All" ? "" : val;
+
+    if(val==="All") opt.classList.add('selected');
+
     opt.addEventListener('click',()=>{
       selectedValue=opt.dataset.value;
       input.value=opt.textContent;
       input.setAttribute('data-value',selectedValue);
-      dropdown.querySelectorAll('.searchable-select-option').forEach(o=>o.classList.remove('selected'));
+
+      dropdown.querySelectorAll('.searchable-select-option')
+        .forEach(o=>o.classList.remove('selected'));
       opt.classList.add('selected');
+
       dropdown.classList.remove('active');
       wrapper.dispatchEvent(new Event('change',{bubbles:true}));
     });
+
     dropdown.appendChild(opt);
   });
+
+  /* OPEN / CLOSE */
   input.addEventListener('click',e=>{
     e.stopPropagation();
-    const isActive=dropdown.classList.contains('active');
-    document.querySelectorAll('.searchable-select-dropdown').forEach(d=>d.classList.remove('active'));
-    if(!isActive){
+    const active=dropdown.classList.contains('active');
+    document.querySelectorAll('.searchable-select-dropdown')
+      .forEach(d=>d.classList.remove('active'));
+    if(!active){
       dropdown.classList.add('active');
       input.removeAttribute('readonly');
-      input.focus();
-      input.select();
+      input.focus(); input.select();
     }
   });
+
+  /* SEARCH FILTER */
   input.addEventListener('input',()=>{
     const term=input.value.toLowerCase();
     dropdown.querySelectorAll('.searchable-select-option').forEach(opt=>{
       const text=opt.textContent.toLowerCase();
-      opt.classList.toggle('hidden',!text.includes(term)&&opt.dataset.value!=="");
+      opt.classList.toggle('hidden', !text.includes(term) && opt.dataset.value!=="");
     });
   });
+
+  /* CLOSE ON BLUR */
   input.addEventListener('blur',()=>{
     setTimeout(()=>{
-      if(!dropdown.matches(':hover')){
-        dropdown.classList.remove('active');
-        input.setAttribute('readonly',true);
-      }
-    },200);
+      dropdown.classList.remove('active');
+      input.setAttribute('readonly',true);
+    },150);
   });
+
   document.addEventListener('click',e=>{
     if(!wrapper.contains(e.target)){
       dropdown.classList.remove('active');
       input.setAttribute('readonly',true);
     }
   });
-  return{
+
+  return {
     getValue:()=>selectedValue,
     setValue:(val)=>{
       selectedValue=val||"";
       const opt=dropdown.querySelector(`[data-value="${val||""}"]`);
       if(opt){
         input.value=opt.textContent;
-        input.setAttribute('data-value',selectedValue);
         dropdown.querySelectorAll('.searchable-select-option').forEach(o=>o.classList.remove('selected'));
         opt.classList.add('selected');
       }
@@ -1097,117 +1016,137 @@ function createSearchableSelect(wrapperId,values){
       selectedValue="";
       input.value="All";
       input.setAttribute('data-value',"");
-      dropdown.querySelectorAll('.searchable-select-option').forEach(o=>{
+
+      dropdown.querySelectorAll('.searchable-select-option')
+      .forEach(o=>{
         o.classList.remove('selected');
-        if(o.dataset.value==="")o.classList.add('selected');
+        if(o.dataset.value==="") o.classList.add('selected');
       });
     }
   };
 }
 
+/* =====================================================
+   UNIQUE VALUE BUILDER
+===================================================== */
 function uniqueValues(arr,key){
   const set=new Set();
   arr.forEach(o=>{
     const v=o[key];
     if(Array.isArray(v)){
       v.forEach(item=>{
-        const trimmed=String(item||"").trim();
-        if(trimmed)set.add(trimmed);
+        const t=String(item||"").trim();
+        if(t) set.add(t);
       });
-    }else{
-      const trimmed=String(v||"").trim();
-      if(trimmed)set.add(trimmed);
+    } else {
+      const t=String(v||"").trim();
+      if(t) set.add(t);
     }
   });
   return Array.from(set).sort();
 }
 
+/* =====================================================
+   POPULATE ALL SLICERS (WITH GRADE FILTER)
+===================================================== */
 const selects={};
+
 function populateSlicers(){
   // ALL STONES
-  selects.all_rowType=createSearchableSelect("all_filter_rowtype",uniqueValues(ALL_ROWS,"type"));
-  selects.all_txId=createSearchableSelect("all_filter_txid",uniqueValues(ALL_ROWS,"txId"));
-  selects.all_sellId=createSearchableSelect("all_filter_sellid",uniqueValues(ALL_ROWS,"sellId"));
-  selects.all_lot=createSearchableSelect("all_filter_lot",uniqueValues(ALL_ROWS,"lot"));
-  selects.all_shape=createSearchableSelect("all_filter_shape",uniqueValues(ALL_ROWS,"shape"));
-  selects.all_size=createSearchableSelect("all_filter_size",uniqueValues(ALL_ROWS,"size"));
-  selects.all_party=createSearchableSelect("all_filter_party",uniqueValues(ALL_ROWS,"party"));
-  
-  // PARTY
-  selects.py_party=createSearchableSelect("py_filter_party",uniqueValues(PARTY_ROWS,"party"));
+  selects.all_rowType=createSearchableSelect("all_filter_rowtype", uniqueValues(ALL_ROWS,"type"));
+  selects.all_txId=createSearchableSelect("all_filter_txid", uniqueValues(ALL_ROWS,"txId"));
+  selects.all_sellId=createSearchableSelect("all_filter_sellid", uniqueValues(ALL_ROWS,"sellId"));
+  selects.all_lot=createSearchableSelect("all_filter_lot", uniqueValues(ALL_ROWS,"lot"));
+  selects.all_shape=createSearchableSelect("all_filter_shape", uniqueValues(ALL_ROWS,"shape"));
+  selects.all_size=createSearchableSelect("all_filter_size", uniqueValues(ALL_ROWS,"size"));
+
+  /* ⭐ UNIFIED GRADE FILTER ⭐ */
+  selects.all_grade=createSearchableSelect("all_filter_grade", uniqueValues(ALL_ROWS,"formatGrade"));
+
+  selects.all_party=createSearchableSelect("all_filter_party", uniqueValues(ALL_ROWS,"party"));
+
+  // PARTY tab
+  selects.py_party=createSearchableSelect("py_filter_party", uniqueValues(PARTY_ROWS,"party"));
 }
 
+/* =====================================================
+   DATE RANGE CHECK
+===================================================== */
 function dateInRange(d,from,to){
   const dt=parseDateToComparable(d);
   if(dt===null)return false;
+
   if(from){
     const df=parseDateToComparable(from);
-    if(df!==null&&dt<df)return false;
+    if(df!==null && dt < df) return false;
   }
   if(to){
-    const dtt=parseDateToComparable(to);
-    if(dtt!==null&&dt>dtt)return false;
+    const dtTo=parseDateToComparable(to);
+    if(dtTo!==null && dt > dtTo) return false;
   }
   return true;
 }
 
+/* =====================================================
+   CSV EXPORT
+===================================================== */
 function exportCSV(containerId,filename){
   const table=document.querySelector(`#${containerId} table`);
   if(!table)return;
+
   const rows=Array.from(table.querySelectorAll('tr'));
   const csv=rows.map(row=>{
     const cells=Array.from(row.querySelectorAll('th, td'));
     return cells.map(cell=>{
-      let text=cell.textContent.trim();
-      text=text.replace(/\s+/g,' ');
-      if(text.includes(',')||text.includes('"')||text.includes('\n')){
-        text='"'+text.replace(/"/g,'""')+'"';
-      }
+      let text=cell.textContent.trim().replace(/\s+/g,' ');
+      if(text.includes(',')||text.includes('"')) text='"'+text.replace(/"/g,'""')+'"';
       return text;
     }).join(',');
   }).join('\n');
+
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
   const link=document.createElement('a');
-  link.setAttribute('href',URL.createObjectURL(blob));
-  link.setAttribute('download',filename);
+  link.href=URL.createObjectURL(blob);
+  link.download=filename;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
 }
 
-function matchesFilter(value,filterValue){
-  if(!filterValue)return true;
+/* =====================================================
+   MATCHES FILTER (MULTI-SHAPE & MULTI-SIZE SUPPORT)
+===================================================== */
+function matchesFilter(value, filterValue){
+  if(!filterValue) return true;
   if(Array.isArray(value)){
     return value.some(v=>String(v||"").trim()===filterValue);
   }
   return String(value||"").trim()===filterValue;
 }
 
-// Print Modal Functions
+/* =====================================================
+   PRINT MODAL FUNCTIONS
+===================================================== */
 function showPrintModal(){
   document.getElementById('printModal').classList.add('active');
 }
-
 function closePrintModal(){
   document.getElementById('printModal').classList.remove('active');
 }
-
 function confirmPrint(){
-  const selectedOption=document.querySelector('input[name="printOption"]:checked').value;
-  
-  if(selectedOption==='with-summary'){
-    document.body.classList.add('print-with-summary');
-  }else{
-    document.body.classList.remove('print-with-summary');
+  const opt=document.querySelector('input[name="printOption"]:checked').value;
+  if(opt==="with-summary"){
+    document.body.classList.add("print-with-summary");
+  } else {
+    document.body.classList.remove("print-with-summary");
   }
-  
   closePrintModal();
-  
-  setTimeout(()=>{
-    window.print();
-  },100);
+  setTimeout(()=>window.print(),100);
 }
 
+/* =====================================================
+   APPLY FILTERS — ALL STONES (WITH GRADE)
+===================================================== */
 function applyALLFilters(q=""){
   const srcVal=document.getElementById("all_filter_source").value;
   const rowTypeVal=selects.all_rowType?.getValue()||"";
@@ -1216,38 +1155,48 @@ function applyALLFilters(q=""){
   const lotVal=selects.all_lot?.getValue()||"";
   const shapeVal=selects.all_shape?.getValue()||"";
   const sizeVal=selects.all_size?.getValue()||"";
+
+  /* ⭐ GRADE FILTER ⭐ */
+  const gradeVal=selects.all_grade?.getValue()||"";
+
   const partyVal=selects.all_party?.getValue()||"";
+
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
+
   const tbody=document.getElementById("tbodyALL");
-  
-  // Show loading indicator
-  tbody.innerHTML='<tr><td colspan="16" style="text-align:center;padding:40px;"><div style="font-size:14px;color:var(--ink-soft);">⏳ Loading data...</div></td></tr>';
-  
-  // Use setTimeout to allow UI to update
+  tbody.innerHTML='<tr><td colspan="16" style="text-align:center;padding:40px;">⏳ Loading…</td></tr>';
+
   setTimeout(()=>{
     const fragment=document.createDocumentFragment();
     let addCTS=0,addPCS=0,addAmt=0,soldCTS=0,soldPCS=0,soldAmt=0;
-    
+
     ALL_ROWS.forEach(r=>{
-      if(srcVal&&r.source!==srcVal)return;
-      if(rowTypeVal&&r.type!==rowTypeVal)return;
-      if(txIdVal&&r.txId!==txIdVal)return;
-      if(sellIdVal&&r.sellId!==sellIdVal)return;
-      if(lotVal&&r.lot!==lotVal)return;
-      if(!matchesFilter(r.shape,shapeVal))return;
-      if(!matchesFilter(r.size,sizeVal))return;
-      if(partyVal&&r.party!==partyVal)return;
-      if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
+      if(srcVal && r.source!==srcVal) return;
+      if(rowTypeVal && r.type!==rowTypeVal) return;
+      if(txIdVal && r.txId!==txIdVal) return;
+      if(sellIdVal && r.sellId!==sellIdVal) return;
+      if(lotVal && r.lot!==lotVal) return;
+
+      if(!matchesFilter(r.shape, shapeVal)) return;
+      if(!matchesFilter(r.size, sizeVal)) return;
+
+      /* ⭐ Apply Grade filter ⭐ */
+      if(gradeVal && r.formatGrade!==gradeVal) return;
+
+      if(partyVal && r.party!==partyVal) return;
+      if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
+
       const txt=JSON.stringify(r).toLowerCase();
-      if(q&&!txt.includes(q))return;
-      
+      if(q && !txt.includes(q)) return;
+
       const srcBadge=r.source==="AJMZ"
-        ?`<span class="badge badge-source-ajmz">AJMZ</span>`
-        :`<span class="badge badge-source-calib">CALIB</span>`;
-      
+        ? `<span class="badge badge-source-ajmz">AJMZ</span>`
+        : `<span class="badge badge-source-calib">CALIB</span>`;
+
       const tr=document.createElement('tr');
-      tr.className=r.type==="ADD"?"add-row":"sell-row";
+      tr.className=r.type==="ADD" ? "add-row" : "sell-row";
+
       tr.innerHTML=`
         <td>${srcBadge}</td>
         <td><span class="badge ${r.type==="ADD"?"badge-add":"badge-sell"}">${r.type}</span></td>
@@ -1267,63 +1216,64 @@ function applyALLFilters(q=""){
         <td>${esc(r.remarks)}</td>
       `;
       fragment.appendChild(tr);
-      
+
       if(r.type==="ADD"){
-        addCTS+=r.cts;
-        addPCS+=r.pcs;
-        addAmt+=r.amount;
-      }else{
-        soldCTS+=r.cts;
-        soldPCS+=r.pcs;
-        soldAmt+=r.amount;
+        addCTS+=r.cts; addPCS+=r.pcs; addAmt+=r.amount;
+      } else {
+        soldCTS+=r.cts; soldPCS+=r.pcs; soldAmt+=r.amount;
       }
     });
-    
+
     tbody.innerHTML="";
     tbody.appendChild(fragment);
-    
+
+    /* KPI updates */
     document.getElementById("all_kpi_added_main").textContent=`${fmt(addCTS)} CTS / ${fmt(addPCS)} PCS`;
     document.getElementById("all_kpi_added_sub").textContent=`Amount: ${fmt(addAmt)}`;
     document.getElementById("all_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
     document.getElementById("all_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
     document.getElementById("all_kpi_inv_main").textContent=`${fmt(addCTS-soldCTS)} CTS / ${fmt(addPCS-soldPCS)} PCS`;
+
     const profitEl=document.getElementById("all_kpi_profit_main");
     profitEl.textContent=fmt(soldAmt);
     profitEl.classList.remove("kpi-profit","kpi-loss");
-    if(soldAmt>0)profitEl.classList.add("kpi-profit");
+    if(soldAmt>0) profitEl.classList.add("kpi-profit");
   },10);
 }
 
+/* =====================================================
+   APPLY FILTERS — PARTY TAB
+===================================================== */
 function applyPARTYFilters(q=""){
   const partyVal=selects.py_party?.getValue()||"";
   const srcVal=document.getElementById("py_filter_source").value;
   const dateFrom=document.getElementById("py_filter_date_from").value;
   const dateTo=document.getElementById("py_filter_date_to").value;
+
   const tbody=document.getElementById("tbodyPARTY");
-  
-  // Show loading indicator
-  tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;"><div style="font-size:14px;color:var(--ink-soft);">⏳ Loading data...</div></td></tr>';
-  
-  // Use setTimeout to allow UI to update
+  tbody.innerHTML='<tr><td colspan="10" style="text-align:center;padding:40px;">⏳ Loading…</td></tr>';
+
   setTimeout(()=>{
     const fragment=document.createDocumentFragment();
     let soldCTS=0,soldPCS=0,soldAmt=0;
-    const partySet=new Set();
     let ajCTS=0,cbCTS=0;
-    
+    const partySet=new Set();
+
     PARTY_ROWS.forEach(r=>{
-      if(partyVal&&r.party!==partyVal)return;
-      if(srcVal&&r.source!==srcVal)return;
-      if((dateFrom||dateTo)&&!dateInRange(r.date,dateFrom,dateTo))return;
+      if(partyVal && r.party!==partyVal) return;
+      if(srcVal && r.source!==srcVal) return;
+      if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
+
       const txt=JSON.stringify(r).toLowerCase();
-      if(q&&!txt.includes(q))return;
-      
+      if(q && !txt.includes(q)) return;
+
       partySet.add(r.party);
+
       const srcBadge=r.source==="AJMZ"
-        ?`<span class="badge badge-source-ajmz">AJMZ</span>`
-        :`<span class="badge badge-source-calib">CALIB</span>`;
-      
-      const tr=document.createElement('tr');
+        ? `<span class="badge badge-source-ajmz">AJMZ</span>`
+        : `<span class="badge badge-source-calib">CALIB</span>`;
+
+      const tr=document.createElement("tr");
       tr.className="sell-row";
       tr.innerHTML=`
         <td>${esc(r.party)}</td>
@@ -1338,60 +1288,87 @@ function applyPARTYFilters(q=""){
         <td>${esc(r.remarks)}</td>
       `;
       fragment.appendChild(tr);
-      
+
       soldCTS+=r.cts;
       soldPCS+=r.pcs;
       soldAmt+=r.amount;
-      if(r.source==="AJMZ")ajCTS+=r.cts;else cbCTS+=r.cts;
+      if(r.source==="AJMZ") ajCTS+=r.cts; else cbCTS+=r.cts;
     });
-    
+
     tbody.innerHTML="";
     tbody.appendChild(fragment);
-    
+
     document.getElementById("py_kpi_sold_main").textContent=`${fmt(soldCTS)} CTS / ${fmt(soldPCS)} PCS`;
     document.getElementById("py_kpi_sold_sub").textContent=`Amount: ${fmt(soldAmt)}`;
     document.getElementById("py_kpi_party_main").textContent=partySet.size;
     document.getElementById("py_kpi_split_main").textContent=`${fmt(ajCTS)} / ${fmt(cbCTS)}`;
-    const profitEl=document.getElementById("py_kpi_profit_main");
-    profitEl.textContent=fmt(soldAmt);
-    profitEl.classList.remove("kpi-profit","kpi-loss");
-    if(soldAmt>0)profitEl.classList.add("kpi-profit");
+
+    const pe=document.getElementById("py_kpi_profit_main");
+    pe.textContent=fmt(soldAmt);
+    pe.classList.remove("kpi-profit","kpi-loss");
+    if(soldAmt>0) pe.classList.add("kpi-profit");
   },10);
 }
 
+/* =====================================================
+   TAB BINDING
+===================================================== */
 function bindTabs(){
   document.querySelectorAll(".tab-btn").forEach(btn=>{
     btn.addEventListener("click",()=>{
       document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
       btn.classList.add("active");
+
       const target=btn.dataset.tab;
       document.querySelectorAll(".tab-section").forEach(sec=>sec.classList.remove("active"));
       document.getElementById(target).classList.add("active");
-      const q=document.getElementById("searchGlobal").value;
-      if(target==="tabALL")applyALLFilters(q);
-      else if(target==="tabPARTY")applyPARTYFilters(q);
+
+      const q=document.getElementById("searchGlobal").value.toLowerCase();
+      if(target==="tabALL") applyALLFilters(q);
+      else applyPARTYFilters(q);
     });
   });
 }
 
-document.addEventListener("DOMContentLoaded",async()=>{
+/* =====================================================
+   DOMContentLoaded — MAIN INITIALIZER
+===================================================== */
+document.addEventListener("DOMContentLoaded", async ()=>{
+
   await loadAllData();
   bindTabs();
-  
+
   const globalInput=document.getElementById("searchGlobal");
   globalInput.addEventListener("input",()=>{
     const q=globalInput.value.toLowerCase();
     applyALLFilters(q);
     applyPARTYFilters(q);
   });
-  
-  // ALL STONES events
-  ["all_filter_source","all_filter_date_from","all_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value.toLowerCase()));
+
+  /* ALL STONES — input triggers */
+  ["all_filter_source","all_filter_date_from","all_filter_date_to"]
+  .forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyALLFilters(globalInput.value.toLowerCase());
+    });
   });
-  ["all_filter_rowtype","all_filter_txid","all_filter_sellid","all_filter_lot","all_filter_shape","all_filter_size","all_filter_party"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>applyALLFilters(globalInput.value.toLowerCase()));
+
+  /* ALL STONES — searchable selects including ⭐ GRADE ⭐ */
+  [
+    "all_filter_rowtype",
+    "all_filter_txid",
+    "all_filter_sellid",
+    "all_filter_lot",
+    "all_filter_shape",
+    "all_filter_size",
+    "all_filter_grade",   // ⭐ added
+    "all_filter_party"
+  ].forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyALLFilters(globalInput.value.toLowerCase());
+    });
   });
+
   document.getElementById("all_clear_filters").addEventListener("click",()=>{
     document.getElementById("all_filter_source").value="";
     selects.all_rowType?.reset();
@@ -1400,19 +1377,31 @@ document.addEventListener("DOMContentLoaded",async()=>{
     selects.all_lot?.reset();
     selects.all_shape?.reset();
     selects.all_size?.reset();
+    selects.all_grade?.reset();     // ⭐ reset Grade
     selects.all_party?.reset();
+
     document.getElementById("all_filter_date_from").value="";
     document.getElementById("all_filter_date_to").value="";
+
     applyALLFilters(globalInput.value.toLowerCase());
   });
-  document.getElementById("all_print").addEventListener("click",()=>showPrintModal());
+
+  document.getElementById("all_print").addEventListener("click",showPrintModal);
   document.getElementById("all_export_csv").addEventListener("click",()=>exportCSV("all_print_area","All_Stones_Export.csv"));
-  
-  // PARTY events
-  ["py_filter_source","py_filter_date_from","py_filter_date_to"].forEach(id=>{
-    document.getElementById(id).addEventListener("change",()=>applyPARTYFilters(globalInput.value.toLowerCase()));
+
+
+  /* PARTY FILTERS */
+  ["py_filter_source","py_filter_date_from","py_filter_date_to"]
+  .forEach(id=>{
+    document.getElementById(id).addEventListener("change",()=>{
+      applyPARTYFilters(globalInput.value.toLowerCase());
+    });
   });
-  document.getElementById("py_filter_party").addEventListener("change",()=>applyPARTYFilters(globalInput.value.toLowerCase()));
+
+  document.getElementById("py_filter_party").addEventListener("change",()=>{
+    applyPARTYFilters(globalInput.value.toLowerCase());
+  });
+
   document.getElementById("py_clear_filters").addEventListener("click",()=>{
     selects.py_party?.reset();
     document.getElementById("py_filter_source").value="";
@@ -1420,13 +1409,15 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("py_filter_date_to").value="";
     applyPARTYFilters(globalInput.value.toLowerCase());
   });
-  document.getElementById("py_print").addEventListener("click",()=>showPrintModal());
+
+  document.getElementById("py_print").addEventListener("click",showPrintModal);
   document.getElementById("py_export_csv").addEventListener("click",()=>exportCSV("py_print_area","Party_Export.csv"));
-  
-  // initial render
+
+  /* INITIAL RENDER */
   applyALLFilters("");
   applyPARTYFilters("");
 });
 </script>
+
 </body>
 </html>
