@@ -423,6 +423,159 @@ body{
   box-shadow:0 0 0 1px rgba(93,134,108,.2);
 }
 
+/* Sell ID Mode Selector */
+.sell-id-mode-section {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #fafaf8;
+  margin-bottom: 12px;
+}
+
+.sell-id-mode-section .mode-title {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+
+.sell-id-radio-group {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.sell-id-radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.sell-id-radio-group input[type="radio"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.sell-id-radio-group input[type="radio"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.sell-id-radio-group label.disabled {
+  color: var(--ink-soft);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#existingSellIdDropdownWrapper {
+  margin-top: 8px;
+  position: relative;
+}
+
+#existingSellIdInput {
+  width: 100%;
+  max-width: 600px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  padding: 6px 10px;
+  font-size: 12px;
+  outline: none;
+  background: #fff;
+  font-family: inherit;
+}
+
+#existingSellIdInput:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px rgba(93,134,108,.2);
+}
+
+#existingSellIdInput:disabled {
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+#existingSellIdDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  max-width: 600px;
+  max-height: 250px;
+  overflow-y: auto;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 2px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  z-index: 2000;
+  display: none;
+}
+
+#existingSellIdDropdown.show {
+  display: block;
+}
+
+.sell-id-dropdown-item {
+  padding: 8px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sell-id-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.sell-id-dropdown-item:hover {
+  background: var(--accent-soft);
+}
+
+.sell-id-dropdown-item .sell-id-main {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 12px;
+}
+
+.sell-id-dropdown-item .sell-id-details {
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.sell-id-dropdown-item.no-results {
+  color: var(--ink-soft);
+  cursor: default;
+  font-style: italic;
+}
+
+.sell-id-dropdown-item.no-results:hover {
+  background: transparent;
+}
+
+.selected-sell-id-display {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
 .party-dropdown-wrapper{
   position:relative;
   min-width:200px;
@@ -472,6 +625,7 @@ body{
 }
 .party-dropdown-item.no-results:hover{background:transparent;}
 
+/* Enhanced Sell Modal Table Styles */
 .sell-table{
   width:100%;
   border-collapse:collapse;
@@ -483,7 +637,81 @@ body{
   padding:4px 5px;
   text-align:left;
 }
-.sell-table thead{background:#f3efe6;}
+
+/* Section styling for sell modal */
+.sell-table td.section-a,
+.sell-table th.section-a {
+  background: #f8f8f8 !important;
+}
+
+.sell-table td.section-b,
+.sell-table th.section-b {
+  background: #e8f4f8 !important;
+}
+
+.sell-table td.section-c,
+.sell-table th.section-c {
+  background: #E9F7EC !important;
+}
+
+/* Section labels row */
+.sell-table thead tr.section-labels th {
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 8px 4px;
+  border-bottom: 2px solid var(--line-strong);
+  text-align: center;
+}
+
+/* Column headers */
+.sell-table thead tr.column-headers th {
+  font-weight: 600;
+  font-size: 10px;
+  padding: 6px 4px;
+}
+
+/* Sticky first column */
+.sell-table td:first-child,
+.sell-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: white !important;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.08);
+}
+
+.sell-table thead tr.section-labels th:first-child,
+.sell-table thead tr.column-headers th:first-child {
+  background: white !important;
+}
+
+/* Column widths */
+.sell-table th:nth-child(1) { width: 70px; min-width: 70px; }   /* Type */
+.sell-table th:nth-child(2) { width: 100px; min-width: 100px; }  /* Tx ID */
+.sell-table th:nth-child(3) { width: 100px; min-width: 100px; }  /* Date */
+.sell-table th:nth-child(4) { width: 130px; min-width: 130px; }  /* Party */
+.sell-table th:nth-child(5) { width: 110px; min-width: 110px; }  /* Lot Name */
+.sell-table th:nth-child(6) { width: 90px; min-width: 90px; }   /* Format/Grade */
+.sell-table th:nth-child(7) { width: 120px; min-width: 120px; }  /* Shape */
+.sell-table th:nth-child(8) { width: 100px; min-width: 100px; }  /* Size */
+.sell-table th:nth-child(9) { width: 180px; min-width: 180px; }  /* Description */
+.sell-table th:nth-child(10) { width: 85px; min-width: 85px; }  /* Orig CTS */
+.sell-table th:nth-child(11) { width: 85px; min-width: 85px; }  /* Orig PCS */
+.sell-table th:nth-child(12) { width: 85px; min-width: 85px; }  /* Orig Price */
+.sell-table th:nth-child(13) { width: 100px; min-width: 100px; } /* Orig Amount */
+.sell-table th:nth-child(14) { width: 85px; min-width: 85px; }  /* Sold CTS */
+.sell-table th:nth-child(15) { width: 85px; min-width: 85px; }  /* Sold PCS */
+.sell-table th:nth-child(16) { width: 85px; min-width: 85px; }  /* Rem CTS */
+.sell-table th:nth-child(17) { width: 85px; min-width: 85px; }  /* Rem PCS */
+.sell-table th:nth-child(18) { width: 100px; min-width: 100px; } /* Rem Amount */
+.sell-table th:nth-child(19) { width: 90px; min-width: 90px; }  /* Sell CTS */
+.sell-table th:nth-child(20) { width: 90px; min-width: 90px; }  /* Sell PCS */
+.sell-table th:nth-child(21) { width: 90px; min-width: 90px; }  /* Price */
+.sell-table th:nth-child(22) { width: 100px; min-width: 100px; } /* Amount */
+.sell-table th:nth-child(23) { width: 140px; min-width: 140px; } /* Remarks */
+
 .sell-table input{
   width:100%;
   border-radius:6px;
@@ -806,10 +1034,34 @@ body{
 </div>
 
 <div id="sellModal" class="modal-overlay">
-  <div class="modal-panel" style="width:1100px;max-width:98%;max-height:90%;overflow:auto;">
+  <div class="modal-panel" style="width:95vw;max-width:1800px;max-height:85vh;overflow:auto;">
     <h3 style="margin-bottom:12px;font-size:17px;font-weight:700">
-      <span id="sellModalTitle">Sell Selected Rows</span> – <span id="sellIdLabel">(auto)</span>
+      <span id="sellModalTitle">Sell Selected Rows</span>
     </h3>
+
+    <!-- SELL ID MODE SELECTOR -->
+    <div class="sell-id-mode-section">
+      <div class="mode-title">🆔 Sell ID Assignment</div>
+      <div class="sell-id-radio-group">
+        <label>
+          <input type="radio" name="sellIdMode" value="new" id="radioNewSellId" checked>
+          <span>Generate New ID</span>
+        </label>
+        <label id="labelExistingSellId">
+          <input type="radio" name="sellIdMode" value="existing" id="radioExistingSellId">
+          <span>Use Existing ID</span>
+        </label>
+      </div>
+      
+      <div id="existingSellIdDropdownWrapper" style="display:none;">
+        <input type="text" id="existingSellIdInput" placeholder="Search or select Sell ID..." autocomplete="off"/>
+        <div id="existingSellIdDropdown"></div>
+      </div>
+
+      <div id="selectedSellIdDisplay" style="display:none;">
+        <span class="selected-sell-id-display" id="selectedSellIdText"></span>
+      </div>
+    </div>
 
     <div class="sell-modal-header">
       <label for="sellPartyInput">Party</label>
@@ -825,7 +1077,7 @@ body{
       <input type="number" step="0.0001" id="sellPriceOverride" placeholder="Optional override" style="min-width:140px;"/>
 
       <span style="font-size:11px;color:var(--ink-soft);">
-        • Same <b>SELL ID</b> for all rows • Edit <b>CTS/PCS</b> directly • <b>Price</b> override applies to all
+        • Edit <b>CTS/PCS</b> directly • <b>Price</b> override applies to all
       </span>
     </div>
 
@@ -927,9 +1179,14 @@ let currentSection = "AJMZ";
 let showAddOnlyMode = false;
 
 let sellModalEl, sellModalTableWrapper, sellPartyInput, sellDateInput, sellPriceOverride,
-    sellIdLabelEl, sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle, validationErrors;
+    sellSaveBtn, sellCancelBtn, partyDropdownMenu, sellModalTitle, validationErrors;
+
+let radioNewSellId, radioExistingSellId, existingSellIdDropdownWrapper, existingSellIdInput, existingSellIdDropdown,
+    selectedSellIdDisplay, selectedSellIdText, labelExistingSellId;
 
 let allUniqueParties = [];
+let existingSellIds = []; // Store all existing sell IDs with metadata
+let selectedSellIdValue = ""; // Track the selected Sell ID
 
 let editMode = false;
 let editSellKey = null;
@@ -938,10 +1195,7 @@ let editParentType = null;
 
 // FIXED: Calculate remaining based on actual sells from database
 function getRemainingForRow(row, type) {
-  // Get all sell records for this parent
   const sellRecords = SELLS[row.key] || [];
-  
-  // Calculate total sold from all sell records
   const totalSoldCts = sellRecords.reduce((sum, s) => sum + Number(s.cts || 0), 0);
   const totalSoldPcs = type === "AJMZ" 
     ? sellRecords.reduce((sum, s) => sum + Number(s.pcs || 0), 0) 
@@ -950,11 +1204,163 @@ function getRemainingForRow(row, type) {
   const baseCts = Number(row.cts || 0);
   const basePcs = type === "AJMZ" ? Number(row.pcs || 0) : 0;
 
-  // Calculate remaining = base - total sold
   const remainingCts = baseCts - totalSoldCts;
   const remainingPcs = type === "AJMZ" ? (basePcs - totalSoldPcs) : 0;
 
   return { remainingCts, remainingPcs };
+}
+
+// Calculate total sold for transparency in modal
+function calculateTotalSold(row, type) {
+  const sellRecords = SELLS[row.key] || [];
+  const totalSoldCts = sellRecords.reduce((sum, s) => sum + Number(s.cts || 0), 0);
+  const totalSoldPcs = type === "AJMZ" 
+    ? sellRecords.reduce((sum, s) => sum + Number(s.pcs || 0), 0) 
+    : 0;
+  
+  return { totalSoldCts, totalSoldPcs };
+}
+
+// NEW: Collect all existing Sell IDs with metadata
+function collectExistingSellIds() {
+  const sellIdMap = new Map();
+  
+  Object.values(SELLS).forEach(sellArray => {
+    sellArray.forEach(sell => {
+      const id = sell.sellId;
+      if (!id) return;
+      
+      if (!sellIdMap.has(id)) {
+        sellIdMap.set(id, {
+          sellId: id,
+          dates: [],
+          parties: new Set(),
+          count: 0,
+          latestDate: null
+        });
+      }
+      
+      const entry = sellIdMap.get(id);
+      const sellDate = sell.date || sell.createdAt || "";
+      entry.dates.push(sellDate);
+      if (sell.party) entry.parties.add(sell.party);
+      entry.count++;
+      
+      // Track latest date
+      if (!entry.latestDate || sellDate > entry.latestDate) {
+        entry.latestDate = sellDate;
+      }
+    });
+  });
+  
+  // Convert to array and sort by most recent date
+  const result = Array.from(sellIdMap.values())
+    .map(entry => ({
+      sellId: entry.sellId,
+      latestDate: entry.latestDate || "",
+      parties: Array.from(entry.parties).join(", "),
+      count: entry.count
+    }))
+    .sort((a, b) => {
+      // Sort by date descending (most recent first)
+      if (b.latestDate !== a.latestDate) {
+        return b.latestDate.localeCompare(a.latestDate);
+      }
+      // If dates are equal, sort by Sell ID descending
+      return b.sellId.localeCompare(a.sellId);
+    });
+  
+  return result;
+}
+
+// NEW: Update the searchable Sell ID dropdown
+function updateExistingSellIdDropdown(searchTerm = "") {
+  if (!existingSellIdDropdown) return;
+  
+  const term = searchTerm.toLowerCase().trim();
+  let filtered = existingSellIds;
+  
+  if (term) {
+    filtered = existingSellIds.filter(item => 
+      item.sellId.toLowerCase().includes(term) ||
+      item.parties.toLowerCase().includes(term) ||
+      item.latestDate.includes(term)
+    );
+  }
+  
+  existingSellIdDropdown.innerHTML = "";
+  
+  if (filtered.length === 0) {
+    const noResult = document.createElement("div");
+    noResult.className = "sell-id-dropdown-item no-results";
+    noResult.textContent = term ? "No matching Sell IDs found" : "No existing Sell IDs available";
+    existingSellIdDropdown.appendChild(noResult);
+  } else {
+    filtered.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "sell-id-dropdown-item";
+      div.dataset.sellId = item.sellId;
+      
+      const mainDiv = document.createElement("div");
+      mainDiv.className = "sell-id-main";
+      mainDiv.textContent = item.sellId;
+      
+      const detailsDiv = document.createElement("div");
+      detailsDiv.className = "sell-id-details";
+      let details = [];
+      if (item.latestDate) details.push(item.latestDate);
+      if (item.parties) details.push(item.parties);
+      details.push(`${item.count} transaction${item.count !== 1 ? 's' : ''}`);
+      detailsDiv.textContent = details.join(" • ");
+      
+      div.appendChild(mainDiv);
+      div.appendChild(detailsDiv);
+      
+      div.addEventListener("click", () => {
+        selectedSellIdValue = item.sellId;
+        existingSellIdInput.value = item.sellId;
+        existingSellIdDropdown.classList.remove("show");
+        
+        // Show selected badge
+        selectedSellIdDisplay.style.display = 'block';
+        selectedSellIdText.textContent = item.sellId;
+      });
+      
+      existingSellIdDropdown.appendChild(div);
+    });
+  }
+}
+
+// NEW: Show existing Sell ID dropdown
+function showExistingSellIdDropdown() {
+  if (!existingSellIdDropdown || existingSellIdInput.disabled) return;
+  updateExistingSellIdDropdown(existingSellIdInput.value);
+  existingSellIdDropdown.classList.add("show");
+}
+
+// NEW: Hide existing Sell ID dropdown
+function hideExistingSellIdDropdown() {
+  if (!existingSellIdDropdown) return;
+  setTimeout(() => {
+    existingSellIdDropdown.classList.remove("show");
+  }, 200);
+}
+
+// NEW: Populate the Sell ID collection (called when modal opens)
+function populateExistingSellIdDropdown() {
+  existingSellIds = collectExistingSellIds();
+  
+  if (existingSellIds.length === 0) {
+    // Disable the "Use Existing" option if no IDs available
+    radioExistingSellId.disabled = true;
+    labelExistingSellId.classList.add('disabled');
+    existingSellIdInput.disabled = true;
+  } else {
+    // Enable the option
+    radioExistingSellId.disabled = false;
+    labelExistingSellId.classList.remove('disabled');
+    existingSellIdInput.disabled = false;
+  }
 }
 
 function findRowByKey(type,key){
@@ -1020,9 +1426,11 @@ function buildFilterDropdown(input){
   dd.innerHTML = html;
   dd.classList.add("show");
 }
+
 function closeAllFilterDropdowns(){
   document.querySelectorAll(".filter-dropdown").forEach(dd=>dd.classList.remove("show"));
 }
+
 async function loadAllData(){
   const [ajSnap,calSnap,sellSnap]=await Promise.all([
     db.ref("ajmzRecords").once("value"),
@@ -1064,11 +1472,9 @@ async function loadAllData(){
       obj.price=Number(obj.price||0);
       obj.amount=Number(obj.amount|| (obj.cts*obj.price));
       
-      // FIXED: Calculate remaining from actual sells
       const rem=getRemainingForRow(obj,"AJMZ");
       obj.remainingCts = rem.remainingCts;
       obj.remainingPcs = rem.remainingPcs;
-      // FIXED: Always recalculate remaining amount using original price
       obj.remainingAmount = obj.remainingCts * obj.price;
       
       obj.__sells = SELLS[obj.key] || [];
@@ -1088,10 +1494,8 @@ async function loadAllData(){
       obj.price=Number(obj.price||0);
       obj.amount=Number(obj.amount|| (obj.cts*obj.price));
       
-      // FIXED: Calculate remaining from actual sells
       const rem=getRemainingForRow(obj,"CALIB");
       obj.remainingCts = rem.remainingCts;
-      // FIXED: Always recalculate remaining amount using original price
       obj.remainingAmount = obj.remainingCts * obj.price;
       
       obj.__sells = SELLS[obj.key] || [];
@@ -1316,7 +1720,6 @@ function renderAJMZRow(row){
   const amount = fmtNumber(row.amount);
   const price = fmtNumber(row.price);
   
-  // Only show remaining values for ADD rows, blank for SELL rows
   const remPcs = isAdd ? fmtNumber(row.remainingPcs) : "";
   const remCts = isAdd ? fmtNumber(row.remainingCts) : "";
   const remAmt = isAdd ? fmtNumber(row.remainingAmount) : "";
@@ -1376,7 +1779,6 @@ function renderCALIBRow(row){
   const amount = fmtNumber(row.amount);
   const price = fmtNumber(row.price);
   
-  // Only show remaining values for ADD rows, blank for SELL rows
   const remPcs = isAdd ? fmtNumber(row.remainingPcs) : "";
   const remCts = isAdd ? fmtNumber(row.remainingCts) : "";
   const remAmt = isAdd ? fmtNumber(row.remainingAmount) : "";
@@ -1474,6 +1876,7 @@ function updateMetrics(){
   document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
 
+// REDESIGNED: Enhanced sell modal table with three logical sections
 function buildSellModalTable(selectedRows,editData=null){
   if(!selectedRows.length){
     sellModalTableWrapper.innerHTML="<div style='font-size:12px;color:#777;'>No rows selected.</div>";
@@ -1485,37 +1888,58 @@ function buildSellModalTable(selectedRows,editData=null){
   let header=`
     <table class="sell-table">
       <thead>
-        <tr>
-          <th style="width:80px;">Type</th>
-          <th style="width:100px;">Tx ID</th>
-          <th style="width:120px;">Lot/Grade</th>
-          <th style="width:150px;">Description</th>
-          <th style="width:80px;">Rem CTS</th>
-          <th style="width:80px;">Rem PCS</th>
-          <th style="width:80px;">Sell CTS</th>
-          <th style="width:80px;">Sell PCS</th>
-          <th style="width:80px;">Price</th>
-          <th style="width:90px;">Amount</th>
-          <th style="width:120px;">Remarks</th>
+        <tr class="section-labels">
+          <th colspan="13" class="section-a">ORIGINAL RECORD</th>
+          <th colspan="5" class="section-b">INVENTORY STATUS</th>
+          <th colspan="5" class="section-c">THIS SELL</th>
+        </tr>
+        <tr class="column-headers">
+          <!-- Section A: Original Record -->
+          <th class="section-a">Type</th>
+          <th class="section-a">Tx ID</th>
+          <th class="section-a">Date</th>
+          <th class="section-a">Party</th>
+          <th class="section-a">Lot Name</th>
+          <th class="section-a">Format/Grade</th>
+          <th class="section-a">Shape</th>
+          <th class="section-a">Size</th>
+          <th class="section-a">Description</th>
+          <th class="section-a">Orig CTS</th>
+          <th class="section-a">Orig PCS</th>
+          <th class="section-a">Orig Price</th>
+          <th class="section-a">Orig Amount</th>
+          
+          <!-- Section B: Inventory Status -->
+          <th class="section-b">Sold CTS</th>
+          <th class="section-b">Sold PCS</th>
+          <th class="section-b">Rem CTS</th>
+          <th class="section-b">Rem PCS</th>
+          <th class="section-b">Rem Amount</th>
+          
+          <!-- Section C: This Sell -->
+          <th class="section-c">Sell CTS</th>
+          <th class="section-c">Sell PCS</th>
+          <th class="section-c">Price</th>
+          <th class="section-c">Amount</th>
+          <th class="section-c">Remarks</th>
         </tr>
       </thead>
       <tbody>
   `;
+  
   let body="";
   
   selectedRows.forEach(rowData=>{
     const {row, type} = rowData;
     const rem=getRemainingForRow(row,type);
+    const sold=calculateTotalSold(row,type);
     
-    // Check if there's a price override
     const overridePrice = sellPriceOverride?.value ? Number(sellPriceOverride.value) : null;
-    
-    // Use override price if available, otherwise use row price
     const price = overridePrice !== null ? overridePrice : Number(row.price || 0);
     
     let sellCts = rem.remainingCts;
     let sellPcs = type==="AJMZ" ? rem.remainingPcs : 0;
-    let sellPrice = price; // This now uses the override if available
+    let sellPrice = price;
     let sellRemarks = "";
     
     if(editData && editData.parentKey === row.key){
@@ -1526,28 +1950,43 @@ function buildSellModalTable(selectedRows,editData=null){
     }
     
     const initAmt = sellCts * sellPrice;
-    const lotOrGrade = type==="AJMZ"
-      ? (row.lotName||"") + (row.lotFormat?(" / "+row.lotFormat):"")
-      : (row.lotName||"") + (row.grade?(" / "+row.grade):"");
-
+    const formatOrGrade = type==="AJMZ" ? (row.lotFormat||"") : (row.grade||"");
     const pcsDisabled = type==="CALIB" ? "disabled" : "";
 
     body+=`
       <tr data-key="${row.key}" data-type="${type}">
-        <td>${type}</td>
-        <td>${esc(row.txId||"")}</td>
-        <td>${esc(lotOrGrade)}</td>
-        <td>${esc(row.description||"")}</td>
-        <td>${fmtNumber(rem.remainingCts)}</td>
-        <td>${type==="AJMZ"?fmtNumber(rem.remainingPcs):"-"}</td>
-        <td><input type="number" step="0.0001" data-sell="cts" value="${sellCts}"></td>
-        <td><input type="number" step="1" data-sell="pcs" value="${sellPcs}" ${pcsDisabled}></td>
-        <td><input type="number" step="0.0001" data-sell="price" value="${sellPrice}"></td>
-        <td><input type="text" data-sell="amount" value="${initAmt?fmtNumber(initAmt):""}" readonly></td>
-        <td><input type="text" data-sell="remarks" placeholder="Optional…" value="${esc(sellRemarks)}"></td>
+        <!-- Section A: Original Record (Read-only) -->
+        <td class="section-a">${type}</td>
+        <td class="section-a">${esc(row.txId||"")}</td>
+        <td class="section-a">${esc(row.date||"")}</td>
+        <td class="section-a">${esc(row.party||"")}</td>
+        <td class="section-a">${esc(row.lotName||"")}</td>
+        <td class="section-a">${esc(formatOrGrade)}</td>
+        <td class="section-a">${esc(multiDisplay(row.shape))}</td>
+        <td class="section-a">${type==="AJMZ" ? (row.size||"") : esc(multiDisplay(row.size))}</td>
+        <td class="section-a">${esc(row.description||"")}</td>
+        <td class="section-a">${fmtNumber(row.cts)}</td>
+        <td class="section-a">${type==="AJMZ" ? fmtNumber(row.pcs) : "-"}</td>
+        <td class="section-a">${fmtNumber(row.price)}</td>
+        <td class="section-a">${fmtNumber(row.amount)}</td>
+        
+        <!-- Section B: Inventory Status (Read-only) -->
+        <td class="section-b">${fmtNumber(sold.totalSoldCts)}</td>
+        <td class="section-b">${type==="AJMZ" ? fmtNumber(sold.totalSoldPcs) : "-"}</td>
+        <td class="section-b">${fmtNumber(rem.remainingCts)}</td>
+        <td class="section-b">${type==="AJMZ" ? fmtNumber(rem.remainingPcs) : "-"}</td>
+        <td class="section-b">${fmtNumber(rem.remainingCts * row.price)}</td>
+        
+        <!-- Section C: This Sell (Editable) -->
+        <td class="section-c"><input type="number" step="0.0001" data-sell="cts" value="${sellCts}"></td>
+        <td class="section-c"><input type="number" step="1" data-sell="pcs" value="${sellPcs}" ${pcsDisabled}></td>
+        <td class="section-c"><input type="number" step="0.0001" data-sell="price" value="${sellPrice}"></td>
+        <td class="section-c"><input type="text" data-sell="amount" value="${initAmt?fmtNumber(initAmt):""}" readonly></td>
+        <td class="section-c"><input type="text" data-sell="remarks" placeholder="Optional…" value="${esc(sellRemarks)}"></td>
       </tr>
     `;
   });
+  
   const footer="</tbody></table>";
   sellModalTableWrapper.innerHTML=header+body+footer;
 }
@@ -1592,10 +2031,21 @@ function openSellModal(){
   editParentType = null;
 
   sellModalTitle.textContent = "Sell Selected Rows";
-  sellIdLabelEl.textContent="(auto)";
+  
+  // Reset Sell ID mode selection
+  radioNewSellId.checked = true;
+  radioExistingSellId.checked = false;
+  existingSellIdDropdownWrapper.style.display = 'none';
+  existingSellIdInput.value = '';
+  selectedSellIdValue = '';
+  selectedSellIdDisplay.style.display = 'none';
+  
+  // Populate existing Sell IDs
+  populateExistingSellIdDropdown();
+  
   sellPartyInput.value="";
   sellDateInput.value=todayISO();
-  sellPriceOverride.value=""; // Clear price override
+  sellPriceOverride.value="";
   validationErrors.innerHTML="";
 
   buildSellModalTable(selectedRows);
@@ -1617,10 +2067,23 @@ function openEditSellModal(parentKey, sellKey, type){
   editParentType = type;
 
   sellModalTitle.textContent = "Edit Sell Record";
-  sellIdLabelEl.textContent = sellRecord.sellId || "(unknown)";
+  
+  // When editing, show the current Sell ID and allow changing mode
+  populateExistingSellIdDropdown();
+  
+  // Default to "existing" mode when editing, with current ID selected
+  radioNewSellId.checked = false;
+  radioExistingSellId.checked = true;
+  existingSellIdDropdownWrapper.style.display = 'block';
+  existingSellIdInput.value = sellRecord.sellId || "";
+  selectedSellIdValue = sellRecord.sellId || "";
+  
+  selectedSellIdDisplay.style.display = 'block';
+  selectedSellIdText.textContent = sellRecord.sellId || "(unknown)";
+  
   sellPartyInput.value = sellRecord.party || "";
   sellDateInput.value = sellRecord.date || todayISO();
-  sellPriceOverride.value=""; // Clear price override for editing
+  sellPriceOverride.value="";
   validationErrors.innerHTML="";
 
   const row = findRowByKey(type, parentKey);
@@ -1638,12 +2101,20 @@ function closeSellModal(){
   sellModalEl.style.display="none";
   sellModalEl.dataset.selectedRows="[]";
   sellModalTableWrapper.innerHTML="";
-  sellPriceOverride.value=""; // Clear price override
+  sellPriceOverride.value="";
   validationErrors.innerHTML="";
   editMode = false;
   editSellKey = null;
   editParentKey = null;
   editParentType = null;
+  
+  // Reset Sell ID selection
+  radioNewSellId.checked = true;
+  radioExistingSellId.checked = false;
+  existingSellIdDropdownWrapper.style.display = 'none';
+  existingSellIdInput.value = '';
+  selectedSellIdValue = '';
+  selectedSellIdDisplay.style.display = 'none';
 }
 
 async function generateSellId(){
@@ -1672,7 +2143,6 @@ async function generateSellId(){
   }
 }
 
-// Validation function - only prevents negative sell values
 function validateSellInputs(rows){
   const errors = [];
   
@@ -1688,7 +2158,6 @@ function validateSellInputs(rows){
     const cts = Number((ctsInput?.value||"").replace(/,/g,""))||0;
     const pcs = rowType==="AJMZ" ? (Number((pcsInput?.value||"").replace(/,/g,""))||0) : 0;
     
-    // Only validate that sell values are not negative themselves
     if(cts < 0){
       errors.push(`Row ${idx+1} (${rowData.txId}): Sell CTS cannot be negative.`);
     }
@@ -1719,7 +2188,6 @@ async function handleSaveSell(){
     return;
   }
 
-  // Validate inputs before saving (only blocks on errors)
   const validationErrorsList = validateSellInputs(rows);
   if(validationErrorsList.length > 0){
     let errorHTML = '<div class="validation-error">';
@@ -1734,16 +2202,28 @@ async function handleSaveSell(){
   
   validationErrors.innerHTML = "";
 
+  // NEW: Determine Sell ID based on mode selection
   let sellId;
-  if(editMode && editSellKey){
-    const sells = SELLS[editParentKey] || [];
-    const existingSell = sells.find(s => s.key === editSellKey);
-    sellId = existingSell ? existingSell.sellId : await generateSellId();
+  const sellIdMode = document.querySelector('input[name="sellIdMode"]:checked').value;
+  
+  if (sellIdMode === "new") {
+    // Generate new Sell ID
+    sellId = await generateSellId();
+  } else if (sellIdMode === "existing") {
+    // Use selected existing Sell ID
+    sellId = selectedSellIdValue || existingSellIdInput.value.trim();
+    if (!sellId) {
+      alert("Please select or enter an existing Sell ID.");
+      return;
+    }
   } else {
+    // Fallback
     sellId = await generateSellId();
   }
   
-  sellIdLabelEl.textContent=sellId;
+  // Update display
+  selectedSellIdDisplay.style.display = 'block';
+  selectedSellIdText.textContent = sellId;
 
   const tasks=[];
   let any=false;
@@ -1795,11 +2275,9 @@ async function handleSaveSell(){
       const oldCts = Number(oldSell?.cts || 0);
       const oldPcs = Number(oldSell?.pcs || 0);
       
-      // FIXED: Recalculate remaining based on actual change
       const remBefore = getRemainingForRow(rowData, rowType);
       const newRemCts = remBefore.remainingCts + oldCts - cts;
       const newRemPcs = rowType==="AJMZ" ? (remBefore.remainingPcs + oldPcs - pcs) : 0;
-      // FIXED: Use original price for remaining amount
       const newRemAmt = newRemCts * Number(rowData.price || 0);
 
       const sellParentRef=db.ref("sellRecords/"+parentKey);
@@ -1822,7 +2300,6 @@ async function handleSaveSell(){
       const remBefore=getRemainingForRow(rowData,rowType);
       const newRemCts=remBefore.remainingCts - cts;
       const newRemPcs=rowType==="AJMZ" ? (remBefore.remainingPcs - pcs) : 0;
-      // FIXED: Use original price from parent record
       const newRemAmt=newRemCts * Number(rowData.price || 0);
 
       const sellData={
@@ -1884,7 +2361,6 @@ async function deleteSell(parentKey,sellKey,parentType){
   const rem=getRemainingForRow(parent,parentType);
   const newRemCts=rem.remainingCts + Number(sell.cts||0);
   const newRemPcs=parentType==="AJMZ" ? (rem.remainingPcs + Number(sell.pcs||0)) : 0;
-  // FIXED: Use original price for remaining amount
   const newRemAmt=newRemCts * Number(parent.price||0);
 
   const updates={remainingCts:newRemCts,remainingAmount:newRemAmt};
@@ -1970,7 +2446,7 @@ document.body.addEventListener("click",async e=>{
     return;
   }
 
-  if(!e.target.closest(".filter-dropdown-wrapper")){
+  if(!e.target.closest(".filter-dropdown-wrapper") && !e.target.closest("#existingSellIdDropdownWrapper")){
     closeAllFilterDropdowns();
   }
 });
@@ -2044,18 +2520,52 @@ function applyFiltersAndRender(){
   updateMetrics();
 }
 
+// NEW: Handle Sell ID mode radio button changes
+function handleSellIdModeChange(){
+  const mode = document.querySelector('input[name="sellIdMode"]:checked').value;
+  
+  if (mode === "existing") {
+    existingSellIdDropdownWrapper.style.display = 'block';
+  } else {
+    existingSellIdDropdownWrapper.style.display = 'none';
+  }
+}
+
 window.addEventListener("DOMContentLoaded",()=>{
   sellModalEl=document.getElementById("sellModal");
   sellModalTableWrapper=document.getElementById("sellModalTableWrapper");
   sellPartyInput=document.getElementById("sellPartyInput");
   sellDateInput=document.getElementById("sellDateInput");
   sellPriceOverride=document.getElementById("sellPriceOverride");
-  sellIdLabelEl=document.getElementById("sellIdLabel");
   sellSaveBtn=document.getElementById("sellSaveBtn");
   sellCancelBtn=document.getElementById("sellCancelBtn");
   partyDropdownMenu=document.getElementById("partyDropdownMenu");
   sellModalTitle=document.getElementById("sellModalTitle");
   validationErrors=document.getElementById("validationErrors");
+  
+  // NEW: Sell ID mode elements
+  radioNewSellId = document.getElementById("radioNewSellId");
+  radioExistingSellId = document.getElementById("radioExistingSellId");
+  existingSellIdDropdownWrapper = document.getElementById("existingSellIdDropdownWrapper");
+  existingSellIdInput = document.getElementById("existingSellIdInput");
+  existingSellIdDropdown = document.getElementById("existingSellIdDropdown");
+  selectedSellIdDisplay = document.getElementById("selectedSellIdDisplay");
+  selectedSellIdText = document.getElementById("selectedSellIdText");
+  labelExistingSellId = document.getElementById("labelExistingSellId");
+  
+  // Bind Sell ID mode change handlers
+  radioNewSellId.addEventListener("change", handleSellIdModeChange);
+  radioExistingSellId.addEventListener("change", handleSellIdModeChange);
+  
+  // Bind Sell ID input events (searchable dropdown)
+  existingSellIdInput.addEventListener("focus", showExistingSellIdDropdown);
+  existingSellIdInput.addEventListener("blur", hideExistingSellIdDropdown);
+  existingSellIdInput.addEventListener("input", (e) => {
+    updateExistingSellIdDropdown(e.target.value);
+    if (!existingSellIdDropdown.classList.contains("show")) {
+      existingSellIdDropdown.classList.add("show");
+    }
+  });
 
   sellPartyInput.addEventListener("focus", showPartyDropdown);
   sellPartyInput.addEventListener("blur", hidePartyDropdown);
@@ -2066,7 +2576,6 @@ window.addEventListener("DOMContentLoaded",()=>{
     }
   });
 
-  // Price Override event listener - updates all price fields when changed
   sellPriceOverride.addEventListener("input", () => {
     const overrideValue = sellPriceOverride.value;
     if(!overrideValue) return;
