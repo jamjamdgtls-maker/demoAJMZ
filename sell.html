@@ -697,16 +697,14 @@ body{
 .sell-table th:nth-child(7) { width: 120px; min-width: 120px; }  /* Shape */
 .sell-table th:nth-child(8) { width: 100px; min-width: 100px; }  /* Size */
 .sell-table th:nth-child(9) { width: 180px; min-width: 180px; }  /* Description */
-.sell-table th:nth-child(10) { width: 85px; min-width: 85px; }  /* Orig Price */
-.sell-table th:nth-child(11) { width: 100px; min-width: 100px; } /* Orig Amount */
-.sell-table th:nth-child(12) { width: 85px; min-width: 85px; }  /* Rem CTS */
-.sell-table th:nth-child(13) { width: 85px; min-width: 85px; }  /* Rem PCS */
-.sell-table th:nth-child(14) { width: 100px; min-width: 100px; } /* Rem Amount */
-.sell-table th:nth-child(15) { width: 90px; min-width: 90px; }  /* Sell CTS */
-.sell-table th:nth-child(16) { width: 90px; min-width: 90px; }  /* Sell PCS */
-.sell-table th:nth-child(17) { width: 90px; min-width: 90px; }  /* Price */
-.sell-table th:nth-child(18) { width: 100px; min-width: 100px; } /* Amount */
-.sell-table th:nth-child(19) { width: 140px; min-width: 140px; } /* Remarks */
+.sell-table th:nth-child(10) { width: 85px; min-width: 85px; }  /* Rem CTS */
+.sell-table th:nth-child(11) { width: 85px; min-width: 85px; }  /* Rem PCS */
+.sell-table th:nth-child(12) { width: 100px; min-width: 100px; } /* Rem Amount */
+.sell-table th:nth-child(13) { width: 90px; min-width: 90px; }  /* Sell CTS */
+.sell-table th:nth-child(14) { width: 90px; min-width: 90px; }  /* Sell PCS */
+.sell-table th:nth-child(15) { width: 90px; min-width: 90px; }  /* Price */
+.sell-table th:nth-child(16) { width: 100px; min-width: 100px; } /* Amount */
+.sell-table th:nth-child(17) { width: 140px; min-width: 140px; } /* Remarks */
 
 .sell-table input{
   width:100%;
@@ -1874,7 +1872,7 @@ function buildSellModalTable(selectedRows,editData=null){
     <table class="sell-table">
       <thead>
         <tr class="section-labels">
-          <th colspan="11" class="section-a">ORIGINAL RECORD</th>
+          <th colspan="9" class="section-a">ORIGINAL RECORD</th>
           <th colspan="3" class="section-b">INVENTORY STATUS</th>
           <th colspan="5" class="section-c">THIS SELL</th>
         </tr>
@@ -1889,8 +1887,6 @@ function buildSellModalTable(selectedRows,editData=null){
           <th class="section-a">Shape</th>
           <th class="section-a">Size</th>
           <th class="section-a">Description</th>
-          <th class="section-a">Orig Price</th>
-          <th class="section-a">Orig Amount</th>
           
           <!-- Section B: Inventory Status -->
           <th class="section-b">Rem CTS</th>
@@ -1945,8 +1941,6 @@ function buildSellModalTable(selectedRows,editData=null){
         <td class="section-a">${esc(multiDisplay(row.shape))}</td>
         <td class="section-a">${type==="AJMZ" ? (row.size||"") : esc(multiDisplay(row.size))}</td>
         <td class="section-a">${esc(row.description||"")}</td>
-        <td class="section-a">${fmtNumber(row.price)}</td>
-        <td class="section-a">${fmtNumber(row.amount)}</td>
         
         <!-- Section B: Inventory Status (Read-only) -->
         <td class="section-b">${fmtNumber(rem.remainingCts)}</td>
