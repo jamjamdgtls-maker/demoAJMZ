@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>REPORTS (2) - FIXED</title>
+<title>REPORTS (2) - FIXED WITH TOTALS</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -262,6 +262,25 @@ body{
 .num-cell{
   text-align:right;
   font-variant-numeric:tabular-nums;
+}
+
+/* Totals row styling - NOW PROPERLY STICKY */
+.totals-row{
+  background:#d4edda !important;
+  font-weight:700;
+  font-size:13px;
+  border-top:3px solid var(--accent) !important;
+  border-bottom:3px solid var(--accent) !important;
+}
+.totals-row td{
+  padding:10px 8px !important;
+  background:#d4edda !important;
+  position:sticky;
+  top:70px; /* Positioned right below the 2-row header (adjusted for actual header height) */
+  z-index:90;
+}
+.totals-row:hover td{
+  background:#c3e6cb !important;
 }
 
 /* Parent row styling */
@@ -523,6 +542,25 @@ body{
   }
   
   /* ============================================
+     TOTALS ROW IN PRINT - KEEP STICKY
+     ============================================ */
+  .totals-row {
+    background: #d4edda !important;
+    font-weight: 700;
+    font-size: 8pt;
+    border-top: 3px solid #000 !important;
+    border-bottom: 3px solid #000 !important;
+    page-break-after: avoid;
+    page-break-inside: avoid;
+  }
+  
+  .totals-row td {
+    padding: 8px 4px !important;
+    border: 1px solid #000 !important;
+    background: #d4edda !important;
+  }
+  
+  /* ============================================
      TABLE BODY - DATA ROWS
      ============================================ */
   .ledger-table tbody td {
@@ -737,7 +775,7 @@ body{
 <div class="workspace">
 
   <div class="panel">
-    <div class="page-title">REPORTS (2) - FIXED CALCULATIONS</div>
+    <div class="page-title">REPORTS (2)</div>
     <div class="spacer"></div>
     <div class="search-box">
       <span class="search-icon">🔍</span>
@@ -774,6 +812,10 @@ body{
       <div class="filter-group">
         <label class="filter-label">Size</label>
         <select id="ajmz_filter_size" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Grade</label>
+        <select id="ajmz_filter_grade" class="filter-select"><option value="">All</option></select>
       </div>
       <div class="filter-group">
         <label class="filter-label">Date From</label>
@@ -872,6 +914,10 @@ body{
         <select id="calib_filter_size" class="filter-select"><option value="">All</option></select>
       </div>
       <div class="filter-group">
+        <label class="filter-label">Grade</label>
+        <select id="calib_filter_grade" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
         <label class="filter-label">Date From</label>
         <input type="date" id="calib_filter_date_from" class="filter-select">
       </div>
@@ -963,6 +1009,10 @@ body{
       <div class="filter-group">
         <label class="filter-label">Size</label>
         <select id="all_filter_size" class="filter-select"><option value="">All</option></select>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label">Grade</label>
+        <select id="all_filter_grade" class="filter-select"><option value="">All</option></select>
       </div>
       <div class="filter-group">
         <label class="filter-label">Date From</label>
@@ -1189,6 +1239,11 @@ function populateFilters(){
   });
   const calibSizesSorted=[...calibSizes].filter(Boolean).sort();
   const allSizes=[...new Set([...ajSizesSorted,...calibSizesSorted])].sort();
+  
+  // Grade filters - from parents only
+  const ajGrades=[...new Set(AJMZ_PARENTS.map(p=>p.grade).filter(Boolean))].sort();
+  const calibGrades=[...new Set(CALIB_PARENTS.map(p=>p.grade).filter(Boolean))].sort();
+  const allGrades=[...new Set([...ajGrades,...calibGrades])].sort();
 
   // Populate AJMZ filter dropdowns
   document.getElementById("ajmz_filter_txid").innerHTML='<option value="">All</option>'+ajTxIds.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
@@ -1196,6 +1251,7 @@ function populateFilters(){
   document.getElementById("ajmz_filter_lot").innerHTML='<option value="">All</option>'+ajLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
   document.getElementById("ajmz_filter_shape").innerHTML='<option value="">All</option>'+ajShapesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   document.getElementById("ajmz_filter_size").innerHTML='<option value="">All</option>'+ajSizesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  document.getElementById("ajmz_filter_grade").innerHTML='<option value="">All</option>'+ajGrades.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');
   
   // Populate CALIB filter dropdowns
   document.getElementById("calib_filter_txid").innerHTML='<option value="">All</option>'+calibTxIds.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
@@ -1203,6 +1259,7 @@ function populateFilters(){
   document.getElementById("calib_filter_lot").innerHTML='<option value="">All</option>'+calibLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
   document.getElementById("calib_filter_shape").innerHTML='<option value="">All</option>'+calibShapesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   document.getElementById("calib_filter_size").innerHTML='<option value="">All</option>'+calibSizesSorted.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  document.getElementById("calib_filter_grade").innerHTML='<option value="">All</option>'+calibGrades.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');
   
   // Populate ALL STONES filter dropdowns
   document.getElementById("all_filter_txid").innerHTML='<option value="">All</option>'+allTxIds.map(t=>`<option value="${esc(t)}">${esc(t)}</option>`).join('');
@@ -1210,6 +1267,7 @@ function populateFilters(){
   document.getElementById("all_filter_lot").innerHTML='<option value="">All</option>'+allLots.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join('');
   document.getElementById("all_filter_shape").innerHTML='<option value="">All</option>'+allShapes.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
   document.getElementById("all_filter_size").innerHTML='<option value="">All</option>'+allSizes.map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  document.getElementById("all_filter_grade").innerHTML='<option value="">All</option>'+allGrades.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');
 }
 
 function renderAJMZ(){
@@ -1219,6 +1277,7 @@ function renderAJMZ(){
   const lot=document.getElementById("ajmz_filter_lot").value;
   const shape=document.getElementById("ajmz_filter_shape").value;
   const size=document.getElementById("ajmz_filter_size").value;
+  const grade=document.getElementById("ajmz_filter_grade").value;
   const dateFrom=document.getElementById("ajmz_filter_date_from").value;
   const dateTo=document.getElementById("ajmz_filter_date_to").value;
   
@@ -1242,6 +1301,7 @@ function renderAJMZ(){
       const sizes=parseMulti(p.size);
       if(!sizes.includes(size))return false;
     }
+    if(grade&&p.grade!==grade)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
@@ -1249,27 +1309,49 @@ function renderAJMZ(){
   const tbody=document.getElementById("tbody_ajmz");
   tbody.innerHTML="";
 
+  // Calculate totals from filtered data
+  let totalOpeningCts = 0;
+  let totalOpeningPcs = 0;
+  let totalOpeningAmount = 0;
+  let totalSoldCts = 0;
+  let totalSoldPcs = 0;
+  let totalSoldAmount = 0;
+  let totalBalanceCts = 0;
+  let totalBalancePcs = 0;
+  let totalBalanceAmount = 0;
+
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
     
-    // FIXED: Calculate total sold from all sell records
+    // Calculate total sold from all sell records
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
     const soldP=sells.reduce((sum,s)=>sum+s.pcs,0);
     const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    // FIXED: Opening Balance = Original parent values
+    // Opening Balance = Original parent values
     const totalC=parent.cts;
     const totalP=parent.pcs;
     const totalA=totalC * parent.price;
 
-    // FIXED: Remaining Balance = Opening - Sold
+    // Remaining Balance = Opening - Sold
     const balC=totalC - soldC;
     const balP=totalP - soldP;
     const balA=balC * parent.price;
 
+    // Add to totals
+    totalOpeningCts += totalC;
+    totalOpeningPcs += totalP;
+    totalOpeningAmount += totalA;
+    totalSoldCts += soldC;
+    totalSoldPcs += soldP;
+    totalSoldAmount += soldA;
+    totalBalanceCts += balC;
+    totalBalancePcs += balP;
+    totalBalanceAmount += balA;
+
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    // ✅ FIXED: Check if parent date matches filter
+    // Check if parent date matches filter
     const parentDateMatch = (!dateFrom || parent.date >= dateFrom) && (!dateTo || parent.date <= dateTo);
 
     // Parent row - only show if date matches AND showAdded is checked
@@ -1300,7 +1382,7 @@ function renderAJMZ(){
       `);
     }
 
-    // ✅ FIXED: Filter sell rows by their own dates
+    // Filter sell rows by their own dates
     if(showSell){
       sells.forEach(sell=>{
         // Check if this specific sell's date matches the filter
@@ -1336,6 +1418,31 @@ function renderAJMZ(){
       });
     }
   });
+
+  // Insert totals row at the beginning of tbody
+  const avgOpeningPrice = totalOpeningCts > 0 ? totalOpeningAmount / totalOpeningCts : 0;
+  const avgSoldPrice = totalSoldCts > 0 ? totalSoldAmount / totalSoldCts : 0;
+  const avgBalancePrice = totalBalanceCts > 0 ? totalBalanceAmount / totalBalanceCts : 0;
+
+  const totalsRow = `
+    <tr class="totals-row">
+      <td colspan="8" style="text-align:left;font-weight:700;font-size:14px;">📊 TOTALS</td>
+      <td class="num-cell section-col total-col">${fmt(totalOpeningCts)}</td>
+      <td class="num-cell total-col">${fmt(totalOpeningPcs)}</td>
+      <td class="num-cell total-col">${fmt(avgOpeningPrice)}</td>
+      <td class="num-cell total-col">${fmt(totalOpeningAmount)}</td>
+      <td class="num-cell section-col sold-col">${fmt(totalSoldCts)}</td>
+      <td class="num-cell sold-col">${fmt(totalSoldPcs)}</td>
+      <td class="num-cell sold-col">${fmt(avgSoldPrice)}</td>
+      <td class="num-cell sold-col">${fmt(totalSoldAmount)}</td>
+      <td class="num-cell section-col balance-col">${fmt(totalBalanceCts)}</td>
+      <td class="num-cell balance-col">${fmt(totalBalancePcs)}</td>
+      <td class="num-cell balance-col">${fmt(avgBalancePrice)}</td>
+      <td class="num-cell balance-col">${fmt(totalBalanceAmount)}</td>
+    </tr>
+  `;
+  
+  tbody.insertAdjacentHTML("afterbegin", totalsRow);
 }
 
 function renderCALIB(){
@@ -1345,6 +1452,7 @@ function renderCALIB(){
   const lot=document.getElementById("calib_filter_lot").value;
   const shape=document.getElementById("calib_filter_shape").value;
   const size=document.getElementById("calib_filter_size").value;
+  const grade=document.getElementById("calib_filter_grade").value;
   const dateFrom=document.getElementById("calib_filter_date_from").value;
   const dateTo=document.getElementById("calib_filter_date_to").value;
   
@@ -1368,6 +1476,7 @@ function renderCALIB(){
       const sizes=parseMulti(p.size);
       if(!sizes.includes(size))return false;
     }
+    if(grade&&p.grade!==grade)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
@@ -1375,24 +1484,40 @@ function renderCALIB(){
   const tbody=document.getElementById("tbody_calib");
   tbody.innerHTML="";
 
+  // Calculate totals from filtered data
+  let totalOpeningCts = 0;
+  let totalOpeningAmount = 0;
+  let totalSoldCts = 0;
+  let totalSoldAmount = 0;
+  let totalBalanceCts = 0;
+  let totalBalanceAmount = 0;
+
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
     
-    // FIXED: Calculate total sold from all sell records
+    // Calculate total sold from all sell records
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
     const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    // FIXED: Opening Balance = Original parent values
+    // Opening Balance = Original parent values
     const totalC=parent.cts;
     const totalA=totalC * parent.price;
 
-    // FIXED: Remaining Balance = Opening - Sold
+    // Remaining Balance = Opening - Sold
     const balC=totalC - soldC;
     const balA=balC * parent.price;
 
+    // Add to totals
+    totalOpeningCts += totalC;
+    totalOpeningAmount += totalA;
+    totalSoldCts += soldC;
+    totalSoldAmount += soldA;
+    totalBalanceCts += balC;
+    totalBalanceAmount += balA;
+
     const avgSellPrice=soldC>0?soldA/soldC:0;
 
-    // ✅ FIXED: Check if parent date matches filter
+    // Check if parent date matches filter
     const parentDateMatch = (!dateFrom || parent.date >= dateFrom) && (!dateTo || parent.date <= dateTo);
 
     // Parent row - CALIB shows grade, NOT lotFormat - only show if date matches
@@ -1420,7 +1545,7 @@ function renderCALIB(){
       `);
     }
 
-    // ✅ FIXED: Filter sell rows by their own dates
+    // Filter sell rows by their own dates
     if(showSell){
       sells.forEach(sell=>{
         // Check if this specific sell's date matches the filter
@@ -1453,6 +1578,28 @@ function renderCALIB(){
       });
     }
   });
+
+  // Insert totals row at the beginning of tbody
+  const avgOpeningPrice = totalOpeningCts > 0 ? totalOpeningAmount / totalOpeningCts : 0;
+  const avgSoldPrice = totalSoldCts > 0 ? totalSoldAmount / totalSoldCts : 0;
+  const avgBalancePrice = totalBalanceCts > 0 ? totalBalanceAmount / totalBalanceCts : 0;
+
+  const totalsRow = `
+    <tr class="totals-row">
+      <td colspan="8" style="text-align:left;font-weight:700;font-size:14px;">📊 TOTALS</td>
+      <td class="num-cell section-col total-col">${fmt(totalOpeningCts)}</td>
+      <td class="num-cell total-col">${fmt(avgOpeningPrice)}</td>
+      <td class="num-cell total-col">${fmt(totalOpeningAmount)}</td>
+      <td class="num-cell section-col sold-col">${fmt(totalSoldCts)}</td>
+      <td class="num-cell sold-col">${fmt(avgSoldPrice)}</td>
+      <td class="num-cell sold-col">${fmt(totalSoldAmount)}</td>
+      <td class="num-cell section-col balance-col">${fmt(totalBalanceCts)}</td>
+      <td class="num-cell balance-col">${fmt(avgBalancePrice)}</td>
+      <td class="num-cell balance-col">${fmt(totalBalanceAmount)}</td>
+    </tr>
+  `;
+  
+  tbody.insertAdjacentHTML("afterbegin", totalsRow);
 }
 
 function renderALL(){
@@ -1462,6 +1609,7 @@ function renderALL(){
   const lot=document.getElementById("all_filter_lot").value;
   const shape=document.getElementById("all_filter_shape").value;
   const size=document.getElementById("all_filter_size").value;
+  const grade=document.getElementById("all_filter_grade").value;
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
   
@@ -1487,6 +1635,7 @@ function renderALL(){
       const sizes=parseMulti(p.size);
       if(!sizes.includes(size))return false;
     }
+    if(grade&&p.grade!==grade)return false;
     if(search){const txt=JSON.stringify(p).toLowerCase();if(!txt.includes(search))return false;}
     return true;
   });
@@ -1494,24 +1643,40 @@ function renderALL(){
   const tbody=document.getElementById("tbody_all");
   tbody.innerHTML="";
 
+  // Calculate totals from filtered data
+  let totalOpeningCts = 0;
+  let totalOpeningAmount = 0;
+  let totalSoldCts = 0;
+  let totalSoldAmount = 0;
+  let totalBalanceCts = 0;
+  let totalBalanceAmount = 0;
+
   filtered.forEach(parent=>{
     const sells=parent.__sells||[];
     
-    // FIXED: Calculate total sold from all sell records
+    // Calculate total sold from all sell records
     const soldC=sells.reduce((sum,s)=>sum+s.cts,0);
     const soldA=sells.reduce((sum,s)=>sum+s.amount,0);
 
-    // FIXED: Opening Balance = Original parent values
+    // Opening Balance = Original parent values
     const totalC=parent.cts;
     const totalA=totalC * parent.price;
 
-    // FIXED: Remaining Balance = Opening - Sold
+    // Remaining Balance = Opening - Sold
     const balC=totalC - soldC;
     const balA=balC * parent.price;
 
+    // Add to totals
+    totalOpeningCts += totalC;
+    totalOpeningAmount += totalA;
+    totalSoldCts += soldC;
+    totalSoldAmount += soldA;
+    totalBalanceCts += balC;
+    totalBalanceAmount += balA;
+
     const avgSell=soldC>0?soldA/soldC:0;
 
-    // ✅ FIXED: Check if parent date matches filter
+    // Check if parent date matches filter
     const parentDateMatch = (!dateFrom || parent.date >= dateFrom) && (!dateTo || parent.date <= dateTo);
 
     // Parent row - only show if date matches
@@ -1538,7 +1703,7 @@ function renderALL(){
       `);
     }
 
-    // ✅ FIXED: Filter sell rows by their own dates
+    // Filter sell rows by their own dates
     if(showSell){
       sells.forEach(sell=>{
         // Check if this specific sell's date matches the filter
@@ -1570,6 +1735,28 @@ function renderALL(){
       });
     }
   });
+
+  // Insert totals row at the beginning of tbody
+  const avgOpeningPrice = totalOpeningCts > 0 ? totalOpeningAmount / totalOpeningCts : 0;
+  const avgSoldPrice = totalSoldCts > 0 ? totalSoldAmount / totalSoldCts : 0;
+  const avgBalancePrice = totalBalanceCts > 0 ? totalBalanceAmount / totalBalanceCts : 0;
+
+  const totalsRow = `
+    <tr class="totals-row">
+      <td colspan="7" style="text-align:left;font-weight:700;font-size:14px;">📊 TOTALS</td>
+      <td class="num-cell section-col total-col">${fmt(totalOpeningCts)}</td>
+      <td class="num-cell total-col">${fmt(avgOpeningPrice)}</td>
+      <td class="num-cell total-col">${fmt(totalOpeningAmount)}</td>
+      <td class="num-cell section-col sold-col">${fmt(totalSoldCts)}</td>
+      <td class="num-cell sold-col">${fmt(avgSoldPrice)}</td>
+      <td class="num-cell sold-col">${fmt(totalSoldAmount)}</td>
+      <td class="num-cell section-col balance-col">${fmt(totalBalanceCts)}</td>
+      <td class="num-cell balance-col">${fmt(avgBalancePrice)}</td>
+      <td class="num-cell balance-col">${fmt(totalBalanceAmount)}</td>
+    </tr>
+  `;
+  
+  tbody.insertAdjacentHTML("afterbegin", totalsRow);
 }
 
 function exportToCSV(type){
@@ -1658,6 +1845,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.getElementById("ajmz_filter_lot").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_shape").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_size").addEventListener("change",renderAJMZ);
+  document.getElementById("ajmz_filter_grade").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_from").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_filter_date_to").addEventListener("change",renderAJMZ);
   document.getElementById("ajmz_show_added").addEventListener("change",renderAJMZ);
@@ -1668,6 +1856,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("ajmz_filter_lot").value="";
     document.getElementById("ajmz_filter_shape").value="";
     document.getElementById("ajmz_filter_size").value="";
+    document.getElementById("ajmz_filter_grade").value="";
     document.getElementById("ajmz_filter_date_from").value="";
     document.getElementById("ajmz_filter_date_to").value="";
     document.getElementById("ajmz_show_added").checked=true;
@@ -1684,6 +1873,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.getElementById("calib_filter_lot").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_shape").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_size").addEventListener("change",renderCALIB);
+  document.getElementById("calib_filter_grade").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_from").addEventListener("change",renderCALIB);
   document.getElementById("calib_filter_date_to").addEventListener("change",renderCALIB);
   document.getElementById("calib_show_added").addEventListener("change",renderCALIB);
@@ -1694,6 +1884,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("calib_filter_lot").value="";
     document.getElementById("calib_filter_shape").value="";
     document.getElementById("calib_filter_size").value="";
+    document.getElementById("calib_filter_grade").value="";
     document.getElementById("calib_filter_date_from").value="";
     document.getElementById("calib_filter_date_to").value="";
     document.getElementById("calib_show_added").checked=true;
@@ -1710,6 +1901,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
   document.getElementById("all_filter_lot").addEventListener("change",renderALL);
   document.getElementById("all_filter_shape").addEventListener("change",renderALL);
   document.getElementById("all_filter_size").addEventListener("change",renderALL);
+  document.getElementById("all_filter_grade").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_from").addEventListener("change",renderALL);
   document.getElementById("all_filter_date_to").addEventListener("change",renderALL);
   document.getElementById("all_show_added").addEventListener("change",renderALL);
@@ -1720,6 +1912,7 @@ document.addEventListener("DOMContentLoaded",async()=>{
     document.getElementById("all_filter_lot").value="";
     document.getElementById("all_filter_shape").value="";
     document.getElementById("all_filter_size").value="";
+    document.getElementById("all_filter_grade").value="";
     document.getElementById("all_filter_date_from").value="";
     document.getElementById("all_filter_date_to").value="";
     document.getElementById("all_show_added").checked=true;
