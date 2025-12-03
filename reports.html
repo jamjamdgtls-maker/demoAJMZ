@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TABLE — ADD + SELL Ledger</title>
+<title>TABLE — ADD + SELL Ledger (Multi-Select)</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
 
@@ -193,10 +193,10 @@ body{
   background:#fff;
 }
 
-/* Searchable dropdown */
+/* Multi-select dropdown */
 .searchable-select-wrapper{
   position:relative;
-  min-width:120px;
+  min-width:140px;
 }
 .searchable-select-input{
   width:100%;
@@ -204,16 +204,25 @@ body{
   border-radius:7px;
   border:1px solid var(--line);
   padding:2px 24px 2px 6px;
-  font-size:12px;
+  font-size:11px;
   background:#fff;
   cursor:pointer;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.searchable-select-input.has-selection{
+  background:#f0f8f0;
+  border-color:var(--accent);
+  font-weight:600;
+  color:var(--accent);
 }
 .searchable-select-dropdown{
   position:absolute;
   top:100%;
   left:0;
   right:0;
-  max-height:200px;
+  max-height:220px;
   overflow-y:auto;
   background:#fff;
   border:1px solid var(--line);
@@ -226,11 +235,33 @@ body{
 .searchable-select-dropdown.active{
   display:block;
 }
+.searchable-select-search{
+  position:sticky;
+  top:0;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+  padding:6px 8px;
+  z-index:10;
+}
+.searchable-select-search input{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:4px 6px;
+  font-size:11px;
+  outline:none;
+}
+.searchable-select-search input:focus{
+  border-color:var(--accent);
+}
 .searchable-select-option{
   padding:6px 10px;
   font-size:12px;
   cursor:pointer;
   border-bottom:1px solid #f0f0f0;
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 .searchable-select-option:last-child{
   border-bottom:none;
@@ -238,12 +269,27 @@ body{
 .searchable-select-option:hover{
   background:#f5f5f0;
 }
-.searchable-select-option.selected{
-  background:var(--accent);
-  color:#fff;
+.searchable-select-option.all-option{
+  background:#fafafa;
+  font-weight:600;
+  border-bottom:2px solid var(--line);
+}
+.searchable-select-option.all-option:hover{
+  background:#f0f0f0;
 }
 .searchable-select-option.hidden{
   display:none;
+}
+.searchable-select-option input[type="checkbox"]{
+  cursor:pointer;
+  width:14px;
+  height:14px;
+  accent-color:var(--accent);
+}
+.searchable-select-option label{
+  cursor:pointer;
+  flex:1;
+  user-select:none;
 }
 
 /* Buttons */
@@ -710,19 +756,10 @@ body{
       <div class="slicer-group"><label class="slicer-label">Row Type</label><div id="all_filter_rowtype" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Tx ID</label><div id="all_filter_txid" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Sell ID</label><div id="all_filter_sellid" class="searchable-select-wrapper"></div></div>
-
       <div class="slicer-group"><label class="slicer-label">Lot</label><div id="all_filter_lot" class="searchable-select-wrapper"></div></div>
-
       <div class="slicer-group"><label class="slicer-label">Shape</label><div id="all_filter_shape" class="searchable-select-wrapper"></div></div>
-
       <div class="slicer-group"><label class="slicer-label">Size</label><div id="all_filter_size" class="searchable-select-wrapper"></div></div>
-
-      <!-- ⭐ ADDED GRADE FILTER HERE ⭐ -->
-      <div class="slicer-group">
-        <label class="slicer-label">Grade</label>
-        <div id="all_filter_grade" class="searchable-select-wrapper"></div>
-      </div>
-
+      <div class="slicer-group"><label class="slicer-label">Grade</label><div id="all_filter_grade" class="searchable-select-wrapper"></div></div>
       <div class="slicer-group"><label class="slicer-label">Party</label><div id="all_filter_party" class="searchable-select-wrapper"></div></div>
 
       <div class="slicer-group"><label class="slicer-label">Date from</label><input id="all_filter_date_from" type="date" class="slicer-input"></div>
@@ -1044,8 +1081,9 @@ function buildUnifiedRows(){
     });
   });
 }
+
 /* =====================================================
-   SEARCHABLE SELECT COMPONENT
+   MULTI-SELECT SEARCHABLE SELECT COMPONENT
 ===================================================== */
 function createSearchableSelect(wrapperId, values){
   const wrapper=document.getElementById(wrapperId);
@@ -1053,97 +1091,168 @@ function createSearchableSelect(wrapperId, values){
 
   wrapper.innerHTML=`
     <input type="text" class="searchable-select-input" placeholder="All" readonly>
-    <div class="searchable-select-dropdown"></div>
+    <div class="searchable-select-dropdown">
+      <div class="searchable-select-search">
+        <input type="text" placeholder="Search..." class="search-input">
+      </div>
+    </div>
   `;
 
   const input=wrapper.querySelector('.searchable-select-input');
   const dropdown=wrapper.querySelector('.searchable-select-dropdown');
+  const searchInput=dropdown.querySelector('.search-input');
 
-  let selectedValue="";
-  const opts=["All", ...values];
+  let selectedValues=[];
 
-  opts.forEach(val=>{
+  /* Create "All" option */
+  const allOpt=document.createElement('div');
+  allOpt.className='searchable-select-option all-option';
+  allOpt.innerHTML=`
+    <input type="checkbox" id="${wrapperId}_all" checked>
+    <label for="${wrapperId}_all">All</label>
+  `;
+  dropdown.appendChild(allOpt);
+
+  const allCheckbox=allOpt.querySelector('input[type="checkbox"]');
+
+  /* Create value options */
+  values.forEach((val,idx)=>{
     const opt=document.createElement('div');
     opt.className='searchable-select-option';
-    opt.textContent=val;
-    opt.dataset.value = val==="All" ? "" : val;
-
-    if(val==="All") opt.classList.add('selected');
-
-    opt.addEventListener('click',()=>{
-      selectedValue=opt.dataset.value;
-      input.value=opt.textContent;
-      input.setAttribute('data-value',selectedValue);
-
-      dropdown.querySelectorAll('.searchable-select-option')
-        .forEach(o=>o.classList.remove('selected'));
-      opt.classList.add('selected');
-
-      dropdown.classList.remove('active');
-      wrapper.dispatchEvent(new Event('change',{bubbles:true}));
-    });
-
+    const checkId=`${wrapperId}_opt_${idx}`;
+    opt.innerHTML=`
+      <input type="checkbox" id="${checkId}" data-value="${esc(val)}">
+      <label for="${checkId}">${esc(val)}</label>
+    `;
+    opt.dataset.value=val;
     dropdown.appendChild(opt);
   });
 
-  /* OPEN / CLOSE */
-  input.addEventListener('click',e=>{
-    e.stopPropagation();
-    const active=dropdown.classList.contains('active');
-    document.querySelectorAll('.searchable-select-dropdown')
-      .forEach(d=>d.classList.remove('active'));
-    if(!active){
-      dropdown.classList.add('active');
-      input.removeAttribute('readonly');
-      input.focus(); input.select();
+  /* Update display text */
+  function updateDisplay(){
+    if(selectedValues.length===0){
+      input.value='All';
+      input.classList.remove('has-selection');
+      allCheckbox.checked=true;
+    } else if(selectedValues.length===1){
+      input.value=selectedValues[0];
+      input.classList.add('has-selection');
+      allCheckbox.checked=false;
+    } else if(selectedValues.length<=3){
+      input.value=selectedValues.join(', ');
+      input.classList.add('has-selection');
+      allCheckbox.checked=false;
+    } else {
+      input.value=`${selectedValues.length} selected`;
+      input.classList.add('has-selection');
+      allCheckbox.checked=false;
+    }
+  }
+
+  /* Handle "All" checkbox */
+  allCheckbox.addEventListener('change',()=>{
+    if(allCheckbox.checked){
+      selectedValues=[];
+      dropdown.querySelectorAll('input[type="checkbox"]:not(#'+wrapperId+'_all)').forEach(cb=>{
+        cb.checked=false;
+      });
+      updateDisplay();
+      wrapper.dispatchEvent(new Event('change',{bubbles:true}));
     }
   });
 
-  /* SEARCH FILTER */
-  input.addEventListener('input',()=>{
-    const term=input.value.toLowerCase();
-    dropdown.querySelectorAll('.searchable-select-option').forEach(opt=>{
-      const text=opt.textContent.toLowerCase();
-      opt.classList.toggle('hidden', !text.includes(term) && opt.dataset.value!=="");
+  /* Handle individual checkboxes */
+  dropdown.querySelectorAll('.searchable-select-option:not(.all-option)').forEach(opt=>{
+    const checkbox=opt.querySelector('input[type="checkbox"]');
+    const value=checkbox.dataset.value;
+
+    checkbox.addEventListener('change',()=>{
+      if(checkbox.checked){
+        if(!selectedValues.includes(value)){
+          selectedValues.push(value);
+        }
+      } else {
+        selectedValues=selectedValues.filter(v=>v!==value);
+      }
+
+      if(selectedValues.length===0){
+        allCheckbox.checked=true;
+      } else {
+        allCheckbox.checked=false;
+      }
+
+      updateDisplay();
+      wrapper.dispatchEvent(new Event('change',{bubbles:true}));
+    });
+
+    /* Allow clicking label or div to toggle */
+    opt.addEventListener('click',e=>{
+      if(e.target.tagName!=='INPUT'){
+        checkbox.checked=!checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+      }
     });
   });
 
-  /* CLOSE ON BLUR */
-  input.addEventListener('blur',()=>{
-    setTimeout(()=>{
-      dropdown.classList.remove('active');
-      input.setAttribute('readonly',true);
-    },150);
-  });
-
-  document.addEventListener('click',e=>{
-    if(!wrapper.contains(e.target)){
-      dropdown.classList.remove('active');
-      input.setAttribute('readonly',true);
+  /* Open/close dropdown */
+  input.addEventListener('click',e=>{
+    e.stopPropagation();
+    const active=dropdown.classList.contains('active');
+    
+    // Close all other dropdowns
+    document.querySelectorAll('.searchable-select-dropdown').forEach(d=>d.classList.remove('active'));
+    
+    if(!active){
+      dropdown.classList.add('active');
+      searchInput.value='';
+      searchInput.focus();
+      
+      // Show all options
+      dropdown.querySelectorAll('.searchable-select-option:not(.all-option)').forEach(opt=>{
+        opt.classList.remove('hidden');
+      });
     }
   });
 
+  /* Search filter */
+  searchInput.addEventListener('input',()=>{
+    const term=searchInput.value.toLowerCase();
+    dropdown.querySelectorAll('.searchable-select-option:not(.all-option)').forEach(opt=>{
+      const text=opt.querySelector('label').textContent.toLowerCase();
+      opt.classList.toggle('hidden',!text.includes(term));
+    });
+  });
+
+  /* Close dropdown when clicking outside */
+  document.addEventListener('click',e=>{
+    if(!wrapper.contains(e.target)){
+      dropdown.classList.remove('active');
+    }
+  });
+
+  /* Prevent dropdown from closing when clicking inside */
+  dropdown.addEventListener('click',e=>{
+    e.stopPropagation();
+  });
+
   return {
-    getValue:()=>selectedValue,
-    setValue:(val)=>{
-      selectedValue=val||"";
-      const opt=dropdown.querySelector(`[data-value="${val||""}"]`);
-      if(opt){
-        input.value=opt.textContent;
-        dropdown.querySelectorAll('.searchable-select-option').forEach(o=>o.classList.remove('selected'));
-        opt.classList.add('selected');
-      }
+    getValue:()=>selectedValues,
+    setValue:(vals)=>{
+      selectedValues=Array.isArray(vals)?[...vals]:[];
+      
+      dropdown.querySelectorAll('input[type="checkbox"]:not(#'+wrapperId+'_all)').forEach(cb=>{
+        cb.checked=selectedValues.includes(cb.dataset.value);
+      });
+      
+      updateDisplay();
     },
     reset:()=>{
-      selectedValue="";
-      input.value="All";
-      input.setAttribute('data-value',"");
-
-      dropdown.querySelectorAll('.searchable-select-option')
-      .forEach(o=>{
-        o.classList.remove('selected');
-        if(o.dataset.value==="") o.classList.add('selected');
+      selectedValues=[];
+      allCheckbox.checked=true;
+      dropdown.querySelectorAll('input[type="checkbox"]:not(#'+wrapperId+'_all)').forEach(cb=>{
+        cb.checked=false;
       });
+      updateDisplay();
     }
   };
 }
@@ -1169,7 +1278,7 @@ function uniqueValues(arr,key){
 }
 
 /* =====================================================
-   POPULATE ALL SLICERS (WITH GRADE FILTER)
+   POPULATE ALL SLICERS
 ===================================================== */
 const selects={};
 
@@ -1181,10 +1290,7 @@ function populateSlicers(){
   selects.all_lot=createSearchableSelect("all_filter_lot", uniqueValues(ALL_ROWS,"lot"));
   selects.all_shape=createSearchableSelect("all_filter_shape", uniqueValues(ALL_ROWS,"shape"));
   selects.all_size=createSearchableSelect("all_filter_size", uniqueValues(ALL_ROWS,"size"));
-
-  /* ⭐ UNIFIED GRADE FILTER ⭐ */
   selects.all_grade=createSearchableSelect("all_filter_grade", uniqueValues(ALL_ROWS,"formatGrade"));
-
   selects.all_party=createSearchableSelect("all_filter_party", uniqueValues(ALL_ROWS,"party"));
 
   // PARTY tab
@@ -1236,14 +1342,19 @@ function exportCSV(containerId,filename){
 }
 
 /* =====================================================
-   MATCHES FILTER (MULTI-SHAPE & MULTI-SIZE SUPPORT)
+   MATCHES FILTER - MULTI-SELECT VERSION
 ===================================================== */
-function matchesFilter(value, filterValue){
-  if(!filterValue) return true;
+function matchesFilter(value, filterValues){
+  // If no filters selected, show all
+  if(!filterValues || filterValues.length===0) return true;
+  
+  // If value is array (like shape/size), check if ANY value matches ANY filter
   if(Array.isArray(value)){
-    return value.some(v=>String(v||"").trim()===filterValue);
+    return value.some(v=>filterValues.includes(String(v||"").trim()));
   }
-  return String(value||"").trim()===filterValue;
+  
+  // Single value: check if it matches ANY of the selected filters
+  return filterValues.includes(String(value||"").trim());
 }
 
 /* =====================================================
@@ -1298,21 +1409,18 @@ function confirmPrint(){
 }
 
 /* =====================================================
-   APPLY FILTERS — ALL STONES (WITH GRADE)
+   APPLY FILTERS — ALL STONES (MULTI-SELECT)
 ===================================================== */
 function applyALLFilters(q=""){
   const srcVal=document.getElementById("all_filter_source").value;
-  const rowTypeVal=selects.all_rowType?.getValue()||"";
-  const txIdVal=selects.all_txId?.getValue()||"";
-  const sellIdVal=selects.all_sellId?.getValue()||"";
-  const lotVal=selects.all_lot?.getValue()||"";
-  const shapeVal=selects.all_shape?.getValue()||"";
-  const sizeVal=selects.all_size?.getValue()||"";
-
-  /* ⭐ GRADE FILTER ⭐ */
-  const gradeVal=selects.all_grade?.getValue()||"";
-
-  const partyVal=selects.all_party?.getValue()||"";
+  const rowTypeVals=selects.all_rowType?.getValue()||[];
+  const txIdVals=selects.all_txId?.getValue()||[];
+  const sellIdVals=selects.all_sellId?.getValue()||[];
+  const lotVals=selects.all_lot?.getValue()||[];
+  const shapeVals=selects.all_shape?.getValue()||[];
+  const sizeVals=selects.all_size?.getValue()||[];
+  const gradeVals=selects.all_grade?.getValue()||[];
+  const partyVals=selects.all_party?.getValue()||[];
 
   const dateFrom=document.getElementById("all_filter_date_from").value;
   const dateTo=document.getElementById("all_filter_date_to").value;
@@ -1326,18 +1434,14 @@ function applyALLFilters(q=""){
 
     ALL_ROWS.forEach(r=>{
       if(srcVal && r.source!==srcVal) return;
-      if(rowTypeVal && r.type!==rowTypeVal) return;
-      if(txIdVal && r.txId!==txIdVal) return;
-      if(sellIdVal && r.sellId!==sellIdVal) return;
-      if(lotVal && r.lot!==lotVal) return;
-
-      if(!matchesFilter(r.shape, shapeVal)) return;
-      if(!matchesFilter(r.size, sizeVal)) return;
-
-      /* ⭐ Apply Grade filter ⭐ */
-      if(gradeVal && r.formatGrade!==gradeVal) return;
-
-      if(partyVal && r.party!==partyVal) return;
+      if(!matchesFilter(r.type, rowTypeVals)) return;
+      if(!matchesFilter(r.txId, txIdVals)) return;
+      if(!matchesFilter(r.sellId, sellIdVals)) return;
+      if(!matchesFilter(r.lot, lotVals)) return;
+      if(!matchesFilter(r.shape, shapeVals)) return;
+      if(!matchesFilter(r.size, sizeVals)) return;
+      if(!matchesFilter(r.formatGrade, gradeVals)) return;
+      if(!matchesFilter(r.party, partyVals)) return;
       if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
 
       const txt=JSON.stringify(r).toLowerCase();
@@ -1395,10 +1499,10 @@ function applyALLFilters(q=""){
 }
 
 /* =====================================================
-   APPLY FILTERS — PARTY TAB
+   APPLY FILTERS — PARTY TAB (MULTI-SELECT)
 ===================================================== */
 function applyPARTYFilters(q=""){
-  const partyVal=selects.py_party?.getValue()||"";
+  const partyVals=selects.py_party?.getValue()||[];
   const srcVal=document.getElementById("py_filter_source").value;
   const dateFrom=document.getElementById("py_filter_date_from").value;
   const dateTo=document.getElementById("py_filter_date_to").value;
@@ -1413,7 +1517,7 @@ function applyPARTYFilters(q=""){
     const partySet=new Set();
 
     PARTY_ROWS.forEach(r=>{
-      if(partyVal && r.party!==partyVal) return;
+      if(!matchesFilter(r.party, partyVals)) return;
       if(srcVal && r.source!==srcVal) return;
       if((dateFrom||dateTo) && !dateInRange(r.date,dateFrom,dateTo)) return;
 
@@ -1506,7 +1610,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     });
   });
 
-  /* ALL STONES — searchable selects including ⭐ GRADE ⭐ */
+  /* ALL STONES — searchable multi-selects */
   [
     "all_filter_rowtype",
     "all_filter_txid",
@@ -1514,7 +1618,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     "all_filter_lot",
     "all_filter_shape",
     "all_filter_size",
-    "all_filter_grade",   // ⭐ added
+    "all_filter_grade",
     "all_filter_party"
   ].forEach(id=>{
     document.getElementById(id).addEventListener("change",()=>{
@@ -1530,7 +1634,7 @@ document.addEventListener("DOMContentLoaded", async ()=>{
     selects.all_lot?.reset();
     selects.all_shape?.reset();
     selects.all_size?.reset();
-    selects.all_grade?.reset();     // ⭐ reset Grade
+    selects.all_grade?.reset();
     selects.all_party?.reset();
 
     document.getElementById("all_filter_date_from").value="";
