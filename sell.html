@@ -687,7 +687,7 @@ body{
   background: white !important;
 }
 
-/* Column widths */
+/* Updated Column widths for streamlined table */
 .sell-table th:nth-child(1) { width: 70px; min-width: 70px; }   /* Type */
 .sell-table th:nth-child(2) { width: 100px; min-width: 100px; }  /* Tx ID */
 .sell-table th:nth-child(3) { width: 100px; min-width: 100px; }  /* Date */
@@ -697,20 +697,16 @@ body{
 .sell-table th:nth-child(7) { width: 120px; min-width: 120px; }  /* Shape */
 .sell-table th:nth-child(8) { width: 100px; min-width: 100px; }  /* Size */
 .sell-table th:nth-child(9) { width: 180px; min-width: 180px; }  /* Description */
-.sell-table th:nth-child(10) { width: 85px; min-width: 85px; }  /* Orig CTS */
-.sell-table th:nth-child(11) { width: 85px; min-width: 85px; }  /* Orig PCS */
-.sell-table th:nth-child(12) { width: 85px; min-width: 85px; }  /* Orig Price */
-.sell-table th:nth-child(13) { width: 100px; min-width: 100px; } /* Orig Amount */
-.sell-table th:nth-child(14) { width: 85px; min-width: 85px; }  /* Sold CTS */
-.sell-table th:nth-child(15) { width: 85px; min-width: 85px; }  /* Sold PCS */
-.sell-table th:nth-child(16) { width: 85px; min-width: 85px; }  /* Rem CTS */
-.sell-table th:nth-child(17) { width: 85px; min-width: 85px; }  /* Rem PCS */
-.sell-table th:nth-child(18) { width: 100px; min-width: 100px; } /* Rem Amount */
-.sell-table th:nth-child(19) { width: 90px; min-width: 90px; }  /* Sell CTS */
-.sell-table th:nth-child(20) { width: 90px; min-width: 90px; }  /* Sell PCS */
-.sell-table th:nth-child(21) { width: 90px; min-width: 90px; }  /* Price */
-.sell-table th:nth-child(22) { width: 100px; min-width: 100px; } /* Amount */
-.sell-table th:nth-child(23) { width: 140px; min-width: 140px; } /* Remarks */
+.sell-table th:nth-child(10) { width: 85px; min-width: 85px; }  /* Orig Price */
+.sell-table th:nth-child(11) { width: 100px; min-width: 100px; } /* Orig Amount */
+.sell-table th:nth-child(12) { width: 85px; min-width: 85px; }  /* Rem CTS */
+.sell-table th:nth-child(13) { width: 85px; min-width: 85px; }  /* Rem PCS */
+.sell-table th:nth-child(14) { width: 100px; min-width: 100px; } /* Rem Amount */
+.sell-table th:nth-child(15) { width: 90px; min-width: 90px; }  /* Sell CTS */
+.sell-table th:nth-child(16) { width: 90px; min-width: 90px; }  /* Sell PCS */
+.sell-table th:nth-child(17) { width: 90px; min-width: 90px; }  /* Price */
+.sell-table th:nth-child(18) { width: 100px; min-width: 100px; } /* Amount */
+.sell-table th:nth-child(19) { width: 140px; min-width: 140px; } /* Remarks */
 
 .sell-table input{
   width:100%;
@@ -1208,17 +1204,6 @@ function getRemainingForRow(row, type) {
   const remainingPcs = type === "AJMZ" ? (basePcs - totalSoldPcs) : 0;
 
   return { remainingCts, remainingPcs };
-}
-
-// Calculate total sold for transparency in modal
-function calculateTotalSold(row, type) {
-  const sellRecords = SELLS[row.key] || [];
-  const totalSoldCts = sellRecords.reduce((sum, s) => sum + Number(s.cts || 0), 0);
-  const totalSoldPcs = type === "AJMZ" 
-    ? sellRecords.reduce((sum, s) => sum + Number(s.pcs || 0), 0) 
-    : 0;
-  
-  return { totalSoldCts, totalSoldPcs };
 }
 
 // NEW: Collect all existing Sell IDs with metadata
@@ -1876,7 +1861,7 @@ function updateMetrics(){
   document.getElementById("calibTotalAmount").textContent=fmtNumber(tAmtC);
 }
 
-// REDESIGNED: Enhanced sell modal table with three logical sections
+// REDESIGNED: Streamlined sell modal table with removed columns
 function buildSellModalTable(selectedRows,editData=null){
   if(!selectedRows.length){
     sellModalTableWrapper.innerHTML="<div style='font-size:12px;color:#777;'>No rows selected.</div>";
@@ -1889,8 +1874,8 @@ function buildSellModalTable(selectedRows,editData=null){
     <table class="sell-table">
       <thead>
         <tr class="section-labels">
-          <th colspan="13" class="section-a">ORIGINAL RECORD</th>
-          <th colspan="5" class="section-b">INVENTORY STATUS</th>
+          <th colspan="11" class="section-a">ORIGINAL RECORD</th>
+          <th colspan="3" class="section-b">INVENTORY STATUS</th>
           <th colspan="5" class="section-c">THIS SELL</th>
         </tr>
         <tr class="column-headers">
@@ -1904,14 +1889,10 @@ function buildSellModalTable(selectedRows,editData=null){
           <th class="section-a">Shape</th>
           <th class="section-a">Size</th>
           <th class="section-a">Description</th>
-          <th class="section-a">Orig CTS</th>
-          <th class="section-a">Orig PCS</th>
           <th class="section-a">Orig Price</th>
           <th class="section-a">Orig Amount</th>
           
           <!-- Section B: Inventory Status -->
-          <th class="section-b">Sold CTS</th>
-          <th class="section-b">Sold PCS</th>
           <th class="section-b">Rem CTS</th>
           <th class="section-b">Rem PCS</th>
           <th class="section-b">Rem Amount</th>
@@ -1932,7 +1913,6 @@ function buildSellModalTable(selectedRows,editData=null){
   selectedRows.forEach(rowData=>{
     const {row, type} = rowData;
     const rem=getRemainingForRow(row,type);
-    const sold=calculateTotalSold(row,type);
     
     const overridePrice = sellPriceOverride?.value ? Number(sellPriceOverride.value) : null;
     const price = overridePrice !== null ? overridePrice : Number(row.price || 0);
@@ -1965,14 +1945,10 @@ function buildSellModalTable(selectedRows,editData=null){
         <td class="section-a">${esc(multiDisplay(row.shape))}</td>
         <td class="section-a">${type==="AJMZ" ? (row.size||"") : esc(multiDisplay(row.size))}</td>
         <td class="section-a">${esc(row.description||"")}</td>
-        <td class="section-a">${fmtNumber(row.cts)}</td>
-        <td class="section-a">${type==="AJMZ" ? fmtNumber(row.pcs) : "-"}</td>
         <td class="section-a">${fmtNumber(row.price)}</td>
         <td class="section-a">${fmtNumber(row.amount)}</td>
         
         <!-- Section B: Inventory Status (Read-only) -->
-        <td class="section-b">${fmtNumber(sold.totalSoldCts)}</td>
-        <td class="section-b">${type==="AJMZ" ? fmtNumber(sold.totalSoldPcs) : "-"}</td>
         <td class="section-b">${fmtNumber(rem.remainingCts)}</td>
         <td class="section-b">${type==="AJMZ" ? fmtNumber(rem.remainingPcs) : "-"}</td>
         <td class="section-b">${fmtNumber(rem.remainingCts * row.price)}</td>
