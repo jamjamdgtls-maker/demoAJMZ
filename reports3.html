@@ -85,81 +85,100 @@ body{
   padding:30px;
 }
 
-/* Invoice Header */
+/* INVOICE Title */
 .invoice-title{
   text-align:center;
-  font-size:32px;
+  font-size:36px;
   font-weight:700;
-  margin-bottom:30px;
+  margin-bottom:25px;
   color:var(--ink);
   text-transform:uppercase;
-  letter-spacing:2px;
+  letter-spacing:3px;
   border-bottom:3px solid var(--border-dark);
   padding-bottom:15px;
 }
 
-/* Header Fields */
+/* Header Fields - Clean Format */
 .header-grid{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:15px 30px;
-  margin-bottom:30px;
+  gap:12px 30px;
+  margin-bottom:25px;
+  padding-bottom:20px;
+  border-bottom:2px solid #e0e0e0;
 }
 
-.field-group{
+.field-row{
   display:flex;
+  gap:8px;
   align-items:center;
-  gap:3px;
+  font-size:13px;
 }
 
 .field-label{
   font-weight:700;
-  font-size:13px;
+  font-size:11px;
   color:var(--ink);
-  min-width:140px;
+  min-width:130px;
   text-transform:uppercase;
   letter-spacing:0.5px;
 }
 
-.field-input{
-  flex:1;
-  padding:8px 12px;
-  border:2px solid var(--border-dark);
-  border-radius:6px;
-  font-size:14px;
-  font-weight:600;
-  background:#fff;
+.field-value{
   color:var(--ink);
+  font-weight:600;
+  flex:1;
+  font-size:13px;
 }
 
-.field-input:focus{
+.field-value input{
+  border:none;
+  border-bottom:1px dashed #ccc;
+  padding:4px 0;
+  font-size:13px;
+  font-weight:600;
+  background:transparent;
+  color:var(--ink);
+  width:100%;
+  font-family:Inter, sans-serif;
+}
+
+.field-value input:focus{
   outline:none;
-  border-color:var(--accent);
+  border-bottom:1px solid var(--accent);
+  background:#fafafa;
 }
 
-.field-input[readonly]{
-  background:#f5f5f5;
+.field-value input[readonly]{
+  border-bottom:1px solid #e0e0e0;
   color:var(--ink-soft);
+  cursor:default;
 }
 
-/* Searchable Select */
+/* Searchable Select - Clean Style */
 .searchable-select-wrapper{
   position:relative;
   flex:1;
 }
 .searchable-select-input{
   width:100%;
-  padding:8px 32px 8px 12px;
-  border:2px solid var(--border-dark);
-  border-radius:6px;
-  font-size:14px;
+  padding:4px 24px 4px 0;
+  border:none;
+  border-bottom:1px dashed #ccc;
+  font-size:13px;
   font-weight:600;
-  background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M6 8L2 4h8z"/></svg>') no-repeat right 10px center;
+  background:transparent url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M6 8L2 4h8z"/></svg>') no-repeat right 4px center;
   cursor:pointer;
+  color:var(--ink);
+  font-family:Inter, sans-serif;
 }
 .searchable-select-input:focus{
   outline:none;
-  border-color:var(--accent);
+  border-bottom:1px solid var(--accent);
+  background-color:#fafafa;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M6 8L2 4h8z"/></svg>');
+  background-repeat:no-repeat;
+  background-position:right 4px center;
 }
 .searchable-select-dropdown{
   position:absolute;
@@ -275,6 +294,24 @@ body{
   box-shadow:0 4px 12px var(--shadow);
 }
 
+/* Print Wrapper - Contains everything for print */
+.print-wrapper{
+  display:block;
+}
+
+/* Header repeat table - hidden on screen */
+.header-repeat-table{
+  display:none;
+  width:100%;
+  border-collapse:collapse;
+}
+
+/* Print value spans */
+.print-value{
+  font-weight:600;
+  color:var(--ink);
+}
+
 /* Invoice Table */
 .invoice-table-wrapper{
   border:2px solid var(--border-dark);
@@ -356,146 +393,6 @@ body{
   padding:12px 6px !important;
 }
 
-/* Print Options Modal */
-.modal-overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background:rgba(0,0,0,0.7);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-
-.modal-overlay.active{
-  display:flex;
-}
-
-.modal-content{
-  background:#fff;
-  padding:30px;
-  border-radius:12px;
-  max-width:500px;
-  width:90%;
-  box-shadow:0 8px 32px rgba(0,0,0,0.3);
-}
-
-.modal-header{
-  font-size:24px;
-  font-weight:700;
-  margin-bottom:20px;
-  color:var(--ink);
-  text-align:center;
-}
-
-.modal-body{
-  margin-bottom:25px;
-}
-
-.option-group{
-  margin-bottom:20px;
-}
-
-.option-label{
-  font-weight:700;
-  font-size:14px;
-  color:var(--ink);
-  margin-bottom:10px;
-  display:block;
-}
-
-.radio-group{
-  display:flex;
-  gap:20px;
-}
-
-.radio-option{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  cursor:pointer;
-}
-
-.radio-option input[type="radio"]{
-  width:18px;
-  height:18px;
-  cursor:pointer;
-}
-
-.radio-option label{
-  cursor:pointer;
-  font-size:14px;
-}
-
-.column-options{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.checkbox-option{
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.checkbox-option input[type="checkbox"]{
-  width:16px;
-  height:16px;
-  cursor:pointer;
-}
-
-.checkbox-option label{
-  cursor:pointer;
-  font-size:13px;
-}
-
-.modal-footer{
-  display:flex;
-  gap:12px;
-  justify-content:flex-end;
-}
-
-.btn-modal{
-  padding:10px 24px;
-  border:2px solid var(--border-dark);
-  border-radius:8px;
-  font-size:14px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.15s;
-}
-
-.btn-modal-cancel{
-  background:#fff;
-  color:var(--ink);
-}
-
-.btn-modal-print{
-  background:var(--accent);
-  color:#fff;
-  border-color:var(--accent);
-}
-
-.btn-modal:hover{
-  transform:translateY(-2px);
-  box-shadow:0 4px 12px var(--shadow);
-}
-
-/* Print Preview Info */
-.preview-info{
-  background:#f0f8ff;
-  border:2px solid #2196F3;
-  border-radius:8px;
-  padding:12px;
-  margin-bottom:15px;
-  font-size:13px;
-  color:#1565C0;
-}
-
 /* Loading Overlay */
 .loading-overlay{
   position:fixed;
@@ -537,18 +434,15 @@ body{
 }
 
 /* ============================================
-   PRINT STYLES - COMPREHENSIVE FIXES
+   PRINT STYLES - REPEATING TABLE HEADERS
    ============================================ */
 
-/* Page Setup - Let browser handle orientation */
 @page {
   size: auto;
   margin: 0.4in 0.5in 0.6in 0.5in;
 }
 
-/* Print Media Query */
 @media print {
-  /* Reset body and html for print */
   html, body {
     width: 100%;
     height: 100%;
@@ -563,8 +457,9 @@ body{
   .filter-section,
   .action-buttons,
   .no-print,
-  .modal-overlay,
-  .loading-overlay {
+  .loading-overlay,
+  .searchable-select-dropdown,
+  .screen-only-header {
     display: none !important;
   }
   
@@ -577,20 +472,57 @@ body{
   
   /* Invoice Container for Print */
   .invoice-container {
-    border: 2px solid #000;
+    border: none;
     box-shadow: none;
-    padding: 15px;
+    padding: 0;
     margin: 0;
     max-width: 100%;
     border-radius: 0;
     background: #fff;
+    width: 100%;
   }
   
-  /* Invoice Title */
+  /* CRITICAL: Print wrapper as table to enable header repetition */
+  .print-wrapper {
+    display: table !important;
+    width: 100%;
+  }
+  
+  /* Invoice Header Wrapper - Repeats on every page */
+  .invoice-header-wrapper {
+    display: table-header-group;
+    page-break-inside: avoid;
+    page-break-after: avoid;
+  }
+  
+  /* Show header-repeat-table in print */
+  .header-repeat-table {
+    display: table !important;
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .header-repeat-table thead {
+    display: table-header-group;
+  }
+  
+  .header-repeat-table thead td {
+    padding: 0;
+    border: none;
+  }
+  
+  /* Print value spans styling */
+  .print-value {
+    font-weight: 600;
+    color: #000 !important;
+    font-size: 11px;
+  }
+  
+  /* INVOICE Title */
   .invoice-title {
     border-bottom: 3px solid #000;
-    font-size: 24px;
-    margin-bottom: 15px;
+    font-size: 26px;
+    margin-bottom: 12px;
     padding-bottom: 10px;
     page-break-after: avoid;
   }
@@ -599,17 +531,12 @@ body{
   .header-grid {
     gap: 8px 20px;
     margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #000;
     page-break-after: avoid;
   }
   
   /* Responsive header layout for portrait */
-  @media print and (max-width: 8.5in) {
-    .header-grid {
-      grid-template-columns: 1fr 1fr !important;
-      gap: 6px 15px !important;
-    }
-  }
-  
   @media print and (orientation: portrait) {
     .header-grid {
       grid-template-columns: 1fr 1fr !important;
@@ -622,74 +549,47 @@ body{
     font-size: 10px;
   }
   
-  .field-input,
-  .searchable-select-input {
-    border: 1px solid #000 !important;
+  .field-value {
     font-size: 11px;
-    padding: 5px 8px;
-    background: #fff !important;
+  }
+  
+  .field-value input,
+  .searchable-select-input {
+    border-bottom: none !important;
+    font-size: 11px;
+    padding: 2px 0;
+    background: transparent !important;
     color: #000 !important;
   }
   
-  /* Portrait-specific adjustments */
-  @media print and (orientation: portrait) {
-    .invoice-title {
-      font-size: 20px;
-      margin-bottom: 12px;
-    }
-    
-    .field-label {
-      min-width: 95px;
-      font-size: 9px;
-    }
-    
-    .field-input,
-    .searchable-select-input {
-      font-size: 10px;
-      padding: 4px 6px;
-    }
-    
-    .invoice-table {
-      font-size: 9px;
-    }
-    
-    .invoice-table thead th {
-      font-size: 8px;
-      padding: 5px 3px;
-    }
-    
-    .invoice-table tbody td {
-      padding: 5px 3px;
-      font-size: 9px;
-    }
-    
-    .totals-row td {
-      font-size: 10px;
-      padding: 7px 3px !important;
-    }
+  /* Table content wrapper - Part of outer table */
+  .table-content-wrapper {
+    display: table-row-group;
   }
   
   /* Table Wrapper */
   .invoice-table-wrapper {
-    margin-bottom: 10px;
+    margin-bottom: 0;
     border: none;
     border-radius: 0;
     overflow: visible;
   }
   
-  /* Invoice Table - Critical Print Fixes */
+  /* Invoice Table */
   .invoice-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 10px;
+    display: table !important;
   }
   
-  /* Table Header - Repeat on Every Page */
-  .invoice-table thead {
-    display: table-header-group;
+  /* Hide original table header (we use the repeating one in invoice-header-wrapper) */
+  .invoice-table-wrapper .invoice-table thead {
+    display: none !important;
   }
   
-  .invoice-table thead th {
+  /* Style for table headers in header-repeat-table */
+  .header-repeat-table thead th {
     background: #e8e8e8 !important;
     border: 1px solid #000 !important;
     padding: 6px 4px;
@@ -703,9 +603,9 @@ body{
     page-break-after: avoid;
   }
   
-  /* Table Body */
+  /* CRITICAL FIX: Table Body must be table-row-group */
   .invoice-table tbody {
-    display: table-row-group;
+    display: table-row-group !important;
   }
   
   /* Table Rows - Prevent Splitting */
@@ -737,7 +637,7 @@ body{
     display: none !important;
   }
   
-  /* Totals Row - Keep with Data */
+  /* Totals Row */
   .totals-row {
     page-break-inside: avoid;
     page-break-before: avoid;
@@ -755,28 +655,46 @@ body{
     print-color-adjust: exact;
   }
   
-  /* Keep last 5 data rows with totals to prevent orphan */
+  /* Keep last 5 data rows with totals */
   .invoice-table tbody tr:nth-last-child(-n+6) {
     page-break-after: avoid;
   }
   
-
-  
-  /* ============================================
-     BROWSER-SPECIFIC FIXES
-     ============================================ */
-  
-  /* Firefox Print Fixes */
-  @-moz-document url-prefix() {
-    .invoice-table thead {
-      display: table-header-group !important;
+  /* Portrait adjustments */
+  @media print and (orientation: portrait) {
+    .invoice-title {
+      font-size: 22px;
+      margin-bottom: 10px;
     }
-  }
-  
-  /* Chrome/Edge Print Fixes */
-  @supports (-webkit-appearance: none) {
-    .invoice-table tbody tr {
-      -webkit-print-color-adjust: exact;
+    
+    .field-label {
+      min-width: 95px;
+      font-size: 9px;
+    }
+    
+    .field-value,
+    .field-value input,
+    .searchable-select-input {
+      font-size: 10px;
+    }
+    
+    .invoice-table {
+      font-size: 9px;
+    }
+    
+    .invoice-table thead th {
+      font-size: 8px;
+      padding: 4px 2px;
+    }
+    
+    .invoice-table tbody td {
+      padding: 4px 2px;
+      font-size: 9px;
+    }
+    
+    .totals-row td {
+      font-size: 10px;
+      padding: 6px 2px !important;
     }
   }
   
@@ -813,101 +731,214 @@ body{
 <div class="workspace">
   <div class="invoice-container">
     
-    <!-- Invoice Title -->
-    <div class="invoice-title">INVOICE</div>
-    
-    <!-- Header Fields -->
-    <div class="header-grid">
-      <div class="field-group">
-        <label class="field-label">DATE:</label>
-        <input type="date" class="field-input" id="invoiceDate">
+    <!-- Print Wrapper - Acts as block for print -->
+    <div class="print-wrapper">
+      
+      <!-- Screen-only Invoice Header (Hidden in print) -->
+      <div class="screen-only-header">
+        <!-- INVOICE Title -->
+        <div class="invoice-title">INVOICE</div>
+        
+        <!-- Header Fields -->
+        <div class="header-grid">
+          <div class="field-row">
+            <span class="field-label">DATE:</span>
+            <span class="field-value">
+              <input type="date" id="invoiceDate">
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">INVOICE NO.:</span>
+            <span class="field-value">
+              <input type="text" id="invoiceNo">
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">TRANSACTION TYPE:</span>
+            <span class="field-value">
+              <div class="searchable-select-wrapper" id="txTypeSelectWrapper"></div>
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">PARTY:</span>
+            <span class="field-value">
+              <div class="searchable-select-wrapper" id="partySelectWrapper"></div>
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">SELL ID:</span>
+            <span class="field-value">
+              <div class="searchable-select-wrapper" id="sellIdSelectWrapper"></div>
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">TOTAL CTS:</span>
+            <span class="field-value">
+              <input type="text" id="totalCTS" readonly>
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">TOTAL AMOUNT:</span>
+            <span class="field-value">
+              <input type="text" id="totalAmount" readonly>
+            </span>
+          </div>
+          
+          <div class="field-row">
+            <span class="field-label">AVERAGE PRICE:</span>
+            <span class="field-value">
+              <input type="text" id="avgPrice" readonly>
+            </span>
+          </div>
+        </div>
       </div>
       
-      <div class="field-group">
-        <label class="field-label">INVOICE NO.:</label>
-        <input type="text" class="field-input" id="invoiceNo" readonly>
+      <!-- Invoice Header Wrapper (Repeats on every page) -->
+      <div class="invoice-header-wrapper">
+        <table class="header-repeat-table">
+          <thead>
+            <tr>
+              <td colspan="11" style="padding:0;">
+                <!-- INVOICE Title -->
+                <div class="invoice-title">INVOICE</div>
+                
+                <!-- Header Fields -->
+                <div class="header-grid">
+                  <div class="field-row">
+                    <span class="field-label">DATE:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printDate"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">INVOICE NO.:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printInvoiceNo"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">TRANSACTION TYPE:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printTxType"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">PARTY:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printParty"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">SELL ID:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printSellId"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">TOTAL CTS:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printTotalCTS"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">TOTAL AMOUNT:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printTotalAmount"></span>
+                    </span>
+                  </div>
+                  
+                  <div class="field-row">
+                    <span class="field-label">AVERAGE PRICE:</span>
+                    <span class="field-value">
+                      <span class="print-value" id="printAvgPrice"></span>
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <th class="col-sr">SR NO.</th>
+              <th class="col-lot">LOT NO.</th>
+              <th class="col-desc">DESCRIPTION</th>
+              <th class="col-shape">SHAPE</th>
+              <th class="col-size">SIZE</th>
+              <th class="col-grade">GRADE</th>
+              <th class="col-pcs">PCS</th>
+              <th class="col-cts">CTS</th>
+              <th class="col-price">PRICE</th>
+              <th class="col-amount">AMOUNT</th>
+              <th class="col-remarks">REMARKS</th>
+            </tr>
+          </thead>
+        </table>
       </div>
       
-      <div class="field-group">
-        <label class="field-label">TRANSACTION TYPE:</label>
-        <div class="searchable-select-wrapper" id="txTypeSelectWrapper"></div>
+      <!-- Table Content Wrapper -->
+      <div class="table-content-wrapper">
+        <!-- Filter Section (Yellow Highlighted) -->
+        <div class="filter-section no-print">
+          <div class="filter-group">
+            <label class="filter-label">DATE FROM:</label>
+            <input type="date" class="filter-select" id="dateFrom" style="width:160px;">
+          </div>
+          
+          <div class="filter-group">
+            <label class="filter-label">DATE TO:</label>
+            <input type="date" class="filter-select" id="dateTo" style="width:160px;">
+          </div>
+          
+          <div class="filter-group">
+            <label class="filter-label">SOURCE:</label>
+            <select class="filter-select" id="sourceFilter">
+              <option value="">All Sources</option>
+              <option value="AJMZ">AJMZ</option>
+              <option value="CALIB">CALIB</option>
+            </select>
+          </div>
+          
+          <div class="action-buttons">
+            <button class="btn btn-secondary" id="clearBtn">🔄 CLEAR</button>
+            <button class="btn btn-primary" id="printBtn">🖨️ PRINT</button>
+          </div>
+        </div>
+        
+        <!-- Invoice Table -->
+        <div class="invoice-table-wrapper">
+          <table class="invoice-table">
+            <thead>
+              <tr>
+                <th class="col-sr">SR NO.</th>
+                <th class="col-lot">LOT NO.</th>
+                <th class="col-desc">DESCRIPTION</th>
+                <th class="col-shape">SHAPE</th>
+                <th class="col-size">SIZE</th>
+                <th class="col-grade">GRADE</th>
+                <th class="col-pcs">PCS</th>
+                <th class="col-cts">CTS</th>
+                <th class="col-price">PRICE</th>
+                <th class="col-amount">AMOUNT</th>
+                <th class="col-remarks">REMARKS</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceTableBody">
+              <!-- Rows will be populated by JavaScript -->
+            </tbody>
+          </table>
+        </div>
       </div>
       
-      <div class="field-group">
-        <label class="field-label">PARTY:</label>
-        <div class="searchable-select-wrapper" id="partySelectWrapper"></div>
-      </div>
-      
-      <div class="field-group">
-        <label class="field-label">SELL ID:</label>
-        <div class="searchable-select-wrapper" id="sellIdSelectWrapper"></div>
-      </div>
-      
-      <div class="field-group">
-        <label class="field-label">TOTAL CTS:</label>
-        <input type="text" class="field-input" id="totalCTS" readonly>
-      </div>
-      
-      <div class="field-group">
-        <label class="field-label">TOTAL AMOUNT:</label>
-        <input type="text" class="field-input" id="totalAmount" readonly>
-      </div>
-      
-      <div class="field-group">
-        <label class="field-label">AVERAGE PRICE:</label>
-        <input type="text" class="field-input" id="avgPrice" readonly>
-      </div>
-    </div>
-    
-    <!-- Filter Section (Yellow Highlighted) -->
-    <div class="filter-section no-print">
-      <div class="filter-group">
-        <label class="filter-label">DATE FROM:</label>
-        <input type="date" class="filter-select" id="dateFrom" style="width:160px;">
-      </div>
-      
-      <div class="filter-group">
-        <label class="filter-label">DATE TO:</label>
-        <input type="date" class="filter-select" id="dateTo" style="width:160px;">
-      </div>
-      
-      <div class="filter-group">
-        <label class="filter-label">SOURCE:</label>
-        <select class="filter-select" id="sourceFilter">
-          <option value="">All Sources</option>
-          <option value="AJMZ">AJMZ</option>
-          <option value="CALIB">CALIB</option>
-        </select>
-      </div>
-      
-      <div class="action-buttons">
-        <button class="btn btn-secondary" id="clearBtn">🔄 CLEAR</button>
-        <button class="btn btn-primary" id="printBtn">🖨️ PRINT</button>
-      </div>
-    </div>
-    
-    <!-- Invoice Table -->
-    <div class="invoice-table-wrapper">
-      <table class="invoice-table">
-        <thead>
-          <tr>
-            <th class="col-sr">SR NO.</th>
-            <th class="col-lot">LOT NO.</th>
-            <th class="col-desc">DESCRIPTION</th>
-            <th class="col-shape">SHAPE</th>
-            <th class="col-size">SIZE</th>
-            <th class="col-grade">GRADE</th>
-            <th class="col-pcs">PCS</th>
-            <th class="col-cts">CTS</th>
-            <th class="col-price">PRICE</th>
-            <th class="col-amount">AMOUNT</th>
-            <th class="col-remarks">REMARKS</th>
-          </tr>
-        </thead>
-        <tbody id="invoiceTableBody">
-          <!-- Rows will be populated by JavaScript -->
-        </tbody>
-      </table>
     </div>
     
   </div>
@@ -1401,8 +1432,34 @@ function clearForm(){
   calculateTotals([]);
 }
 
-// Print function - directly open browser print dialog
+// Print function - sync values and open browser print dialog
 function executePrint(){
+  // Sync values from inputs to print spans
+  const dateInput = document.getElementById("invoiceDate");
+  document.getElementById("printDate").textContent = dateInput.value || "";
+  
+  const invoiceNoInput = document.getElementById("invoiceNo");
+  document.getElementById("printInvoiceNo").textContent = invoiceNoInput.value || "";
+  
+  // Get selected values from dropdowns
+  const txTypeInput = document.querySelector('#txTypeSelectWrapper .searchable-select-input');
+  document.getElementById("printTxType").textContent = txTypeInput ? (txTypeInput.value || "") : "";
+  
+  const partyInput = document.querySelector('#partySelectWrapper .searchable-select-input');
+  document.getElementById("printParty").textContent = partyInput ? (partyInput.value || "") : "";
+  
+  const sellIdInput = document.querySelector('#sellIdSelectWrapper .searchable-select-input');
+  document.getElementById("printSellId").textContent = sellIdInput ? (sellIdInput.value || "") : "";
+  
+  const totalCTSInput = document.getElementById("totalCTS");
+  document.getElementById("printTotalCTS").textContent = totalCTSInput.value || "0.00";
+  
+  const totalAmountInput = document.getElementById("totalAmount");
+  document.getElementById("printTotalAmount").textContent = totalAmountInput.value || "0.00";
+  
+  const avgPriceInput = document.getElementById("avgPrice");
+  document.getElementById("printAvgPrice").textContent = avgPriceInput.value || "0.00";
+  
   window.print();
 }
 
